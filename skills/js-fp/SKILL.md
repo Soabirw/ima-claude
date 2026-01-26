@@ -1,6 +1,6 @@
 ---
 name: "js-fp"
-description: "Core FP principles with anti-over-engineering focus - Simple > Complex | Native > Utilities | MVP > Enterprise"
+description: "Core FP principles with anti-over-engineering focus - Simple > Complex | Native > Custom Utilities | MVP > Enterprise"
 ---
 
 # JavaScript Functional Programming
@@ -11,18 +11,20 @@ Core functional programming principles for JavaScript with anti-over-engineering
 
 - Implementing pure, testable functions
 - Need FP architectural guidance
-- Preventing over-engineering and utility creation
+- Preventing over-engineering and custom FP utility creation
 - Comprehensive testing strategies
 - Evidence-based performance optimization
 
 ## ⚠️ CRITICAL: Anti-Over-Engineering (PRIMARY FOCUS)
 
-**Core Principle**: "Simple solutions > Complex abstractions | Native patterns > FP utilities | MVP > Enterprise patterns"
+**Core Principle**: "Simple solutions > Complex abstractions | Native patterns > Custom FP utilities | MVP > Enterprise patterns"
 
-### Prohibited Patterns (NEVER CREATE)
+> **Clarification**: This skill prevents CREATING custom FP utility functions (pipe, compose, curry) to make JavaScript "feel" like Haskell. Using established libraries (lodash, date-fns, etc.) is perfectly fine. FP is a mindset—pure functions, immutability, composition—not a rigid API signature.
+
+### Don't Create Custom FP Utilities
 
 ```javascript
-// ❌ NEVER: pipe() utility
+// ❌ DON'T CREATE: pipe() utility
 const pipe = (...fns) => x => fns.reduce((v, f) => f(v), x)
 
 // ✅ INSTEAD: Native function calls with early returns
@@ -36,7 +38,7 @@ const validateUser = (userData) => {
   return validateNameLength(userData)
 }
 
-// ❌ NEVER: compose() utility
+// ❌ DON'T CREATE: compose() utility
 const compose = (...fns) => x => fns.reduceRight((v, f) => f(v), x)
 
 // ✅ INSTEAD: Direct function calls
@@ -46,7 +48,7 @@ const processData = (raw) => {
   return transform(validated)
 }
 
-// ❌ NEVER: curry() utility
+// ❌ DON'T CREATE: curry() utility
 const curry = (fn) => (...args) => args.length >= fn.length
   ? fn(...args)
   : (...more) => curry(fn)(...args, ...more)
@@ -57,7 +59,7 @@ const createValidator = (rules) => (value) => {
   return errors.length === 0 ? { valid: true } : { valid: false, errors }
 }
 
-// ❌ NEVER: Custom monads
+// ❌ DON'T CREATE: Custom monads
 class Maybe { /* complex monad implementation */ }
 
 // ✅ INSTEAD: Native error handling and conditionals
@@ -354,7 +356,7 @@ const createMemoized = () => {
 ## Quality Gates (Pre-Implementation Checklist)
 
 1. **"Can this be pure?"** → Separate business logic from side effects
-2. **"Can this use native patterns?"** → Avoid utility creation, use language features
+2. **"Can this use native patterns?"** → Avoid creating custom FP utilities, use language features
 3. **"Can this be simplified?"** → Choose simple solution over complex abstraction
 4. **"Is this complexity justified?"** → Evidence-based complexity decisions
 5. **"Is this testable?"** → Pure functions enable comprehensive testing

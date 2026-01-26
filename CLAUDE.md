@@ -24,11 +24,11 @@ IMA's Claude Code Skills for functional programming, architecture, and team stan
 
 ## Core Philosophy
 
-**"Simple solutions > Complex abstractions | Native patterns > Utilities | MVP > Enterprise"**
+**"Simple solutions > Complex abstractions | Native patterns > Custom FP utilities | MVP > Enterprise"**
 
 All skills enforce:
 1. **Anti-over-engineering** - Start simple, add complexity only with evidence
-2. **Native patterns** - Use language idioms, not FP utilities
+2. **Native patterns** - Use language idioms, don't create custom FP utilities (pipe/compose/curry). Using established libraries is fine.
 3. **Testability** - Pure functions enable comprehensive testing
 4. **Context-appropriate** - CLI script ≠ production service
 

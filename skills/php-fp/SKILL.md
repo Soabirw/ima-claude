@@ -1,6 +1,6 @@
 ---
 name: "php-fp"
-description: "Core FP principles for PHP with anti-over-engineering focus - Simple > Complex | Native > Utilities | MVP > Enterprise"
+description: "Core FP principles for PHP with anti-over-engineering focus - Simple > Complex | Native > Custom Utilities | MVP > Enterprise"
 ---
 
 # PHP Functional Programming
@@ -11,19 +11,21 @@ Core functional programming principles for PHP with anti-over-engineering enforc
 
 - Implementing pure, testable PHP functions
 - Need FP architectural guidance for PHP
-- Preventing over-engineering and utility creation
+- Preventing over-engineering and custom FP utility creation
 - Comprehensive testing strategies with PHPUnit
 - Evidence-based performance optimization
 
 ## CRITICAL: Anti-Over-Engineering (PRIMARY FOCUS)
 
-**Core Principle**: "Simple solutions > Complex abstractions | Native patterns > FP utilities | MVP > Enterprise patterns"
+**Core Principle**: "Simple solutions > Complex abstractions | Native patterns > Custom FP utilities | MVP > Enterprise patterns"
 
-### Prohibited Patterns (NEVER CREATE)
+> **Clarification**: This skill prevents CREATING custom FP utility functions (pipe, compose, curry) to make PHP "feel" like Haskell. Using established libraries (Carbon, Collections, etc.) is perfectly fine. FP is a mindset—pure functions, immutability, composition—not a rigid API signature.
+
+### Don't Create Custom FP Utilities
 
 ```php
 <?php
-// NEVER: pipe() utility
+// DON'T CREATE: pipe() utility
 function pipe(...$functions) {
     return fn($value) => array_reduce($functions, fn($carry, $fn) => $fn($carry), $value);
 }
@@ -35,13 +37,13 @@ function validateUser(array $userData): array {
     return validateEmail($userData);
 }
 
-// NEVER: curry() utility
+// DON'T CREATE: curry() utility
 // INSTEAD: Native closures
 function createValidator(array $rules): callable {
     return fn($value): array => ['valid' => empty(array_filter($rules, fn($r) => !$r['validator']($value)))];
 }
 
-// NEVER: Complex monad implementations
+// DON'T CREATE: Complex monad implementations
 // INSTEAD: Simple result arrays
 function divide(float $a, float $b): array {
     return $b === 0.0 ? ['success' => false, 'error' => 'Division by zero'] : ['success' => true, 'data' => $a / $b];
@@ -53,7 +55,7 @@ function divide(float $a, float $b): array {
 Before extracting or abstracting, ask:
 
 1. **"Can this be pure?"** - Separate business logic from side effects
-2. **"Can this use native patterns?"** - Avoid utility creation, use PHP features
+2. **"Can this use native patterns?"** - Avoid creating custom FP utilities, use PHP features
 3. **"Can this be simplified?"** - Choose simple solution over complex abstraction
 4. **"Is this complexity justified?"** - Evidence-based complexity decisions
 
@@ -283,7 +285,7 @@ $results = array_map($processor, $records);  // Linear execution
 Before implementation:
 
 1. **"Can this be pure?"** - Separate business logic from side effects
-2. **"Can this use native patterns?"** - Avoid utility creation
+2. **"Can this use native patterns?"** - Avoid creating custom FP utilities
 3. **"Can this be simplified?"** - Simple > complex
 4. **"Is this complexity justified?"** - Evidence required
 5. **"Is this testable?"** - Pure functions enable comprehensive testing

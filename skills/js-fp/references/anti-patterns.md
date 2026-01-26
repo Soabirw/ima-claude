@@ -93,10 +93,12 @@ authRoutes.post('/request', async (c) => {
 app.use(ctx => { ctx.authService = authService })  // Created once
 ```
 
-## 6. Creating FP Utilities
+## 6. Creating Custom FP Utilities
+
+> **Note**: This is about not CREATING your own FP utilities. Using established libraries (lodash, Ramda, etc.) is perfectly fine.
 
 ```javascript
-// ANTI-PATTERN: Creating pipe/compose/curry utilities
+// ANTI-PATTERN: Creating your own pipe/compose/curry utilities
 const pipe = (...fns) => x => fns.reduce((v, f) => f(v), x)
 const compose = (...fns) => x => fns.reduceRight((v, f) => f(v), x)
 
