@@ -1,0 +1,4 @@
+# Ignore resources folders (user-downloaded content)
+# except for SETUP.md files which explain where to get resources
+**/resources/*
+!**/resources/SETUP.md

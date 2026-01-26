@@ -1,0 +1,16 @@
+# Marian Research Indexes
+
+This folder will contain research indexes and references for Marian theology.
+
+Planned content:
+- Index of Marian passages in Church Fathers
+- Rosary variant structures
+- Consecration preparation guides
+- Marian doctrine development timeline
+
+For now, the project relies on:
+- `instructions.md` for methodology
+- `resources/` for downloaded primary sources
+- `patristic-theology` and `marian-devotion` skills if installed
+
+Feel free to add your own indexes here as you develop the research base.

@@ -1,0 +1,11 @@
+# Thematic References
+
+This folder is for thematic reference documents that organize patristic content by topic rather than by era.
+
+Planned content:
+- apostolic-era.md - Key themes from the Apostolic period
+- ante-nicene.md - Pre-Nicene theological development
+- nicene-post-nicene.md - Golden Age synthesis
+- marian-themes.md - Marian theology in the Fathers
+
+For now, use the Index-*.md files in the parent directory for era-based research.

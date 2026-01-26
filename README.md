@@ -140,6 +140,27 @@ Usage:
 "Enable 40k mode and review this code"
 ```
 
+## Projects (Manual Setup)
+
+Example research projects for **Claude Web Projects** and **Claude Code**. These are not part of the automated install—use them manually or as templates for building your own domain-specific assistants.
+
+| Project | Description |
+|---------|-------------|
+| `patristic-researcher` | Early Church Fathers research (~30-430 AD) |
+| `mecha-thomas` | Thomistic research with Chestertonian voice |
+| `mecha-alphonsus` | Marian theology in St. Alphonsus' style |
+
+**Usage:**
+```bash
+# Claude Code: Launch from project directory
+cd ~/dev/ima-claude/projects/patristic-researcher
+claude
+
+# Claude Web: Copy instructions.md, upload files/ to Project Knowledge
+```
+
+See [projects/README.md](projects/README.md) for setup guide and instructions for building your own projects.
+
 ## Architecture
 
 ima-claude follows a **Skills-first** architecture:
