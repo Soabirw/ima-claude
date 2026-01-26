@@ -5,6 +5,7 @@ import { join, dirname } from "path";
 import {
   CLAUDE_DIR,
   SKILLS_DIR,
+  HOOKS_DIR,
   VERSION,
   log,
   colors,
@@ -13,8 +14,10 @@ import {
   checkClaudeCode,
   checkSuperClaude,
   backupDir,
+  mergeHooksIntoSettings,
   SKILLS_TO_INSTALL,
   PERSONALITIES_TO_INSTALL,
+  HOOKS_TO_INSTALL,
 } from "./utils";
 
 async function main() {
@@ -128,7 +131,47 @@ async function main() {
     }
   }
 
-  // Step 9: Create local-skills template directory
+  // Step 9: Install hooks
+  const hooksSource = join(scriptDir, "hooks");
+  if (existsSync(hooksSource)) {
+    ensureDir(HOOKS_DIR);
+
+    log.step("Installing hooks...");
+    let hooksInstalled = 0;
+
+    for (const hook of HOOKS_TO_INSTALL) {
+      const src = join(hooksSource, hook);
+      const dest = join(HOOKS_DIR, hook);
+
+      if (existsSync(src)) {
+        copyFileSync(src, dest);
+        // Make executable
+        const fs = await import("fs");
+        fs.chmodSync(dest, 0o755);
+        console.log(`   ${colors.green}✓${colors.reset} ${hook}`);
+        hooksInstalled++;
+      }
+    }
+
+    // Copy hooks README
+    const hooksReadme = join(hooksSource, "README.md");
+    if (existsSync(hooksReadme)) {
+      copyFileSync(hooksReadme, join(HOOKS_DIR, "README.md"));
+    }
+
+    log.success(`Installed ${hooksInstalled} hooks`);
+
+    // Step 10: Configure hooks in settings.json
+    log.step("Configuring hooks in settings.json...");
+    const { created } = mergeHooksIntoSettings();
+    if (created) {
+      log.success("Created settings.json with hook configuration");
+    } else {
+      log.success("Merged hook configuration into settings.json");
+    }
+  }
+
+  // Step 11: Create local-skills template directory
   const localSkillsDir = join(SKILLS_DIR, ".local");
   if (!existsSync(localSkillsDir)) {
     ensureDir(localSkillsDir);
@@ -161,6 +204,7 @@ my-project-skill/
   console.log(`\n${colors.bright}✅ ima-claude installed successfully!${colors.reset}\n`);
   console.log(`   Skills:        ${SKILLS_DIR}/`);
   console.log(`   Personalities: ${CLAUDE_DIR}/personalities/`);
+  console.log(`   Hooks:         ${HOOKS_DIR}/`);
   console.log("");
   console.log("   Quick Start:");
   console.log(`   ${colors.cyan}"Use the js-fp skill to review this code"${colors.reset}`);

@@ -4,7 +4,9 @@ import { homedir } from "os";
 
 export const CLAUDE_DIR = join(homedir(), ".claude");
 export const SKILLS_DIR = join(CLAUDE_DIR, "skills");
-export const VERSION = "1.0.0";
+export const HOOKS_DIR = join(CLAUDE_DIR, "hooks");
+export const SETTINGS_FILE = join(CLAUDE_DIR, "settings.json");
+export const VERSION = "1.1.0";
 
 export const colors = {
   reset: "\x1b[0m",
@@ -120,3 +122,90 @@ export const PERSONALITIES_TO_INSTALL = [
   "enable-40k.md",
   "enable-templars.md",
 ];
+
+export const HOOKS_TO_INSTALL = [
+  "enforce_rg_over_grep.py",
+  "tavily_extract_advanced.py",
+  "webfetch_to_tavily.py",
+  "websearch_to_tavily.py",
+];
+
+// Hook configuration to merge into settings.json
+export const HOOKS_CONFIG = {
+  hooks: {
+    preToolUse: [
+      {
+        matcher: "Bash",
+        hooks: [
+          { type: "command", command: `python3 ${HOOKS_DIR}/enforce_rg_over_grep.py` }
+        ]
+      },
+      {
+        matcher: "mcp__tavily__tavily-extract",
+        hooks: [
+          { type: "command", command: `python3 ${HOOKS_DIR}/tavily_extract_advanced.py` }
+        ]
+      },
+      {
+        matcher: "WebFetch",
+        hooks: [
+          { type: "command", command: `python3 ${HOOKS_DIR}/webfetch_to_tavily.py` }
+        ]
+      },
+      {
+        matcher: "WebSearch",
+        hooks: [
+          { type: "command", command: `python3 ${HOOKS_DIR}/websearch_to_tavily.py` }
+        ]
+      }
+    ]
+  }
+};
+
+/**
+ * Merge ima-claude hooks config into existing settings.json
+ * Preserves existing settings, adds/updates hooks section
+ */
+export function mergeHooksIntoSettings(): { merged: boolean; created: boolean } {
+  let settings: Record<string, unknown> = {};
+  let created = false;
+
+  // Read existing settings if present
+  if (existsSync(SETTINGS_FILE)) {
+    try {
+      const content = readFileSync(SETTINGS_FILE, "utf8");
+      settings = JSON.parse(content);
+    } catch {
+      // If parse fails, start fresh but preserve the file
+      settings = {};
+    }
+  } else {
+    created = true;
+  }
+
+  // Merge hooks config
+  // If hooks.preToolUse exists, merge arrays (avoid duplicates by matcher)
+  if (settings.hooks && (settings.hooks as Record<string, unknown>).preToolUse) {
+    const existingHooks = (settings.hooks as Record<string, unknown>).preToolUse as Array<{ matcher: string }>;
+    const newHooks = HOOKS_CONFIG.hooks.preToolUse;
+
+    for (const newHook of newHooks) {
+      const existingIndex = existingHooks.findIndex(h => h.matcher === newHook.matcher);
+      if (existingIndex >= 0) {
+        // Replace existing hook with same matcher
+        existingHooks[existingIndex] = newHook;
+      } else {
+        // Add new hook
+        existingHooks.push(newHook);
+      }
+    }
+  } else {
+    // No existing hooks, just add ours
+    settings.hooks = HOOKS_CONFIG.hooks;
+  }
+
+  // Write back
+  writeFileSync(SETTINGS_FILE, JSON.stringify(settings, null, 2) + "\n");
+
+  return { merged: true, created };
+}
