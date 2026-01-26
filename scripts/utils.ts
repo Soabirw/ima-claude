@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, readdirSync, statSync, copyFileSync, readFileSync, writeFileSync } from "fs";
+import { existsSync, mkdirSync, readdirSync, statSync, copyFileSync, readFileSync, writeFileSync, unlinkSync, chmodSync } from "fs";
 import { join, dirname } from "path";
 import { homedir } from "os";
 
@@ -6,7 +6,7 @@ export const CLAUDE_DIR = join(homedir(), ".claude");
 export const SKILLS_DIR = join(CLAUDE_DIR, "skills");
 export const HOOKS_DIR = join(CLAUDE_DIR, "hooks");
 export const SETTINGS_FILE = join(CLAUDE_DIR, "settings.json");
-export const VERSION = "1.1.0";
+export const VERSION = "1.2.0";
 
 export const colors = {
   reset: "\x1b[0m",
@@ -44,6 +44,16 @@ export function copyDirRecursive(src: string, dest: string): void {
     if (stat.isDirectory()) {
       copyDirRecursive(srcPath, destPath);
     } else {
+      // Remove existing file first (handles read-only files)
+      if (existsSync(destPath)) {
+        try {
+          unlinkSync(destPath);
+        } catch {
+          // If unlink fails, try to make it writable first
+          chmodSync(destPath, 0o644);
+          unlinkSync(destPath);
+        }
+      }
       copyFileSync(srcPath, destPath);
     }
   }
@@ -56,6 +66,17 @@ export function checkClaudeCode(): boolean {
 export function checkSuperClaude(): boolean {
   // Check for SuperClaude by looking for COMMANDS.md
   return existsSync(join(CLAUDE_DIR, "COMMANDS.md"));
+}
+
+/**
+ * Check if ima-claude is already installed by looking for our skills
+ */
+export function isImaClaudeInstalled(): boolean {
+  // Check for at least one of our core skills
+  const coreSkills = ["js-fp", "php-fp", "architect"];
+  return coreSkills.some(skill =>
+    existsSync(join(SKILLS_DIR, skill, "SKILL.md"))
+  );
 }
 
 export function backupDir(dir: string, backupName: string): string {

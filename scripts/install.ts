@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 
-import { existsSync, mkdirSync, copyFileSync, readdirSync, statSync } from "fs";
+import { existsSync, copyFileSync, readdirSync, chmodSync, writeFileSync } from "fs";
 import { join, dirname } from "path";
 import {
   CLAUDE_DIR,
@@ -13,15 +13,22 @@ import {
   copyDirRecursive,
   checkClaudeCode,
   checkSuperClaude,
-  backupDir,
+  isImaClaudeInstalled,
   mergeHooksIntoSettings,
   SKILLS_TO_INSTALL,
   PERSONALITIES_TO_INSTALL,
   HOOKS_TO_INSTALL,
 } from "./utils";
 
+const args = process.argv.slice(2);
+const reinstall = args.includes("--reinstall");
+
 async function main() {
-  console.log(`\n${colors.bright}🚀 Installing ima-claude v${VERSION}${colors.reset}\n`);
+  const isUpgrade = isImaClaudeInstalled() && !reinstall;
+  const action = isUpgrade ? "Upgrading" : "Installing";
+  const emoji = isUpgrade ? "🔄" : "🚀";
+
+  console.log(`\n${colors.bright}${emoji} ${action} ima-claude v${VERSION}${colors.reset}\n`);
 
   // Step 1: Check for Claude Code
   if (!checkClaudeCode()) {
@@ -31,17 +38,17 @@ async function main() {
   }
   log.success("Claude Code detected");
 
-  // Step 2: Check for SuperClaude (optional)
-  const hasSuperClaude = checkSuperClaude();
-  if (hasSuperClaude) {
-    log.success("SuperClaude detected - skills will integrate with personas");
-  } else {
-    log.warn("SuperClaude not detected");
-    console.log("   ima-claude works best with SuperClaude installed.");
-    console.log("   Visit: https://github.com/SuperClaude-Org/SuperClaude_Framework\n");
-
-    // In non-interactive mode, just continue
-    console.log("   Continuing with standalone installation...\n");
+  // Step 2: Check for SuperClaude (optional) - only on fresh install
+  if (!isUpgrade) {
+    const hasSuperClaude = checkSuperClaude();
+    if (hasSuperClaude) {
+      log.success("SuperClaude detected - skills will integrate with personas");
+    } else {
+      log.warn("SuperClaude not detected");
+      console.log("   ima-claude works best with SuperClaude installed.");
+      console.log("   Visit: https://github.com/SuperClaude-Org/SuperClaude_Framework\n");
+      console.log("   Continuing with standalone installation...\n");
+    }
   }
 
   // Step 3: Get script directory (where ima-claude source is)
@@ -55,8 +62,8 @@ async function main() {
     process.exit(1);
   }
 
-  // Step 4: Backup existing skills if any
-  if (existsSync(SKILLS_DIR)) {
+  // Step 4: Backup on --reinstall only
+  if (reinstall && existsSync(SKILLS_DIR)) {
     const existingSkills = readdirSync(SKILLS_DIR);
     const conflictingSkills = SKILLS_TO_INSTALL.filter((s) =>
       existingSkills.includes(s)
@@ -80,8 +87,10 @@ async function main() {
   // Step 5: Ensure skills directory exists
   ensureDir(SKILLS_DIR);
 
-  // Step 6: Install skills
-  log.step("Installing skills...");
+  // Step 6: Install/upgrade skills
+  const skillVerb = isUpgrade ? "Upgrading" : "Installing";
+  const skillSymbol = isUpgrade ? "↻" : "✓";
+  log.step(`${skillVerb} skills...`);
   let installedCount = 0;
 
   for (const skill of SKILLS_TO_INSTALL) {
@@ -94,19 +103,24 @@ async function main() {
     }
 
     copyDirRecursive(src, dest);
-    console.log(`   ${colors.green}✓${colors.reset} ${skill}`);
+    console.log(`   ${colors.green}${skillSymbol}${colors.reset} ${skill}`);
     installedCount++;
   }
 
-  log.success(`Installed ${installedCount} skills`);
+  log.success(`${isUpgrade ? "Upgraded" : "Installed"} ${installedCount} skills`);
 
   // Step 7: Install .skill files (if any)
   const skillFiles = readdirSync(skillsSource).filter((f) => f.endsWith(".skill"));
   if (skillFiles.length > 0) {
-    log.step("Installing .skill files...");
+    log.step(`${skillVerb} .skill files...`);
     for (const file of skillFiles) {
-      copyFileSync(join(skillsSource, file), join(SKILLS_DIR, file));
-      console.log(`   ${colors.green}✓${colors.reset} ${file}`);
+      const dest = join(SKILLS_DIR, file);
+      // Handle read-only files
+      if (existsSync(dest)) {
+        try { chmodSync(dest, 0o644); } catch {}
+      }
+      copyFileSync(join(skillsSource, file), dest);
+      console.log(`   ${colors.green}${skillSymbol}${colors.reset} ${file}`);
     }
   }
 
@@ -115,19 +129,27 @@ async function main() {
     const personalitiesDir = join(CLAUDE_DIR, "personalities");
     ensureDir(personalitiesDir);
 
-    log.step("Installing personalities...");
+    log.step(`${skillVerb} personalities...`);
     for (const file of PERSONALITIES_TO_INSTALL) {
       const src = join(personalitiesSource, file);
       const dest = join(personalitiesDir, file);
       if (existsSync(src)) {
+        // Handle read-only files
+        if (existsSync(dest)) {
+          try { chmodSync(dest, 0o644); } catch {}
+        }
         copyFileSync(src, dest);
-        console.log(`   ${colors.green}✓${colors.reset} ${file}`);
+        console.log(`   ${colors.green}${skillSymbol}${colors.reset} ${file}`);
       }
     }
     // Copy README
     const readmeSrc = join(personalitiesSource, "README.md");
     if (existsSync(readmeSrc)) {
-      copyFileSync(readmeSrc, join(personalitiesDir, "README.md"));
+      const readmeDest = join(personalitiesDir, "README.md");
+      if (existsSync(readmeDest)) {
+        try { chmodSync(readmeDest, 0o644); } catch {}
+      }
+      copyFileSync(readmeSrc, readmeDest);
     }
   }
 
@@ -136,7 +158,7 @@ async function main() {
   if (existsSync(hooksSource)) {
     ensureDir(HOOKS_DIR);
 
-    log.step("Installing hooks...");
+    log.step(`${skillVerb} hooks...`);
     let hooksInstalled = 0;
 
     for (const hook of HOOKS_TO_INSTALL) {
@@ -144,11 +166,13 @@ async function main() {
       const dest = join(HOOKS_DIR, hook);
 
       if (existsSync(src)) {
+        // Handle read-only files
+        if (existsSync(dest)) {
+          try { chmodSync(dest, 0o644); } catch {}
+        }
         copyFileSync(src, dest);
-        // Make executable
-        const fs = await import("fs");
-        fs.chmodSync(dest, 0o755);
-        console.log(`   ${colors.green}✓${colors.reset} ${hook}`);
+        chmodSync(dest, 0o755);
+        console.log(`   ${colors.green}${skillSymbol}${colors.reset} ${hook}`);
         hooksInstalled++;
       }
     }
@@ -156,10 +180,14 @@ async function main() {
     // Copy hooks README
     const hooksReadme = join(hooksSource, "README.md");
     if (existsSync(hooksReadme)) {
-      copyFileSync(hooksReadme, join(HOOKS_DIR, "README.md"));
+      const dest = join(HOOKS_DIR, "README.md");
+      if (existsSync(dest)) {
+        try { chmodSync(dest, 0o644); } catch {}
+      }
+      copyFileSync(hooksReadme, dest);
     }
 
-    log.success(`Installed ${hooksInstalled} hooks`);
+    log.success(`${isUpgrade ? "Upgraded" : "Installed"} ${hooksInstalled} hooks`);
 
     // Step 10: Configure hooks in settings.json
     log.step("Configuring hooks in settings.json...");
@@ -171,11 +199,10 @@ async function main() {
     }
   }
 
-  // Step 11: Create local-skills template directory
+  // Step 11: Create local-skills template directory (only on fresh install)
   const localSkillsDir = join(SKILLS_DIR, ".local");
   if (!existsSync(localSkillsDir)) {
     ensureDir(localSkillsDir);
-    // Create a placeholder file
     const placeholderContent = `# Local Skills
 
 Place your private/project-specific skills here.
@@ -195,25 +222,29 @@ my-project-skill/
     └── api-patterns.md
 \`\`\`
 `;
-    const fs = await import("fs");
-    fs.writeFileSync(join(localSkillsDir, "README.md"), placeholderContent);
+    writeFileSync(join(localSkillsDir, "README.md"), placeholderContent);
     log.success("Created .local directory for private skills");
   }
 
   // Summary
-  console.log(`\n${colors.bright}✅ ima-claude installed successfully!${colors.reset}\n`);
+  const doneEmoji = isUpgrade ? "🔄" : "✅";
+  const doneVerb = isUpgrade ? "upgraded" : "installed";
+  console.log(`\n${colors.bright}${doneEmoji} ima-claude ${doneVerb} successfully!${colors.reset}\n`);
   console.log(`   Skills:        ${SKILLS_DIR}/`);
   console.log(`   Personalities: ${CLAUDE_DIR}/personalities/`);
   console.log(`   Hooks:         ${HOOKS_DIR}/`);
   console.log("");
-  console.log("   Quick Start:");
-  console.log(`   ${colors.cyan}"Use the js-fp skill to review this code"${colors.reset}`);
-  console.log(`   ${colors.cyan}"Apply architect patterns to this design"${colors.reset}`);
-  console.log("");
 
-  if (!hasSuperClaude) {
-    console.log(`   ${colors.yellow}Tip: Install SuperClaude for enhanced features${colors.reset}`);
+  if (!isUpgrade) {
+    console.log("   Quick Start:");
+    console.log(`   ${colors.cyan}"Use the js-fp skill to review this code"${colors.reset}`);
+    console.log(`   ${colors.cyan}"Apply architect patterns to this design"${colors.reset}`);
     console.log("");
+
+    if (!checkSuperClaude()) {
+      console.log(`   ${colors.yellow}Tip: Install SuperClaude for enhanced features${colors.reset}`);
+      console.log("");
+    }
   }
 }
 
