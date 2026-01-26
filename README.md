@@ -20,6 +20,31 @@ IMA's Claude Code Skills - FP patterns, architecture guidance, and team standard
 
 ima-claude works completely standalone, but integrates beautifully with SuperClaude for additional features like personas, commands, and MCP orchestration.
 
+## MCP Configuration (Highly Recommended)
+
+### airis-mcp-gateway
+
+We recommend [airis-mcp-gateway](https://github.com/agiletec-inc/airis-mcp-gateway) as your primary MCP solution. It consolidates multiple essential MCP servers into a single gateway:
+
+| MCP Server | Purpose |
+|------------|---------|
+| **Context7** | Library documentation lookup |
+| **Tavily** | Web search and content extraction |
+| **Sequential Thinking** | Complex multi-step reasoning |
+| **Magic (21st.dev)** | UI component generation |
+| **BrowserMCP/Playwright** | Browser automation and E2E testing |
+| **Chrome DevTools** | Browser debugging |
+| **Atlassian** | Jira/Confluence integration |
+| **Gitea** | Git repository management |
+
+**Why use the gateway?**
+- Single configuration vs 8+ separate MCP servers
+- Unified authentication and management
+- Consistent tool naming conventions
+- Easy enable/disable for specific servers
+
+See [docs/MCP-SETUP.md](docs/MCP-SETUP.md) for detailed installation instructions.
+
 ## Quick Install
 
 ```bash
@@ -89,6 +114,19 @@ Or explicitly request a skill:
 ```
 "Use the js-fp skill to review this code"
 ```
+
+## Hooks (Optional Enhancements)
+
+Pre-tool-use hooks that enhance Claude Code's behavior:
+
+| Hook | Purpose |
+|------|---------|
+| `enforce_rg_over_grep.py` | Enforces ripgrep over grep/find |
+| `tavily_extract_advanced.py` | Auto-upgrades Tavily to advanced mode |
+| `webfetch_to_tavily.py` | Redirects WebFetch to Tavily |
+| `websearch_to_tavily.py` | Redirects WebSearch to Tavily |
+
+See [hooks/README.md](hooks/README.md) for installation and configuration.
 
 ## Personalities (Optional Fun)
 
