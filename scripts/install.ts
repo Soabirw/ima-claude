@@ -6,6 +6,7 @@ import {
   CLAUDE_DIR,
   SKILLS_DIR,
   HOOKS_DIR,
+  COMMANDS_DIR,
   VERSION,
   log,
   colors,
@@ -18,6 +19,7 @@ import {
   SKILLS_TO_INSTALL,
   PERSONALITIES_TO_INSTALL,
   HOOKS_TO_INSTALL,
+  COMMANDS_TO_INSTALL,
 } from "./utils";
 
 const args = process.argv.slice(2);
@@ -199,7 +201,33 @@ async function main() {
     }
   }
 
-  // Step 11: Create local-skills template directory (only on fresh install)
+  // Step 11: Install commands
+  const commandsSource = join(scriptDir, "commands");
+  if (existsSync(commandsSource)) {
+    ensureDir(COMMANDS_DIR);
+
+    log.step(`${skillVerb} commands...`);
+    let commandsInstalled = 0;
+
+    for (const cmd of COMMANDS_TO_INSTALL) {
+      const src = join(commandsSource, cmd);
+      const dest = join(COMMANDS_DIR, cmd);
+
+      if (existsSync(src)) {
+        // Handle read-only files
+        if (existsSync(dest)) {
+          try { chmodSync(dest, 0o644); } catch {}
+        }
+        copyFileSync(src, dest);
+        console.log(`   ${colors.green}${skillSymbol}${colors.reset} ${cmd}`);
+        commandsInstalled++;
+      }
+    }
+
+    log.success(`${isUpgrade ? "Upgraded" : "Installed"} ${commandsInstalled} commands`);
+  }
+
+  // Step 12: Create local-skills template directory (only on fresh install)
   const localSkillsDir = join(SKILLS_DIR, ".local");
   if (!existsSync(localSkillsDir)) {
     ensureDir(localSkillsDir);
@@ -233,12 +261,15 @@ my-project-skill/
   console.log(`   Skills:        ${SKILLS_DIR}/`);
   console.log(`   Personalities: ${CLAUDE_DIR}/personalities/`);
   console.log(`   Hooks:         ${HOOKS_DIR}/`);
+  console.log(`   Commands:      ${COMMANDS_DIR}/`);
   console.log("");
 
   if (!isUpgrade) {
     console.log("   Quick Start:");
     console.log(`   ${colors.cyan}"Use the js-fp skill to review this code"${colors.reset}`);
     console.log(`   ${colors.cyan}"Apply architect patterns to this design"${colors.reset}`);
+    console.log(`   ${colors.cyan}/save-session${colors.reset} - Save session state`);
+    console.log(`   ${colors.cyan}/resume-session${colors.reset} - Resume saved session`);
     console.log("");
 
     if (!checkSuperClaude()) {

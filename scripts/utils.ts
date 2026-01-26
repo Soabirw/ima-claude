@@ -5,8 +5,9 @@ import { homedir } from "os";
 export const CLAUDE_DIR = join(homedir(), ".claude");
 export const SKILLS_DIR = join(CLAUDE_DIR, "skills");
 export const HOOKS_DIR = join(CLAUDE_DIR, "hooks");
+export const COMMANDS_DIR = join(CLAUDE_DIR, "commands");
 export const SETTINGS_FILE = join(CLAUDE_DIR, "settings.json");
-export const VERSION = "1.2.1";
+export const VERSION = "1.2.2";
 
 export const colors = {
   reset: "\x1b[0m",
@@ -149,6 +150,11 @@ export const HOOKS_TO_INSTALL = [
   "tavily_extract_advanced.py",
   "webfetch_to_tavily.py",
   "websearch_to_tavily.py",
+];
+
+export const COMMANDS_TO_INSTALL = [
+  "save-session.md",
+  "resume-session.md",
 ];
 
 // Hook configuration to merge into settings.json
