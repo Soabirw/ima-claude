@@ -394,67 +394,6 @@ const Component = () => {
 }
 ```
 
-## Complete Component Example
-
-```typescript
-// ProductCard.tsx
-import { memo, useMemo, useCallback } from 'react'
-
-interface Product {
-  id: string
-  name: string
-  price: number
-  inStock: boolean
-}
-
-// ───── Custom hook ─────
-const useProductLogic = (product: Product) => {
-  const displayData = useMemo(() => ({
-    ...product,
-    formattedPrice: `$${product.price.toFixed(2)}`,
-    availability: product.inStock ? 'In Stock' : 'Out of Stock'
-  }), [product])
-
-  const cssClasses = useMemo(() => ({
-    card: `product-card ${product.inStock ? 'in-stock' : 'out-of-stock'}`,
-    price: `product-price ${product.inStock ? 'available' : 'unavailable'}`
-  }), [product.inStock])
-
-  return { displayData, cssClasses }
-}
-
-// ───── Component ─────
-interface ProductCardProps {
-  product: Product
-  onAddToCart: (productId: string) => void
-}
-
-const ProductCard = memo<ProductCardProps>(({ product, onAddToCart }) => {
-  const { displayData, cssClasses } = useProductLogic(product)
-
-  const handleAddToCart = useCallback(() => {
-    if (product.inStock) {
-      onAddToCart(product.id)
-    }
-  }, [product.inStock, product.id, onAddToCart])
-
-  return (
-    <div className={cssClasses.card}>
-      <h3>{displayData.name}</h3>
-      <p className={cssClasses.price}>{displayData.formattedPrice}</p>
-      <p className="availability">{displayData.availability}</p>
-      <button onClick={handleAddToCart} disabled={!product.inStock}>
-        Add to Cart
-      </button>
-    </div>
-  )
-})
-
-ProductCard.displayName = 'ProductCard'
-
-export { ProductCard }
-```
-
 ## Quality Gates
 
 Before implementing any React component:
@@ -470,19 +409,19 @@ Before implementing any React component:
 ## When to Load Additional Content
 
 ### Hooks Advanced
-**File**: `hooks-advanced.md`
+**File**: `references/hooks-advanced.md`
 **When**: Complex custom hooks, advanced patterns
-**Contains**: Advanced hook patterns, optimization strategies, composition
+**Contains**: Hook composition, state machines, async patterns, effect isolation
 
 ### Performance Patterns
-**File**: `performance-patterns.md`
+**File**: `references/performance-patterns.md`
 **When**: Performance optimization needed, large lists
 **Contains**: React.memo strategies, virtualization, code splitting
 
 ### Working Examples
-**Directory**: `examples/`
-**When**: Need complete working component examples
-**Contains**: Full component examples, hooks, HOCs, tests
+**File**: `examples/ProductCard.tsx`
+**When**: Need complete working component example
+**Contains**: Full ProductCard component with custom hook, types, and exports
 
 ## Foundation Reference
 

@@ -105,13 +105,7 @@ Same pattern as padding, but with `m` instead of `p`:
 
 ### Grayscale
 - `text-grey-1` / `bg-grey-1` - Lightest
-- `text-grey-2` / `bg-grey-2`
-- `text-grey-3` / `bg-grey-3`
-- `text-grey-4` / `bg-grey-4`
 - `text-grey-5` / `bg-grey-5` - Medium
-- `text-grey-6` / `bg-grey-6`
-- `text-grey-7` / `bg-grey-7`
-- `text-grey-8` / `bg-grey-8`
 - `text-grey-9` / `bg-grey-9` - Darkest
 
 ### Special Colors
@@ -127,7 +121,6 @@ Same pattern as padding, but with `m` instead of `p`:
 - `row` - flex row (display: flex)
 - `column` - flex column (display: flex; flex-direction: column)
 - `row inline` - inline flex row
-- `column inline` - inline flex column
 - `reverse` - reverse order (combine with row/column)
 
 ### Alignment (align-items)
@@ -146,11 +139,7 @@ Same pattern as padding, but with `m` instead of `p`:
 - `justify-evenly` - space-evenly
 
 ### Self Alignment
-- `self-start`
-- `self-center`
-- `self-end`
-- `self-stretch`
-- `self-baseline`
+- `self-start`, `self-center`, `self-end`, `self-stretch`, `self-baseline`
 
 ### Flex Items
 - `col` - flex: 1 (equal width)
@@ -170,7 +159,7 @@ Same pattern as padding, but with `m` instead of `p`:
 - `block` - display: block
 - `inline` - display: inline
 - `inline-block` - display: inline-block
-- `hidden` - display: none (use v-if/v-show instead when possible)
+- `hidden` - display: none
 
 ---
 
@@ -184,11 +173,7 @@ Same pattern as padding, but with `m` instead of `p`:
 
 ## Shadow Classes
 
-- `shadow-1` - Subtle elevation
-- `shadow-2` - Low elevation
-- `shadow-3` - Medium elevation (default)
-- `shadow-4` - High elevation
-- `shadow-5` - Very high elevation
+- `shadow-1` through `shadow-5` - Increasing elevation
 - `no-shadow` - box-shadow: none
 
 ---
@@ -198,63 +183,26 @@ Same pattern as padding, but with `m` instead of `p`:
 - `relative-position` - position: relative
 - `absolute` - position: absolute
 - `fixed` - position: fixed
-- `absolute-top` - top: 0
-- `absolute-right` - right: 0
-- `absolute-bottom` - bottom: 0
-- `absolute-left` - left: 0
+- `absolute-top`, `absolute-right`, `absolute-bottom`, `absolute-left`
 - `absolute-center` - Center absolutely
-- `absolute-full` - Fill parent (top/right/bottom/left: 0)
-
----
-
-## Cursor Classes
-
-- `cursor-pointer` - pointer
-- `cursor-not-allowed` - not-allowed
-- `cursor-inherit` - inherit
-- `cursor-none` - none
-
----
-
-## Overflow Classes
-
-- `overflow-auto` - auto
-- `overflow-hidden` - hidden
-- `overflow-visible` - visible
-- `scroll` - overflow: auto
+- `absolute-full` - Fill parent
 
 ---
 
 ## Width/Height Classes
 
-### Width
-- `fit` - width: 100%
-- `full-width` - width: 100%
+- `fit` / `full-width` - width: 100%
 - `full-height` - height: 100%
-
-### Max/Min
-- Can use inline styles: `style="max-width: 600px"`
-- Or custom classes in scoped styles
 
 ---
 
 ## Responsive Classes
 
 ### Breakpoint Visibility
-
-Hide on specific breakpoints:
 - `lt-sm` - Hide when < 600px
 - `lt-md` - Hide when < 1024px
-- `lt-lg` - Hide when < 1440px
 - `gt-xs` - Hide when > 599px
 - `gt-sm` - Hide when > 1023px
-- `gt-md` - Hide when > 1439px
-
-**Example:**
-```vue
-<div class="lt-md">Hidden on mobile/tablet</div>
-<div class="gt-sm">Hidden on mobile, shown on desktop</div>
-```
 
 ---
 
@@ -263,45 +211,27 @@ Hide on specific breakpoints:
 ### Centered Header
 ```vue
 <div class="text-center q-py-lg q-mb-lg">
-  <h1 class="text-h3 text-weight-bold text-primary q-mb-sm q-mt-none">
-    Title
-  </h1>
-  <p class="text-h6 text-italic text-accent q-mb-none">
-    Subtitle
-  </p>
+  <h1 class="text-h3 text-weight-bold text-primary q-mb-sm q-mt-none">Title</h1>
+  <p class="text-h6 text-italic text-accent q-mb-none">Subtitle</p>
 </div>
 ```
 
-### Flex Container with Gap
+### Flex Container
 ```vue
 <div class="row items-center justify-between q-mb-md">
-  <div class="col-auto">Left content</div>
-  <div class="col-auto">Right content</div>
+  <div class="col-auto">Left</div>
+  <div class="col-auto">Right</div>
 </div>
-```
-
-### Card with Padding
-```vue
-<q-card class="q-pa-md q-mb-lg rounded-borders">
-  <div class="text-h6 text-weight-bold q-mb-sm">Card Title</div>
-  <p class="text-body2 text-grey-7 q-mb-none">Card content</p>
-</q-card>
 ```
 
 ### Toggle with Description
 ```vue
 <div class="q-pa-md q-mb-md rounded-borders">
-  <q-toggle
-    v-model="value"
-    label="Option Label"
-    class="text-weight-medium q-mb-sm"
-  />
-  <p class="text-caption text-grey-7 q-pl-sm q-mb-none">
-    Description of what this toggle does
-  </p>
+  <q-toggle v-model="value" label="Option" class="text-weight-medium q-mb-sm" />
+  <p class="text-caption text-grey-7 q-pl-sm q-mb-none">Description</p>
 </div>
 ```
 
 ---
 
-**Reference**: Official Quasar docs at https://quasar.dev/style/spacing
+**Reference**: https://quasar.dev/style/spacing

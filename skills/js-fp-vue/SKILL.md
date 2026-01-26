@@ -34,6 +34,7 @@ Functional programming patterns for Vue.js components with composables, wrapper 
  * - 100% testable through dependency injection
  */
 
+import type { Ref } from 'vue'
 import { computed, readonly, toRef } from 'vue'
 
 interface UserData {
@@ -168,162 +169,6 @@ fetchUser()
 </template>
 ```
 
-## Composable Factory Pattern
-
-**Rule**: Pre-compile expensive configurations for performance.
-
-```typescript
-// composables/useUserFactory.ts
-
-// Factory creates optimized composable
-const createUserComposable = (defaultConfig: UserConfig) => {
-  // Pre-compile static configuration (hot path optimization)
-  const compiledClasses = {
-    compact: {
-      card: 'user-card user-card--compact',
-      name: 'user-card__name user-card__name--compact'
-    },
-    detailed: {
-      card: 'user-card user-card--detailed',
-      name: 'user-card__name user-card__name--detailed'
-    }
-  }
-
-  return (userData: Readonly<Ref<UserData>>, config?: Partial<UserConfig>) => {
-    const mergedConfig = { ...defaultConfig, ...config }
-
-    const displayData = computed(() => ({
-      ...userData.value,
-      displayName: userData.value.name.trim()
-    }))
-
-    // O(1) lookup instead of string concatenation
-    const cssClasses = computed(() => compiledClasses[mergedConfig.variant])
-
-    return { displayData, cssClasses }
-  }
-}
-
-// Usage: Pre-compile for different contexts
-export const useCompactUser = createUserComposable({
-  showEmail: false,
-  variant: 'compact'
-})
-
-export const useDetailedUser = createUserComposable({
-  showEmail: true,
-  variant: 'detailed'
-})
-```
-
-## State Management (Composables > Stores)
-
-**Rule**: Use composables for 95% of state management. Only use Pinia/Vuex for truly global state.
-
-```typescript
-// composables/useUserState.ts
-
-export const useUserState = () => {
-  const users = ref<UserData[]>([])
-  const loading = ref(false)
-
-  // Pure functions for state transitions
-  const addUser = (user: UserData) => {
-    users.value = [...users.value, user] // Immutable
-  }
-
-  const updateUser = (userId: string, updates: Partial<UserData>) => {
-    users.value = users.value.map(user =>
-      user.id === userId ? { ...user, ...updates } : user
-    ) // Immutable
-  }
-
-  const removeUser = (userId: string) => {
-    users.value = users.value.filter(user => user.id !== userId) // Immutable
-  }
-
-  // Side effect isolated
-  const fetchUsers = async () => {
-    loading.value = true
-    try {
-      users.value = await userApi.getUsers()
-    } finally {
-      loading.value = false
-    }
-  }
-
-  return {
-    users: readonly(users),
-    loading: readonly(loading),
-    addUser,
-    updateUser,
-    removeUser,
-    fetchUsers
-  }
-}
-
-// Usage in component
-const { users, addUser, fetchUsers } = useUserState()
-```
-
-## Anti-Patterns (AVOID)
-
-### ❌ Pinia/Vuex Over-Usage
-
-```typescript
-// ❌ Complex store for simple state
-const useUserStore = defineStore('users', {
-  state: () => ({ users: [], loading: false }),
-  actions: {
-    async fetchUsers() { /* complex async logic */ }
-  }
-})
-
-// ✅ Simple composable (covers 95% of use cases)
-const useUsers = () => {
-  const users = ref<UserData[]>([])
-  const loading = ref(false)
-
-  const fetchUsers = async () => {
-    loading.value = true
-    users.value = await userApi.getUsers()
-    loading.value = false
-  }
-
-  return { users: readonly(users), loading: readonly(loading), fetchUsers }
-}
-```
-
-### ❌ Reactive Over-Engineering
-
-```typescript
-// ❌ Unnecessary reactive complexity
-const user = reactive({
-  profile: reactive({
-    settings: reactive({
-      theme: 'dark'
-    })
-  })
-})
-
-// ✅ Simple ref with computed when needed
-const userSettings = ref({ theme: 'dark', notifications: true })
-const isDarkTheme = computed(() => userSettings.value.theme === 'dark')
-```
-
-### ❌ Watch Over-Usage
-
-```typescript
-// ❌ Watch for derived state
-const fullName = ref('')
-watch([firstName, lastName], () => {
-  fullName.value = `${firstName.value} ${lastName.value}`
-})
-
-// ✅ Computed for derived state
-const fullName = computed(() => `${firstName.value} ${lastName.value}`)
-```
-
 ## Vue 3 Composition API Best Practices
 
 ### Reactive vs. Ref
@@ -361,201 +206,97 @@ onMounted(() => {
 })
 ```
 
-## Testing Vue FP Components
+## Anti-Patterns (AVOID)
 
-### Test Pure Composables
-
-```typescript
-// composables/__tests__/useUserLogic.test.ts
-import { ref } from 'vue'
-import { useUserLogic } from '../useUserLogic'
-
-describe('useUserLogic', () => {
-  it('computes display data correctly', () => {
-    const userData = ref({
-      id: '1',
-      name: ' John ',
-      email: 'john@test.com'
-    })
-    const config = ref({
-      showEmail: true,
-      variant: 'compact' as const
-    })
-
-    const { displayData } = useUserLogic(userData, config)
-
-    expect(displayData.value).toEqual({
-      id: '1',
-      name: ' John ',
-      email: 'john@test.com',
-      displayName: 'John' // Trimmed
-    })
-  })
-
-  it('hides email when config.showEmail is false', () => {
-    const userData = ref({
-      id: '1',
-      name: 'John',
-      email: 'john@test.com'
-    })
-    const config = ref({
-      showEmail: false,
-      variant: 'compact' as const
-    })
-
-    const { displayData } = useUserLogic(userData, config)
-
-    expect(displayData.value.email).toBeUndefined()
-  })
-})
-```
-
-### Test Components with Vue Test Utils
+### Pinia/Vuex Over-Usage
 
 ```typescript
-// components/__tests__/UserCard.test.ts
-import { mount } from '@vue/test-utils'
-import UserCard from '../UserCard.vue'
-
-describe('UserCard', () => {
-  it('renders user data correctly', () => {
-    const wrapper = mount(UserCard, {
-      props: {
-        userData: { id: '1', name: 'John', email: 'john@test.com' },
-        config: { showEmail: true, variant: 'compact' }
-      }
-    })
-
-    expect(wrapper.find('.user-card__name').text()).toBe('John')
-    expect(wrapper.find('p').text()).toBe('john@test.com')
-  })
-
-  it('hides email when config.showEmail is false', () => {
-    const wrapper = mount(UserCard, {
-      props: {
-        userData: { id: '1', name: 'John', email: 'john@test.com' },
-        config: { showEmail: false, variant: 'compact' }
-      }
-    })
-
-    expect(wrapper.find('p').exists()).toBe(false)
-  })
-})
-```
-
-## Complete Component Example
-
-```vue
-<!-- ProductCard.vue -->
-<script setup lang="ts">
-import { computed, readonly, toRef } from 'vue'
-
-interface Product {
-  id: string
-  name: string
-  price: number
-  inStock: boolean
-}
-
-// ───── Pure composable ─────
-const useProductLogic = (product: Readonly<Ref<Product>>) => {
-  const displayData = computed(() => ({
-    ...product.value,
-    formattedPrice: `$${product.value.price.toFixed(2)}`,
-    availability: product.value.inStock ? 'In Stock' : 'Out of Stock'
-  }))
-
-  const cssClasses = computed(() => ({
-    card: `product-card ${product.value.inStock ? 'in-stock' : 'out-of-stock'}`,
-    price: `product-price ${product.value.inStock ? 'available' : 'unavailable'}`
-  }))
-
-  return { displayData, cssClasses }
-}
-
-// ───── Component setup ─────
-const props = defineProps<{
-  product: Product
-}>()
-
-const emit = defineEmits<{
-  addToCart: [productId: string]
-}>()
-
-const { displayData, cssClasses } = useProductLogic(
-  readonly(toRef(props, 'product'))
-)
-
-const handleAddToCart = () => {
-  if (props.product.inStock) {
-    emit('addToCart', props.product.id)
+// BAD: Complex store for simple state
+const useUserStore = defineStore('users', {
+  state: () => ({ users: [], loading: false }),
+  actions: {
+    async fetchUsers() { /* complex async logic */ }
   }
-}
-</script>
+})
 
-<template>
-  <div :class="cssClasses.card">
-    <h3>{{ displayData.name }}</h3>
-    <p :class="cssClasses.price">{{ displayData.formattedPrice }}</p>
-    <p class="availability">{{ displayData.availability }}</p>
-    <button
-      @click="handleAddToCart"
-      :disabled="!product.inStock"
-    >
-      Add to Cart
-    </button>
-  </div>
-</template>
+// GOOD: Simple composable (covers 95% of use cases)
+const useUsers = () => {
+  const users = ref<UserData[]>([])
+  const loading = ref(false)
 
-<style scoped>
-.product-card {
-  border: 1px solid #ddd;
-  padding: 1rem;
-  border-radius: 8px;
-}
+  const fetchUsers = async () => {
+    loading.value = true
+    users.value = await userApi.getUsers()
+    loading.value = false
+  }
 
-.product-card.in-stock {
-  border-color: #28a745;
+  return { users: readonly(users), loading: readonly(loading), fetchUsers }
 }
+```
 
-.product-card.out-of-stock {
-  opacity: 0.6;
-}
+### Reactive Over-Engineering
 
-.product-price.unavailable {
-  text-decoration: line-through;
-}
-</style>
+```typescript
+// BAD: Unnecessary reactive complexity
+const user = reactive({
+  profile: reactive({
+    settings: reactive({
+      theme: 'dark'
+    })
+  })
+})
+
+// GOOD: Simple ref with computed when needed
+const userSettings = ref({ theme: 'dark', notifications: true })
+const isDarkTheme = computed(() => userSettings.value.theme === 'dark')
+```
+
+### Watch Over-Usage
+
+```typescript
+// BAD: Watch for derived state
+const fullName = ref('')
+watch([firstName, lastName], () => {
+  fullName.value = `${firstName.value} ${lastName.value}`
+})
+
+// GOOD: Computed for derived state
+const fullName = computed(() => `${firstName.value} ${lastName.value}`)
 ```
 
 ## Quality Gates
 
 Before implementing any Vue component:
 
-1. ✅ **Pure composable**: Business logic separated from presentation?
-2. ✅ **Wrapper pattern**: Side effects isolated to wrapper component?
-3. ✅ **Reactive optimization**: Using computed over watch?
-4. ✅ **State management**: Using composables instead of store (unless truly global)?
-5. ✅ **Testability**: Can inject mocks for all dependencies?
-6. ✅ **FP principles**: Pure functions, immutable updates?
-7. ✅ **Performance**: Pre-compiled configurations when appropriate?
+1. **Pure composable**: Business logic separated from presentation?
+2. **Wrapper pattern**: Side effects isolated to wrapper component?
+3. **Reactive optimization**: Using computed over watch?
+4. **State management**: Using composables instead of store (unless truly global)?
+5. **Testability**: Can inject mocks for all dependencies?
+6. **FP principles**: Pure functions, immutable updates?
+7. **Performance**: Pre-compiled configurations when appropriate?
 
 ## When to Load Additional Content
 
 ### Composables Advanced
-**File**: `composables-advanced.md`
-**When**: Complex composable patterns, advanced composition
-**Contains**: Advanced composable patterns, lifecycle integration, provide/inject
+**File**: `references/composables-advanced.md`
+**When**: Complex composable patterns, factory patterns, provide/inject DI
+**Contains**: Composable factory, state management, lifecycle integration, composition patterns
 
 ### Reactivity Patterns
-**File**: `reactivity-patterns.md`
-**When**: Performance optimization, reactivity issues
-**Contains**: Deep reactivity patterns, performance optimization, memory management
+**File**: `references/reactivity-patterns.md`
+**When**: Performance optimization, reactivity issues, memory management
+**Contains**: Deep reactive vs ref patterns, shallowRef, computed optimization, cleanup patterns
 
-### Working Examples
-**Directory**: `examples/`
-**When**: Need complete working component examples
-**Contains**: Full component examples, composables, wrappers, tests
+### Testing
+**File**: `references/testing.md`
+**When**: Writing tests for Vue FP components
+**Contains**: Testing pure composables, component tests, wrapper tests, mocking patterns
+
+### Complete Examples
+**File**: `references/complete-examples.md`
+**When**: Need full working component examples
+**Contains**: Product card, user dashboard with wrapper, form with validation
 
 ## Foundation Reference
 

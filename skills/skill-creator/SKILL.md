@@ -1,26 +1,12 @@
 ---
 name: skill-creator
-description: Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an existing skill) that extends Claude's capabilities with specialized knowledge, workflows, or tool integrations.
+description: Guide for creating effective skills that extend Claude's capabilities. Use when users want to create a skill, build a skill, make a skill, design a skill, or update an existing skill. Also triggers for skill template, skill structure, skill format, skill authoring, skill development, or questions about how skills work and how to write them.
 license: Complete terms in LICENSE.txt
 ---
 
 # Skill Creator
 
-This skill provides guidance for creating effective skills.
-
-## About Skills
-
-Skills are modular, self-contained packages that extend Claude's capabilities by providing
-specialized knowledge, workflows, and tools. Think of them as "onboarding guides" for specific
-domains or tasks—they transform Claude from a general-purpose agent into a specialized agent
-equipped with procedural knowledge that no model can fully possess.
-
-### What Skills Provide
-
-1. Specialized workflows - Multi-step procedures for specific domains
-2. Tool integrations - Instructions for working with specific file formats or APIs
-3. Domain expertise - Company-specific knowledge, schemas, business logic
-4. Bundled resources - Scripts, references, and assets for complex and repetitive tasks
+Guide for creating skills—modular packages that provide Claude with specialized workflows, tool integrations, and domain expertise.
 
 ## Core Principles
 

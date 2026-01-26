@@ -79,219 +79,28 @@ echo '# Exclude all markdown files in transient/
 
 ### Step 2: Create Navigation Hub (docs/README.md)
 
-```markdown
-# Project Documentation
+Use template: [`templates/docs-README.md`](templates/docs-README.md)
 
-Central hub for all project documentation.
+Customize the Quick Navigation table for your project's key files.
 
-## 📂 Documentation Structure
+### Step 3: Create Active Section README (docs/active/README.md)
 
-### [`active/`](active/README.md) - Current Documentation ⭐
-Active, maintained documentation used in daily development.
-**All files committed to git.**
+Use template: [`templates/active-README.md`](templates/active-README.md)
 
-- **[architecture/](active/architecture/)** - System design, plugins, dependencies
-- **[development/](active/development/)** - Testing, code standards, patterns
-- **[integrations/](active/integrations/)** - Third-party integrations
-- **[features/](active/features/)** - Feature-specific documentation
-- **[operations/](active/operations/)** - Security, troubleshooting, deployment
-- **[reference/](active/reference/)** - Templates, quick commands
+### Step 4: Create Archive README (docs/archive/README.md)
 
-### [`archive/`](archive/README.md) - Historical Reference 📚
-Completed phases, deprecated patterns, historical context.
-**Committed to git for reference.**
+Use template: [`templates/archive-README.md`](templates/archive-README.md)
 
-### [`transient/`](transient/) - Working Documents 🚧
-Local-only ephemeral documents for investigation and planning.
-**Git-ignored, not committed.**
-
-## Quick Navigation
-
-| Category | Key Files | Purpose |
-|----------|-----------|---------|
-| Development | [Testing Guide](active/development/testing-guides/) | Test setup and patterns |
-| Architecture | [Plugin Layers](active/architecture/PLUGIN_LAYERS.md) | System architecture |
-| Operations | [Security](active/operations/SECURITY_GUIDE.md) | Security best practices |
-
-## Documentation Standards
-
-- **Naming**: `UPPER_SNAKE_CASE.md` for documents, `lowercase-kebab/` for folders
-- **Cross-References**: Always link to related documentation
-- **Last Updated**: Include date at bottom of each document
-- **Structure**: Use consistent heading hierarchy (H1 title, H2 sections)
-
----
-
-**Last Updated**: YYYY-MM-DD
-```
-
-### Step 3: Create Active Section README
-
-```markdown
-# Active Documentation
-
-Current, maintained documentation for daily development and reference.
-
-## Sections
-
-### [`architecture/`](architecture/)
-System design documents, plugin ecosystem, dependencies, refactoring strategy.
-
-### [`development/`](development/)
-Testing infrastructure, code examples, development patterns, standards.
-
-### [`integrations/`](integrations/)
-Third-party system integration documentation and patterns.
-
-### [`features/`](features/)
-Feature-specific documentation organized by feature name.
-
-### [`operations/`](operations/)
-Security guides, troubleshooting, deployment procedures.
-
-### [`reference/`](reference/)
-Quick reference materials, templates, command cheatsheets.
-
-## Documentation Standards
-
-- **Should be current**: Review quarterly, update when implementation changes
-- **Should include examples**: Real code from the codebase
-- **Should link to related docs**: Cross-reference architecture, features, operations
-
-## When to Add Here vs. Transient
-
-| Add to Active | Add to Transient |
-|---------------|------------------|
-| Stable implementation docs | Investigation logs |
-| Permanent reference material | Spike/POC results |
-| Team knowledge base | Phase planning notes |
-| Onboarding materials | Temporary checklists |
-
----
-
-**Last Updated**: YYYY-MM-DD
-```
-
-### Step 4: Create Archive README
-
-```markdown
-# Documentation Archive
-
-Historical documentation, completed phases, and deprecated patterns.
-
-## Purpose
-
-This archive serves as:
-- **Historical context** for understanding past decisions
-- **Learning resource** for patterns that worked (or didn't)
-- **Audit trail** for project evolution
-
-## Archive Contents
-
-### Completed Phases
-- `YYYY-phase-name/` - Phase completion summary with outcomes
-
-## Archive Naming Convention
-
-```
-YYYY-phase-name/           # Completed development phases
-YYYY-MM-feature-name/      # Deprecated feature documentation
-deprecated-pattern-name/   # Replaced patterns with migration notes
-```
-
-## When to Archive
-
-| Archive When | Don't Archive |
-|--------------|---------------|
-| Phase/milestone complete | Still actively referenced |
-| Pattern deprecated with replacement | Needed for current development |
-| Historical reference value | No future reference value (delete instead) |
-
-## Browsing Tips
-
-- Start with the phase README for summary
-- Look for "What Was Done" and "Lessons Learned" sections
-- Check cross-references to current active docs
-
----
-
-**Last Updated**: YYYY-MM-DD
-```
+For completed phases, use: [`templates/phase-archive-README.md`](templates/phase-archive-README.md)
 
 ### Step 5: Create Transient README and .gitignore
 
-**docs/transient/README.md:**
-```markdown
-# Transient Documentation
+- **docs/transient/README.md**: Use [`templates/transient-README.md`](templates/transient-README.md)
+- **docs/transient/.gitignore**: Use [`templates/transient-gitignore`](templates/transient-gitignore)
 
-Ephemeral local-only documents for active planning and investigation.
+### Step 6: Create Section READMEs
 
-**⚠️ Files here are git-ignored and will NOT be committed.**
-
-## Purpose
-
-Use transient/ for:
-- **Phase planning** before implementation starts
-- **Investigation logs** during debugging
-- **Spike results** from technical exploration
-- **Collaborative notes** during pairing sessions
-- **Temporary checklists** for one-time tasks
-
-## Organization Suggestions
-
-```
-transient/
-├── planning/              # Upcoming phase/feature planning
-├── investigations/        # Debug sessions, root cause analysis
-├── spikes/               # Technical explorations, POCs
-└── notes/                # Miscellaneous working notes
-```
-
-## Workflow
-
-### Creating Transient Docs
-1. Create file in appropriate subfolder
-2. Include date in filename: `YYYY-MM-DD-topic.md`
-3. Work locally, iterate freely
-
-### Moving to Active
-When a transient doc becomes stable:
-1. Clean up content for permanence
-2. Move to appropriate `active/` section
-3. Delete original transient file
-4. Update navigation links
-
-### Cleanup
-- Review transient/ monthly
-- Delete completed investigation logs
-- Archive useful findings to `active/` or `archive/`
-
-## Git Behavior
-
-This folder contains a `.gitignore` that excludes all `*.md` files.
-
-**To force-add a file** (rare, for intentional commits):
-```bash
-git add -f docs/transient/important-file.md
-```
-
----
-
-**Last Updated**: YYYY-MM-DD
-```
-
-**docs/transient/.gitignore:**
-```
-# Exclude all markdown files in transient/
-# These are ephemeral local-only documents
-*.md
-
-# Keep this README (force-added)
-!README.md
-
-# Keep the .gitignore itself
-!.gitignore
-```
+For each `active/` subdirectory, use: [`templates/section-README.md`](templates/section-README.md)
 
 ## Document Lifecycle Workflow
 
