@@ -1,0 +1,9 @@
+# Exclude all markdown files in transient/
+# These are ephemeral local-only documents
+*.md
+
+# Keep this README (force-added)
+!README.md
+
+# Keep the .gitignore itself
+!.gitignore

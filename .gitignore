@@ -1,0 +1,30 @@
+# Node/Bun
+node_modules/
+package-lock.json
+bun.lockb
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Private/Local skills (keep locally, don't publish)
+skills/ima-forms-expert/
+skills/*-private/
+templates/local-skills/*
+!templates/local-skills/.gitkeep
+
+# Session and personal data
+*.jsonl
+session.md
+.credentials.json
+stats-cache.json
+
+# Build artifacts
+dist/
+*.exe

@@ -1,0 +1,56 @@
+# My Team's Claude Configuration
+
+## Example CLAUDE.md
+
+Copy this to `~/.claude/CLAUDE.md` and customize for your team.
+
+---
+
+# Claude Code Configuration
+
+## Skills (Auto-discovered)
+
+These skills from ima-claude are always available:
+- JavaScript FP: js-fp, js-fp-api, js-fp-react, js-fp-vue
+- PHP FP: php-fp, php-fp-wordpress
+- Architecture: architect
+- Documentation: docs-organize
+
+## Team Standards
+
+### Code Style
+- All JavaScript follows FP patterns from js-fp skill
+- Use native patterns, not FP utilities
+- Separate pure logic from side effects
+
+### Architecture Principles
+- Apply architect skill for system design
+- Start simple, justify complexity with evidence
+- MVP first, evolve with proven needs
+
+### Documentation
+- Use docs-organize for structure
+- Active docs in `/docs/`
+- Archive historical in `/docs/archive/`
+
+## Project-Specific Skills
+
+Reference local skills for project patterns:
+```
+"Use my-project-api skill for our API conventions"
+```
+
+## Optional: Personalities
+
+For fun themed responses:
+```
+"Enable 40k mode"
+```
+
+---
+
+## Customization Tips
+
+1. **Add team-specific rules** below the skills section
+2. **Reference local skills** for project conventions
+3. **Keep it focused** - don't duplicate skill content here

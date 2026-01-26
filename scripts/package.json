@@ -1,0 +1,24 @@
+{
+  "name": "ima-claude",
+  "version": "1.0.0",
+  "description": "IMA's Claude Code Skills - FP patterns, architecture guidance, and team standards",
+  "type": "module",
+  "scripts": {
+    "install": "bun run install.ts",
+    "upgrade": "bun run upgrade.ts"
+  },
+  "bin": {
+    "ima-claude": "./cli.ts"
+  },
+  "keywords": [
+    "claude",
+    "claude-code",
+    "functional-programming",
+    "skills"
+  ],
+  "author": "IMA",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/bun": "latest"
+  }
+}

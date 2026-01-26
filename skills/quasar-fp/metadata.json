@@ -1,0 +1,85 @@
+{
+  "skill": "quasar-fp",
+  "version": "1.0.0",
+  "category": "Frontend Framework",
+  "framework": "Quasar Framework (Vue 3)",
+  "purpose": "Quasar Framework best practices with utility-first CSS and FP patterns",
+  "auto_detect": true,
+  "detection": {
+    "file_patterns": [
+      "**/*.vue",
+      "**/quasar.config.js",
+      "**/quasar.variables.scss"
+    ],
+    "import_patterns": [
+      "import.*from ['\"]quasar['\"]",
+      "useQuasar",
+      "@/composables/use.*\\.js"
+    ],
+    "content_patterns": [
+      "<q-[a-z-]+",
+      "class=\"[^\"]*q-(pa|ma|pt|mt|mb|ml)-[a-z]{2,}",
+      "QBtn|QCard|QDialog|QExpansionItem|QToggle|QInput|QSelect"
+    ],
+    "keywords": [
+      "create component",
+      "build UI",
+      "add form",
+      "settings panel",
+      "quasar component",
+      "vue component"
+    ]
+  },
+  "confidence_weights": {
+    "quasar_config_exists": 0.95,
+    "vue_files_with_q_components": 0.90,
+    "quasar_imports": 0.85,
+    "vue_plus_component_keywords": 0.70
+  },
+  "mcp_integration": {
+    "context7": {
+      "library_name": "quasar",
+      "library_id": "/quasarframework/quasar",
+      "trigger_keywords": [
+        "how to use Q",
+        "Quasar component",
+        "quasar.config",
+        "Quasar documentation",
+        "Quasar styling"
+      ],
+      "example_queries": [
+        "QTable server-side pagination",
+        "QDialog component props",
+        "Quasar theme customization",
+        "QInput validation rules"
+      ]
+    },
+    "sequential": {
+      "trigger_keywords": [
+        "complex Quasar setup",
+        "Quasar configuration",
+        "plugin setup",
+        "boot file"
+      ]
+    }
+  },
+  "dependencies": ["js-fp-vue"],
+  "related_skills": ["js-fp-react", "js-fp"],
+  "examples": {
+    "settings_panel": "src/components/chaplet/SevenSorrowsChapletOptions.vue",
+    "complex_component": "src/components/chaplet/SorrowSection.vue",
+    "page_layout": "src/pages/chaplets/SevenSorrowsChaplet.vue"
+  },
+  "success_metrics": {
+    "utility_usage_target": 0.80,
+    "css_reduction_target": 0.35,
+    "quasar_component_usage_target": 0.90,
+    "theme_integration_target": 1.0
+  },
+  "learning_resources": {
+    "official_docs": "https://quasar.dev",
+    "utility_reference": "https://quasar.dev/style/spacing",
+    "components": "https://quasar.dev/vue-components",
+    "theme_customization": "https://quasar.dev/style/theme-builder"
+  }
+}
