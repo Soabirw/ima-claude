@@ -6,7 +6,7 @@ export const CLAUDE_DIR = join(homedir(), ".claude");
 export const SKILLS_DIR = join(CLAUDE_DIR, "skills");
 export const HOOKS_DIR = join(CLAUDE_DIR, "hooks");
 export const SETTINGS_FILE = join(CLAUDE_DIR, "settings.json");
-export const VERSION = "1.2.0";
+export const VERSION = "1.2.1";
 
 export const colors = {
   reset: "\x1b[0m",
