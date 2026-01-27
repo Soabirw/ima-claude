@@ -14,7 +14,6 @@ bun.lockb
 Thumbs.db
 
 # Private/Local skills (keep locally, don't publish)
-skills/ima-forms-expert/
 skills/*-private/
 templates/local-skills/*
 !templates/local-skills/.gitkeep
