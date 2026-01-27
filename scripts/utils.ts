@@ -138,6 +138,7 @@ export const SKILLS_TO_INSTALL = [
   "docs-organize",
   "skill-analyzer",
   "skill-creator",
+  "wp-local",
 ];
 
 export const PERSONALITIES_TO_INSTALL = [

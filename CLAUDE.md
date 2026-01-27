@@ -17,6 +17,7 @@ IMA's Claude Code Skills for functional programming, architecture, and team stan
 ### Domain Expert Skills
 - `architect` - System design, scalability, long-term architecture
 - `docs-organize` - Three-tier documentation (Active/Archive/Transient)
+- `wp-local` - WP-CLI commands in Flywheel Local WP environments
 
 ### Meta Skills
 - `skill-analyzer` - Analyze and improve skills
