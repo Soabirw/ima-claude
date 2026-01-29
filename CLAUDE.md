@@ -18,6 +18,14 @@ IMA's Claude Code Skills for functional programming, architecture, and team stan
 - `architect` - System design, scalability, long-term architecture
 - `docs-organize` - Three-tier documentation (Active/Archive/Transient)
 - `wp-local` - WP-CLI commands in Flywheel Local WP environments
+- `rg` - Ripgrep usage patterns (prefer over grep/find)
+
+### MCP Integration Skills
+- `mcp-tavily` - Web research via Tavily (prefer over WebSearch/WebFetch)
+- `mcp-context7` - Library documentation lookup
+- `mcp-serena` - Code symbol operations (find references, rename, refactor)
+- `mcp-sequential` - Structured reasoning for complex problems
+- `mcp-memory` - Persistent knowledge graph across sessions
 
 ### Meta Skills
 - `skill-analyzer` - Analyze and improve skills

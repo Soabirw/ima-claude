@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 """
-PreToolUse hook: Enforce ripgrep over grep/find for better performance.
+PreToolUse hook: Warn about using grep/find instead of ripgrep.
 
-Blocks:
+Warns (allows command to proceed):
 - grep → suggests rg
 - find -name → suggests rg --files -g pattern
+
+The warning is shown to Claude, encouraging it to use rg for subsequent operations.
 """
 import json
 import re
@@ -13,11 +15,13 @@ import sys
 VALIDATION_RULES = [
     (
         r"\bgrep\b(?!.*\|)",
-        "Use 'rg' (ripgrep) instead of 'grep' for better performance and features",
+        "⚠️  PREFER ripgrep: Use 'rg' instead of 'grep' - faster, better defaults, respects .gitignore. "
+        "Please use 'rg' for the rest of this session. See /rg skill for usage.",
     ),
     (
         r"\bfind\s+\S+\s+-name\b",
-        "Use 'rg --files | rg pattern' or 'rg --files -g pattern' instead of 'find -name' for better performance",
+        "⚠️  PREFER ripgrep: Use 'rg --files -g \"pattern\"' instead of 'find -name' - faster, respects .gitignore. "
+        "Please use 'rg' for the rest of this session. See /rg skill for usage.",
     ),
 ]
 
@@ -47,6 +51,6 @@ issues = validate_command(command)
 
 if issues:
     for message in issues:
-        print(f"- {message}", file=sys.stderr)
-    # Exit code 2 blocks tool call and shows stderr to Claude
-    sys.exit(2)
+        print(f"{message}", file=sys.stderr)
+    # Exit code 0 allows command to proceed but stderr is shown to Claude as a warning
+    sys.exit(0)
