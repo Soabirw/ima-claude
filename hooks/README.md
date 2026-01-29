@@ -70,7 +70,7 @@ Hooks are configured in `~/.claude/settings.json`:
 ```json
 {
   "hooks": {
-    "preToolUse": [
+    "PreToolUse": [
       {
         "matcher": "Bash",
         "hooks": [

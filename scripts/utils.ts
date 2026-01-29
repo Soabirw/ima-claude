@@ -7,7 +7,7 @@ export const SKILLS_DIR = join(CLAUDE_DIR, "skills");
 export const HOOKS_DIR = join(CLAUDE_DIR, "hooks");
 export const COMMANDS_DIR = join(CLAUDE_DIR, "commands");
 export const SETTINGS_FILE = join(CLAUDE_DIR, "settings.json");
-export const VERSION = "1.2.2";
+export const VERSION = "1.3.0";
 
 export const colors = {
   reset: "\x1b[0m",
@@ -126,6 +126,7 @@ export function promptYesNo(question: string): boolean {
 }
 
 export const SKILLS_TO_INSTALL = [
+  // FP skills
   "js-fp",
   "js-fp-api",
   "js-fp-react",
@@ -134,11 +135,18 @@ export const SKILLS_TO_INSTALL = [
   "php-fp",
   "php-fp-wordpress",
   "quasar-fp",
+  // Domain expert skills
   "architect",
   "docs-organize",
+  "wp-local",
+  "rg",
+  "ima-forms-expert",
+  // MCP integration skills
+  "mcp-sequential",
+  "mcp-memory",
+  // Meta skills
   "skill-analyzer",
   "skill-creator",
-  "wp-local",
 ];
 
 export const PERSONALITIES_TO_INSTALL = [
@@ -161,7 +169,7 @@ export const COMMANDS_TO_INSTALL = [
 // Hook configuration to merge into settings.json
 export const HOOKS_CONFIG = {
   hooks: {
-    preToolUse: [
+    PreToolUse: [
       {
         matcher: "Bash",
         hooks: [
@@ -212,10 +220,10 @@ export function mergeHooksIntoSettings(): { merged: boolean; created: boolean } 
   }
 
   // Merge hooks config
-  // If hooks.preToolUse exists, merge arrays (avoid duplicates by matcher)
-  if (settings.hooks && (settings.hooks as Record<string, unknown>).preToolUse) {
-    const existingHooks = (settings.hooks as Record<string, unknown>).preToolUse as Array<{ matcher: string }>;
-    const newHooks = HOOKS_CONFIG.hooks.preToolUse;
+  // If hooks.PreToolUse exists, merge arrays (avoid duplicates by matcher)
+  if (settings.hooks && (settings.hooks as Record<string, unknown>).PreToolUse) {
+    const existingHooks = (settings.hooks as Record<string, unknown>).PreToolUse as Array<{ matcher: string }>;
+    const newHooks = HOOKS_CONFIG.hooks.PreToolUse;
 
     for (const newHook of newHooks) {
       const existingIndex = existingHooks.findIndex(h => h.matcher === newHook.matcher);

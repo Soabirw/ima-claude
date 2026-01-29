@@ -1,3 +1,7 @@
+# MCP/Claude
+.claude
+.serena
+
 # Node/Bun
 node_modules/
 package-lock.json
