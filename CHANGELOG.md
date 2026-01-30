@@ -33,7 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Session Management Documentation** (`docs/Active/session-management.md`)
   - Technical comparison: file-based vs MCP-based
   - Advantages over file approach
-  - Comparison to SuperClaude `/sc:save` + `/sc:load`
+  - Serena MCP requirements and rationale
   - Migration notes from old commands
 
 ### Fixed

@@ -48,16 +48,11 @@ Restores session from Serena MCP memory and presents status summary.
 4. **Lean** - Single checkpoint, not a massive project load
 5. **Simple** - No `.claude` directory creation, no absolute path resolution
 
-## Comparison to SuperClaude
+## Requirements
 
-**SuperClaude `/sc:save` + `/sc:load`:**
-- Massive project context load
-- Overwhelming for quick resume
+**Serena MCP** is required for session management. The skills use Serena's file-based memory storage which is designed for document persistence (unlike Memory MCP which is optimized for knowledge graphs).
 
-**IMA `/save-session` + `/resume-session`:**
-- Lean state capture only
-- Quick resume without context overwhelm
-- Better for mid-task checkpoints
+If Serena is not installed, the skills will inform you and provide installation guidance.
 
 ## Migration from Old Commands
 
