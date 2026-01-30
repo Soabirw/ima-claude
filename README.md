@@ -182,6 +182,12 @@ Pre-tool-use hooks that enhance Claude Code's behavior:
 
 See [hooks/README.md](hooks/README.md) for installation and configuration.
 
+## Prompt Coach (Experimental)
+
+**Haiku-powered prompt feedback system** that analyzes your prompts before they reach Claude, suggesting relevant skills and catching anti-patterns. Stays silent when you're on track, speaks up when it can help.
+
+See [docs/PROMPT_COACH.md](docs/PROMPT_COACH.md) for setup, configuration, and usage.
+
 ## Personalities (Optional Fun)
 
 Themed response styles that change Claude's tone without affecting expertise:

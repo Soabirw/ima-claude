@@ -72,7 +72,7 @@ Your MCP skills will now use direct tool patterns automatically.
 
 ### Added
 
-- **Prompt Coach** - Haiku-based prompt evaluation system
+- **Prompt Coach (Experimental)** - Haiku-based prompt evaluation system
   - `UserPromptSubmit` hook evaluates prompts against team standards
   - Suggests relevant skills when missing (e.g., "Consider: mcp-serena")
   - Flags anti-patterns (custom FP utilities, over-engineering, security gaps)
@@ -80,7 +80,7 @@ Your MCP skills will now use direct tool patterns automatically.
   - Disabled by default: `export PROMPT_COACH_ENABLED=true` to activate
   - Optional logging: `export PROMPT_COACH_LOG=true`
   - New files: `hooks/prompt_coach.py`, `hooks/prompt_coach_system.md`, `hooks/prompt_coach_digest.md`
-  - Documentation: `docs/PROMPT_COACH.md`
+  - See [docs/PROMPT_COACH.md](docs/PROMPT_COACH.md) for setup and usage
 
 ### Technical
 
