@@ -320,20 +320,10 @@ async function removeAiris(installed: Record<string, InstalledServer>, airisRunn
   if (!installed["airis-mcp-gateway"]) {
     log.warn("Airis Gateway is not configured in ~/.claude.json");
     if (airisRunning) {
-      console.log("\nHowever, Airis is still running in Docker.");
-      const stopIt = await promptYesNo("Stop Airis Docker containers?", true);
-      if (stopIt) {
-        console.log("\nStopping Airis Docker containers...");
-        const result = spawnSync("docker", ["stop", "airis-mcp-gateway", "airis-serena", "airis-mcp-gateway-core"], {
-          encoding: "utf8",
-        });
-        if (result.status === 0) {
-          log.success("Airis Docker containers stopped");
-          console.log("\nTo prevent auto-start, remove from docker-compose or disable auto-start.");
-        } else {
-          log.error("Failed to stop containers. Stop manually with: docker stop airis-mcp-gateway");
-        }
-      }
+      console.log("\n" + colors.cyan + "ℹ" + colors.reset + "  Airis MCP Gateway appears to be running in Docker.");
+      console.log("   If you no longer need it, you can stop the containers manually:");
+      console.log("   " + colors.dim + "docker ps | grep airis" + colors.reset);
+      console.log("   " + colors.dim + "docker stop <container-names>" + colors.reset);
     }
     console.log("");
     process.exit(0);
@@ -354,20 +344,11 @@ async function removeAiris(installed: Record<string, InstalledServer>, airisRunn
     log.success("Airis Gateway removed from configuration");
 
     if (airisRunning) {
-      console.log("");
-      const stopIt = await promptYesNo("Stop Airis Docker containers?", true);
-      if (stopIt) {
-        console.log("\nStopping Airis Docker containers...");
-        const stopResult = spawnSync("docker", ["stop", "airis-mcp-gateway", "airis-serena", "airis-mcp-gateway-core"], {
-          encoding: "utf8",
-        });
-        if (stopResult.status === 0) {
-          log.success("Airis Docker containers stopped");
-          console.log("\nTo prevent auto-start, remove from docker-compose or disable auto-start.");
-        } else {
-          log.error("Failed to stop containers. Stop manually with: docker stop airis-mcp-gateway");
-        }
-      }
+      console.log("\n" + colors.cyan + "ℹ" + colors.reset + "  Airis MCP Gateway is still running in Docker.");
+      console.log("   If you no longer need it, you can stop the containers manually:");
+      console.log("   " + colors.dim + "docker ps | grep airis" + colors.reset + "  # List Airis containers");
+      console.log("   " + colors.dim + "docker stop <container-names>" + colors.reset + "  # Stop specific containers");
+      console.log("\n   To prevent auto-start, update your docker-compose.yml or Docker Desktop settings.");
     }
   } else {
     log.error(`Failed to remove: ${result.message}`);

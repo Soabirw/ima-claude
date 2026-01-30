@@ -28,7 +28,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Bun-based CLI with interactive prompts for server selection
   - Handles API key input (Tavily)
   - Uses official `claude mcp add` commands (safe, no JSON editing)
-  - Option to remove Airis Gateway and stop Docker containers
+  - Option to remove Airis Gateway from configuration
+  - Provides guidance for managing Docker containers (no automatic operations)
   - Supports all recommended MCP servers: Tavily, Context7, Memory, Sequential Thinking, Fetch, Chrome DevTools
 
 ### Updated
@@ -61,13 +62,20 @@ If you were using Airis Gateway:
 1. Run the interactive setup: `bun run scripts/setup-mcp.ts`
 2. Select "Remove Airis Gateway" to clean up old configuration
 3. Install desired MCP servers (Tavily requires API key from tavily.com)
-4. Stop Airis Docker containers when prompted
+4. Manually stop Airis Docker containers if no longer needed:
+   ```bash
+   docker ps | grep airis  # Check running containers
+   docker stop <container-names>  # Stop specific containers
+   ```
 
 Or manually:
 ```bash
-# Remove Airis
+# Remove Airis configuration
 claude mcp remove airis-mcp-gateway
-docker stop airis-mcp-gateway airis-serena airis-mcp-gateway-core
+
+# Manually stop Docker containers if no longer needed
+docker ps | grep airis
+docker stop <container-names>
 
 # Install direct servers (see README.md for full commands)
 claude mcp add --scope user context7 -- npx -y @upstash/context7-mcp@latest

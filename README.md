@@ -45,7 +45,8 @@ The interactive script will:
 - Let you select which servers to install
 - Handle API key input (Tavily)
 - Configure servers using official `claude mcp add` commands
-- Optionally remove Airis Gateway if installed
+- Optionally remove Airis Gateway from configuration
+- Provide guidance for managing Docker containers (no automatic operations)
 
 ### Manual Installation
 
