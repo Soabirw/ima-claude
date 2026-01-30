@@ -3,6 +3,9 @@
 UserPromptSubmit hook: Evaluate prompts with Haiku for team standards.
 Provides feedback inline when valuable, stays silent otherwise.
 
+Configuration:
+  API key and model configured in prompt_coach_config.json (same directory)
+
 Environment variables:
   PROMPT_COACH_ENABLED=true  - Enable evaluation
   PROMPT_COACH_LOG=true      - Log prompts + feedback to ~/.claude/prompt_coach.log
@@ -68,6 +71,7 @@ def main() -> None:
     hooks_dir = Path(__file__).parent
     system_prompt_path = hooks_dir / "prompt_coach_system.md"
     digest_path = hooks_dir / "prompt_coach_digest.md"
+    config_path = hooks_dir / "prompt_coach_config.json"
 
     try:
         system_prompt = system_prompt_path.read_text()
@@ -76,16 +80,32 @@ def main() -> None:
         log_feedback(prompt, f"[error: {e.filename} not found]")
         sys.exit(0)
 
+    # Load config with API key
+    try:
+        with open(config_path) as f:
+            config = json.load(f)
+        api_key = config.get("anthropic_api_key")
+        model = config.get("model", "claude-3-5-haiku-20241022")
+        if not api_key:
+            log_feedback(prompt, "[error: anthropic_api_key not found in config]")
+            sys.exit(0)
+    except FileNotFoundError:
+        log_feedback(prompt, "[error: prompt_coach_config.json not found]")
+        sys.exit(0)
+    except (json.JSONDecodeError, KeyError) as e:
+        log_feedback(prompt, f"[error: invalid config: {e}]")
+        sys.exit(0)
+
     # Combine system prompt with skills digest
     full_system = f"{system_prompt}\n\n---\n\n# SKILLS DIGEST\n\n{skills_digest}"
 
-    # Call Haiku API (uses ANTHROPIC_API_KEY from environment)
+    # Call Haiku API (uses API key from config)
     try:
         import anthropic
-        client = anthropic.Anthropic()
+        client = anthropic.Anthropic(api_key=api_key)
 
         response = client.messages.create(
-            model="claude-3-5-haiku-20241022",
+            model=model,
             max_tokens=300,
             system=full_system,
             messages=[{"role": "user", "content": f"USER PROMPT TO EVALUATE:\n\n{prompt}"}]

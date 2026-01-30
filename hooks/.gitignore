@@ -1,0 +1,6 @@
+# Ignore config files with API keys
+prompt_coach_config.json
+
+# Ignore Python cache
+__pycache__/
+*.pyc
