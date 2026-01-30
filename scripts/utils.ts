@@ -7,7 +7,7 @@ export const SKILLS_DIR = join(CLAUDE_DIR, "skills");
 export const HOOKS_DIR = join(CLAUDE_DIR, "hooks");
 export const COMMANDS_DIR = join(CLAUDE_DIR, "commands");
 export const SETTINGS_FILE = join(CLAUDE_DIR, "settings.json");
-export const VERSION = "1.5.0";
+export const VERSION = "1.6.0";
 
 export const colors = {
   reset: "\x1b[0m",
@@ -147,6 +147,9 @@ export const SKILLS_TO_INSTALL = [
   "mcp-serena",
   "mcp-sequential",
   "mcp-memory",
+  // Session management skills
+  "save-session",
+  "resume-session",
   // Meta skills
   "skill-analyzer",
   "skill-creator",
@@ -168,8 +171,9 @@ export const HOOKS_TO_INSTALL = [
 ];
 
 export const COMMANDS_TO_INSTALL = [
-  "save-session.md",
-  "resume-session.md",
+  // Commands moved to skills in v1.6.0
+  // - save-session (now a skill using Serena MCP)
+  // - resume-session (now a skill using Serena MCP)
 ];
 
 // Hook configuration to merge into settings.json

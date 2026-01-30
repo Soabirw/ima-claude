@@ -27,6 +27,10 @@ IMA's Claude Code Skills for functional programming, architecture, and team stan
 - `mcp-sequential` - Structured reasoning for complex problems
 - `mcp-memory` - Persistent knowledge graph across sessions
 
+### Session Management Skills
+- `save-session` - Save session state to Serena MCP memory (no file path confusion)
+- `resume-session` - Resume previous session from Serena MCP memory
+
 ### Meta Skills
 - `skill-analyzer` - Analyze and improve skills
 - `skill-creator` - Create new skills

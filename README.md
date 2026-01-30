@@ -4,9 +4,10 @@ IMA's Claude Code Skills - FP patterns, architecture guidance, and team standard
 
 ## What's Included
 
-- **18 Skills**: FP patterns for JS, PHP, React, Vue, Quasar, WordPress + MCP helpers + testing
+- **20 Skills**: FP patterns for JS, PHP, React, Vue, Quasar, WordPress + MCP helpers + testing + session management
 - **Architecture guidance**: System design principles
 - **MCP Integration**: Setup script + skills for Tavily, Context7, Memory, Sequential Thinking
+- **Session Management**: MCP-based save/resume (no file path confusion)
 - **Meta-skills**: Create and analyze skills
 - **Personalities**: Fun themed response styles (40K, Templars)
 
@@ -85,6 +86,14 @@ ima-claude includes skills that help you use MCP servers effectively:
 - **mcp-context7** - Library documentation lookup strategies
 - **mcp-memory** - Knowledge graph best practices
 - **mcp-sequential** - Structured reasoning workflows
+- **mcp-serena** - Code symbol operations and refactoring
+
+### Session Management Skills
+
+- **save-session** - Save session state to Serena MCP memory (no file path confusion)
+- **resume-session** - Resume previous session from Serena MCP memory
+
+Uses Serena MCP for cross-session persistence. No more file path issues!
 
 These skills auto-activate when you use the MCP tools.
 

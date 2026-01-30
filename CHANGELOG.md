@@ -5,6 +5,44 @@ All notable changes to ima-claude will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.0] - 2026-01-30
+
+### Changed - BREAKING
+
+- **Session management migrated from file-based commands to MCP-based Skills**
+  - Removed `~/.claude/commands/save-session.md` and `resume-session.md`
+  - New Skills use Serena MCP memory storage (no file path confusion)
+  - Memory name: `session-state` (project-specific, cross-session persistent)
+  - Same markdown format, zero path resolution issues
+
+### Added
+
+- **save-session Skill** - Save session state to Serena MCP memory
+  - Uses `mcp__serena__write_memory` (no file path confusion)
+  - Project-specific storage (sessions belong to projects)
+  - Cross-session persistent (survives Claude restarts)
+  - Lean single checkpoint model
+  - See skill at `skills/save-session/SKILL.md`
+
+- **resume-session Skill** - Resume session from Serena MCP memory
+  - Uses `mcp__serena__read_memory`
+  - Presents status summary and waits for user direction
+  - No auto-start work behavior
+  - See skill at `skills/resume-session/SKILL.md`
+
+- **Session Management Documentation** (`docs/Active/session-management.md`)
+  - Technical comparison: file-based vs MCP-based
+  - Advantages over file approach
+  - Comparison to SuperClaude `/sc:save` + `/sc:load`
+  - Migration notes from old commands
+
+### Fixed
+
+- Session save/resume no longer experiences file path confusion
+- Claude no longer gets confused about working directory when saving sessions
+- No more `.claude/` directory creation issues
+- Eliminated file write failures in session management
+
 ## [1.5.0] - 2026-01-30
 
 ### Changed - BREAKING

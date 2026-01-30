@@ -1,12 +1,27 @@
-Save current session state to `.claude/session.md` in the working directory.
+---
+name: "save-session"
+description: "Save session state to Serena MCP memory (no file path confusion)"
+---
+
+# save-session
+
+Save current session state to Serena MCP memory for cross-session persistence.
+
+## Trigger Phrases
+
+- "save session"
+- "save the session"
+- "save current session"
+- "create session save"
+- "checkpoint session"
 
 ## Instructions
 
-1. Determine the absolute path: `{working_directory}/.claude/session.md`
-2. Create the `.claude` directory if it doesn't exist
-3. Use the **Write** tool to create/overwrite the file with the format below
+Use `mcp__serena__write_memory` to save session state.
 
-## File Format
+**Memory name**: `session-state`
+
+**Content format**:
 
 ```markdown
 # Session State
@@ -54,4 +69,11 @@ Saved: {current_date_time}
 
 ## After Writing
 
-Confirm with: "Session saved to `.claude/session.md`"
+Confirm with: "Session saved to Serena memory 'session-state'"
+
+## Technical Notes
+
+- Uses Serena MCP `write_memory` tool (no file path confusion)
+- Memory persists across Claude sessions in project context
+- Overwrites previous session-state (single checkpoint model)
+- Project-specific storage (appropriate for session state)
