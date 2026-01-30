@@ -16,6 +16,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **phpunit-wp Skill** - PHPUnit testing for WordPress plugins with FP principles
+  - Fast unit test setup for WordPress plugins
+  - Documents the two critical setup bugs (silent execution, autoload files)
+  - Environment-aware setup for Local WP
+  - Pure function testing patterns with minimal mocking
+  - Working templates for composer.json, phpunit.xml, bootstrap.php
+  - See skill at `skills/phpunit-wp/SKILL.md`
+
 - **Interactive MCP Setup Script** (`scripts/setup-mcp.ts`)
   - Bun-based CLI with interactive prompts for server selection
   - Handles API key input (Tavily)

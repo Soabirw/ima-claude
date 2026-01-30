@@ -4,7 +4,7 @@ IMA's Claude Code Skills - FP patterns, architecture guidance, and team standard
 
 ## What's Included
 
-- **17 Skills**: FP patterns for JS, PHP, React, Vue, Quasar, WordPress + MCP helpers
+- **18 Skills**: FP patterns for JS, PHP, React, Vue, Quasar, WordPress + MCP helpers + testing
 - **Architecture guidance**: System design principles
 - **MCP Integration**: Setup script + skills for Tavily, Context7, Memory, Sequential Thinking
 - **Meta-skills**: Create and analyze skills
@@ -129,6 +129,7 @@ bunx ima-claude upgrade
 | `architect` | System design expertise and principles |
 | `docs-organize` | Three-tier documentation organization |
 | `wp-local` | WP-CLI commands for Flywheel Local WP |
+| `phpunit-wp` | PHPUnit testing for WordPress plugins with FP principles |
 | `rg` | Ripgrep usage patterns |
 | `ima-forms-expert` | WordPress form components (IMA Forms) |
 
