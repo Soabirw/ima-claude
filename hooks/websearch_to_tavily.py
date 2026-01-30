@@ -3,7 +3,7 @@
 PreToolUse hook: Suggest Tavily search over WebSearch.
 
 Warns (allows command to proceed):
-- WebSearch → suggests Tavily via Airis gateway for better results
+- WebSearch → suggests Tavily for better results
 
 Tavily provides more comprehensive search results and is preferred for
 research tasks requiring current information.
@@ -20,16 +20,19 @@ except json.JSONDecodeError as err:
     sys.exit(1)
 
 # Print warning to stderr (shown to Claude)
-warning = f"""⚠️  PREFER Tavily: For web research, use Tavily via Airis gateway instead of WebSearch.
+warning = f"""⚠️  PREFER Tavily: For web research, use Tavily instead of WebSearch.
 
 Tavily provides better results for current information, research questions, and comparisons.
 
 To use Tavily search:
-  mcp__airis-mcp-gateway__airis-exec
-    tool: "tavily:tavily_search"
-    arguments: {{"query": "{query}", "search_depth": "basic", "max_results": 10}}
+  mcp__tavily__tavily_search
+    query: "{query}"
+    search_depth: "basic"
+    max_results: 10
 
-See /mcp-tavily skill for full usage patterns and search_depth options.
+For comprehensive research, use search_depth: "advanced"
+
+See mcp-tavily skill for full usage patterns and options.
 """
 
 print(warning, file=sys.stderr)

@@ -7,71 +7,47 @@ description: Use Context7 MCP for official library documentation, framework APIs
 
 Use Context7 for official library documentation instead of web searching or guessing APIs.
 
-## Setup: Airis Gateway
-
-Context7 runs through the Airis MCP gateway. The server may be "cold" (not loaded) initially.
-
-**Tool access pattern**: `mcp__airis-mcp-gateway__airis-exec` with `tool: "context7:tool-name"`
-
 ## MCP Tools
 
 | Tool | Purpose |
 |------|---------|
-| `context7:resolve-library-id` | Find Context7-compatible library ID from name |
-| `context7:query-docs` | Get curated docs with specific topic focus |
+| `mcp__context7__search` | Search for libraries and get documentation |
 
-## Workflow
+## Basic Usage
 
-### 1. Check if Server is Loaded (Optional)
-
-If you get errors, the server may be cold. Load it first:
-```
-mcp__airis-mcp-gateway__airis-find
-  server: "context7"
-  query: "resolve"
-```
-
-### 2. Resolve Library ID
-
-**Required before querying docs** (unless user provides ID like `/org/project`).
+Context7 combines library resolution and documentation retrieval into a single tool.
 
 ```
-mcp__airis-mcp-gateway__airis-exec
-  tool: "context7:resolve-library-id"
-  arguments: {
-    "query": "How to use QDialog component",
-    "libraryName": "quasar"
-  }
+mcp__context7__search
+  query: "How to use QDialog component in Quasar"
 ```
 
-**Both parameters required**:
-- `query`: The user's actual question (helps rank results)
-- `libraryName`: The library name to search for
+**Parameters**:
+- `query` (required): Your question or search query including the library name
 
-Returns library ID like `/quasarframework/quasar`. Store for next call.
+The tool will:
+1. Identify the library from your query
+2. Find the relevant documentation
+3. Return focused, relevant docs
 
-### 3. Query Documentation
+## Query Optimization
 
-```
-mcp__airis-mcp-gateway__airis-exec
-  tool: "context7:query-docs"
-  arguments: {
-    "libraryId": "/quasarframework/quasar",
-    "query": "QDialog component API props events slots"
-  }
-```
+**Be specific and include**:
+- Component/function names: "QDialog component API props events slots"
+- What you want to do: "How to set up authentication with JWT"
+- Context: "React useState hook example with TypeScript"
 
-**Query optimization tips**:
-- Be specific: "How to set up authentication with JWT" not "auth"
-- Include component/function names
-- Add "API", "props", "events" for reference docs
-- Add "example", "usage" for implementation guidance
+**Good queries**:
+| Query | Why It's Good |
+|-------|---------------|
+| "Quasar QDialog props and events" | Specific component, clear intent |
+| "React useEffect cleanup function" | Specific hook, specific aspect |
+| "Prisma findMany where clause syntax" | Specific method, specific feature |
+| "Express middleware error handling" | Framework + feature |
 
-### 4. Apply Patterns
-
-- Extract relevant code patterns from docs
-- Note version compatibility requirements
-- Apply with proper attribution if significant
+**Avoid vague queries**:
+- ❌ "How does Quasar work?"
+- ✅ "How to create a Quasar button with icon"
 
 ## Decision Logic
 
@@ -82,23 +58,11 @@ ELSE IF import statement detected AND user asks about that library:
     → Use Context7
 ELSE IF general programming concept (closures, promises, etc.):
     → Use native Claude knowledge
-ELSE IF library not found in Context7:
+ELSE IF library not found:
     → Fallback to WebSearch or Tavily
+ELSE IF asking for "latest" or "new" features post-cutoff:
+    → Use Tavily instead
 ```
-
-## Error Recovery
-
-| Error | Recovery |
-|-------|----------|
-| "Schema not found" / tool error | Server is cold - use airis-find to load it first |
-| Library not found | WebSearch for "[library] official documentation" |
-| No good matches after 3 tries | Use best result, note limitations |
-| Invalid library ID | Retry resolve-library-id with different libraryName |
-
-## Important Limits
-
-- **Max 3 calls per question** for each tool
-- If you can't find what you need after 3 attempts, use best available result
 
 ## When NOT to Use
 
@@ -107,12 +71,39 @@ ELSE IF library not found in Context7:
 - Simple syntax questions Claude already knows
 - User wants current/latest info post-cutoff (use Tavily instead)
 
+## Common Libraries Supported
+
+**Frontend**: React, Vue, Quasar, Next.js, Nuxt, Svelte, Angular, Tailwind, Bootstrap
+**Backend**: Express, Fastify, Nest.js, tRPC, Prisma, Sequelize, TypeORM
+**Utilities**: Lodash, Ramda, date-fns, Zod, Yup, Joi
+**Build**: Vite, Webpack, Rollup, ESBuild
+**Testing**: Jest, Vitest, Playwright, Cypress
+
 ## Examples
 
 | User Request | Action |
 |--------------|--------|
-| "How to use QDialog in Vue?" | resolve-library-id(libraryName: "quasar") → query-docs(query: "QDialog") |
-| "React useState example" | resolve-library-id(libraryName: "react") → query-docs(query: "useState hook example") |
-| "Prisma query syntax" | resolve-library-id(libraryName: "prisma") → query-docs(query: "query findMany where") |
+| "How to use QDialog in Vue?" | search(query: "QDialog component Quasar Vue") |
+| "React useState example" | search(query: "React useState hook example") |
+| "Prisma query syntax" | search(query: "Prisma findMany where query") |
 | "What's a closure?" | Native Claude (no library) |
 | "Latest React 19 features" | Use Tavily (current info needed) |
+
+## Multiple Queries
+
+If initial results aren't sufficient, refine your query:
+1. First attempt: "Quasar form validation"
+2. If needed: "Quasar QForm validation rules API"
+3. If needed: "Quasar field validation with Vuelidate"
+
+## Setup
+
+No API key required. Install with:
+```bash
+bun run scripts/setup-mcp.ts
+```
+
+Or manually:
+```bash
+claude mcp add --scope user context7 -- npx -y @upstash/context7-mcp@latest
+```

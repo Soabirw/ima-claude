@@ -22,25 +22,19 @@ triggers:
 
 Use Memory MCP to store and retrieve information across sessions as a knowledge graph.
 
-## Setup: Airis Gateway
-
-Memory runs through the Airis MCP gateway.
-
-**Tool access pattern**: `mcp__airis-mcp-gateway__airis-exec` with `tool: "memory:tool-name"`
-
 ## Available Tools
 
 | Tool | Purpose |
 |------|---------|
-| `memory:create_entities` | Create new entities (things/concepts) |
-| `memory:create_relations` | Link entities together |
-| `memory:add_observations` | Add facts to existing entities |
-| `memory:search_nodes` | Search the knowledge graph |
-| `memory:open_nodes` | Get specific entities by name |
-| `memory:read_graph` | Read entire knowledge graph |
-| `memory:delete_entities` | Remove entities |
-| `memory:delete_relations` | Remove relations |
-| `memory:delete_observations` | Remove observations |
+| `mcp__memory__create_entities` | Create new entities (things/concepts) |
+| `mcp__memory__create_relations` | Link entities together |
+| `mcp__memory__add_observations` | Add facts to existing entities |
+| `mcp__memory__search_nodes` | Search the knowledge graph |
+| `mcp__memory__open_nodes` | Get specific entities by name |
+| `mcp__memory__read_graph` | Read entire knowledge graph |
+| `mcp__memory__delete_entities` | Remove entities |
+| `mcp__memory__delete_relations` | Remove relations |
+| `mcp__memory__delete_observations` | Remove observations |
 
 ## When to Use
 
@@ -58,122 +52,95 @@ Memory runs through the Airis MCP gateway.
 - "How did we solve this before?"
 - Session start: Load relevant project context
 
-## Workflow
-
-### 1. Load Server (if cold)
-
-```
-mcp__airis-mcp-gateway__airis-find
-  server: "memory"
-  query: "memory"
-```
-
-### 2. Create Entities
+## Create Entities
 
 Entities are the nodes in your knowledge graph - things, concepts, decisions.
 
 ```
-mcp__airis-mcp-gateway__airis-exec
-  tool: "memory:create_entities"
-  arguments: {
-    "entities": [
-      {
-        "name": "project-acme-api",
-        "entityType": "project",
-        "observations": [
-          "Uses Node.js with Express",
-          "PostgreSQL database",
-          "REST API architecture chosen over GraphQL"
-        ]
-      },
-      {
-        "name": "user-eric",
-        "entityType": "user",
-        "observations": [
-          "Prefers functional programming patterns",
-          "Uses Quasar for Vue projects",
-          "Wants minimal comments in code"
-        ]
-      }
-    ]
-  }
+mcp__memory__create_entities
+  entities: [
+    {
+      "name": "project-acme-api",
+      "entityType": "project",
+      "observations": [
+        "Uses Node.js with Express",
+        "PostgreSQL database",
+        "REST API architecture chosen over GraphQL"
+      ]
+    },
+    {
+      "name": "user-eric",
+      "entityType": "user",
+      "observations": [
+        "Prefers functional programming patterns",
+        "Uses Quasar for Vue projects",
+        "Wants minimal comments in code"
+      ]
+    }
+  ]
 ```
 
-### 3. Create Relations
+## Create Relations
 
 Relations connect entities - use active voice verbs.
 
 ```
-mcp__airis-mcp-gateway__airis-exec
-  tool: "memory:create_relations"
-  arguments: {
-    "relations": [
-      {
-        "from": "user-eric",
-        "to": "project-acme-api",
-        "relationType": "owns"
-      },
-      {
-        "from": "project-acme-api",
-        "to": "decision-rest-over-graphql",
-        "relationType": "uses"
-      }
-    ]
-  }
+mcp__memory__create_relations
+  relations: [
+    {
+      "from": "user-eric",
+      "to": "project-acme-api",
+      "relationType": "owns"
+    },
+    {
+      "from": "project-acme-api",
+      "to": "decision-rest-over-graphql",
+      "relationType": "uses"
+    }
+  ]
 ```
 
-### 4. Add Observations
+## Add Observations
 
 Add new facts to existing entities.
 
 ```
-mcp__airis-mcp-gateway__airis-exec
-  tool: "memory:add_observations"
-  arguments: {
-    "observations": [
-      {
-        "entityName": "project-acme-api",
-        "contents": [
-          "Added rate limiting on 2024-01-15",
-          "Uses Redis for session storage"
-        ]
-      }
-    ]
-  }
+mcp__memory__add_observations
+  observations: [
+    {
+      "entityName": "project-acme-api",
+      "contents": [
+        "Added rate limiting on 2024-01-15",
+        "Uses Redis for session storage"
+      ]
+    }
+  ]
 ```
 
-### 5. Search Knowledge Graph
+## Search Knowledge Graph
 
 Find relevant entities by query.
 
 ```
-mcp__airis-mcp-gateway__airis-exec
-  tool: "memory:search_nodes"
-  arguments: {
-    "query": "authentication"
-  }
+mcp__memory__search_nodes
+  query: "authentication"
 ```
 
-### 6. Get Specific Entities
+## Get Specific Entities
 
 Retrieve entities by name.
 
 ```
-mcp__airis-mcp-gateway__airis-exec
-  tool: "memory:open_nodes"
-  arguments: {
-    "names": ["user-eric", "project-acme-api"]
-  }
+mcp__memory__open_nodes
+  names: ["user-eric", "project-acme-api"]
 ```
 
-### 7. Read Full Graph
+## Read Full Graph
 
 Get everything (use sparingly for large graphs).
 
 ```
-mcp__airis-mcp-gateway__airis-exec
-  tool: "memory:read_graph"
-  arguments: {}
+mcp__memory__read_graph
 ```
 
 ## Entity Types (Suggested)
@@ -210,7 +177,7 @@ Use consistent, searchable names:
 
 ```
 # Create the decision entity
-memory:create_entities
+mcp__memory__create_entities
   entities: [{
     "name": "decision-api-versioning",
     "entityType": "decision",
@@ -223,7 +190,7 @@ memory:create_entities
   }]
 
 # Link to project
-memory:create_relations
+mcp__memory__create_relations
   relations: [{
     "from": "project-acme-api",
     "to": "decision-api-versioning",
@@ -234,7 +201,7 @@ memory:create_relations
 ## Example: Storing User Preferences
 
 ```
-memory:create_entities
+mcp__memory__create_entities
   entities: [{
     "name": "user-eric-code-style",
     "entityType": "preference",
@@ -252,18 +219,22 @@ memory:create_entities
 
 ```
 # Search for relevant project context
-memory:search_nodes
+mcp__memory__search_nodes
   query: "project-acme"
 
 # Get user preferences
-memory:open_nodes
+mcp__memory__open_nodes
   names: ["user-eric", "user-eric-code-style"]
 ```
 
-## Error Recovery
+## Setup
 
-| Error | Recovery |
-|-------|----------|
-| Server cold | Use `airis-find server="memory"` first |
-| Entity not found | Check spelling, use `search_nodes` to find |
-| Duplicate entity | Use `add_observations` instead of create |
+No API key required. Install with:
+```bash
+bun run scripts/setup-mcp.ts
+```
+
+Or manually:
+```bash
+claude mcp add --scope user memory -- npx -y @modelcontextprotocol/server-memory@latest
+```

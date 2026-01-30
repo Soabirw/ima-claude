@@ -7,7 +7,7 @@ export const SKILLS_DIR = join(CLAUDE_DIR, "skills");
 export const HOOKS_DIR = join(CLAUDE_DIR, "hooks");
 export const COMMANDS_DIR = join(CLAUDE_DIR, "commands");
 export const SETTINGS_FILE = join(CLAUDE_DIR, "settings.json");
-export const VERSION = "1.3.1";
+export const VERSION = "1.5.0";
 
 export const colors = {
   reset: "\x1b[0m",
@@ -162,6 +162,9 @@ export const HOOKS_TO_INSTALL = [
   "tavily_extract_advanced.py",
   "webfetch_to_tavily.py",
   "websearch_to_tavily.py",
+  "prompt_coach.py",
+  "prompt_coach_system.md",
+  "prompt_coach_digest.md",
 ];
 
 export const COMMANDS_TO_INSTALL = [
@@ -197,6 +200,13 @@ export const HOOKS_CONFIG = {
           { type: "command", command: `python3 ${HOOKS_DIR}/websearch_to_tavily.py` }
         ]
       }
+    ],
+    UserPromptSubmit: [
+      {
+        hooks: [
+          { type: "command", command: `python3 ${HOOKS_DIR}/prompt_coach.py` }
+        ]
+      }
     ]
   }
 };
@@ -222,26 +232,31 @@ export function mergeHooksIntoSettings(): { merged: boolean; created: boolean } 
     created = true;
   }
 
-  // Merge hooks config
-  // If hooks.PreToolUse exists, merge arrays (avoid duplicates by matcher)
-  if (settings.hooks && (settings.hooks as Record<string, unknown>).PreToolUse) {
-    const existingHooks = (settings.hooks as Record<string, unknown>).PreToolUse as Array<{ matcher: string }>;
+  // Initialize hooks object if not present
+  if (!settings.hooks) {
+    settings.hooks = {};
+  }
+  const settingsHooks = settings.hooks as Record<string, unknown>;
+
+  // Merge PreToolUse hooks (match by matcher field)
+  if (settingsHooks.PreToolUse) {
+    const existingHooks = settingsHooks.PreToolUse as Array<{ matcher: string }>;
     const newHooks = HOOKS_CONFIG.hooks.PreToolUse;
 
     for (const newHook of newHooks) {
       const existingIndex = existingHooks.findIndex(h => h.matcher === newHook.matcher);
       if (existingIndex >= 0) {
-        // Replace existing hook with same matcher
         existingHooks[existingIndex] = newHook;
       } else {
-        // Add new hook
         existingHooks.push(newHook);
       }
     }
   } else {
-    // No existing hooks, just add ours
-    settings.hooks = HOOKS_CONFIG.hooks;
+    settingsHooks.PreToolUse = HOOKS_CONFIG.hooks.PreToolUse;
   }
+
+  // Merge UserPromptSubmit hooks (replace entire array since no matcher field)
+  settingsHooks.UserPromptSubmit = HOOKS_CONFIG.hooks.UserPromptSubmit;
 
   // Write back
   writeFileSync(SETTINGS_FILE, JSON.stringify(settings, null, 2) + "\n");

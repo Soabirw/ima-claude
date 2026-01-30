@@ -22,11 +22,11 @@ triggers:
 
 Use Sequential Thinking for complex problems that benefit from structured, revisable analysis.
 
-## Setup: Airis Gateway
+## Available Tool
 
-Sequential Thinking runs through the Airis MCP gateway.
-
-**Tool access pattern**: `mcp__airis-mcp-gateway__airis-exec` with `tool: "sequential-thinking:sequentialthinking"`
+| Tool | Purpose |
+|------|---------|
+| `mcp__sequential-thinking__sequentialThinking` | Execute a thought in a reasoning chain |
 
 ## When to Use
 
@@ -44,83 +44,16 @@ Sequential Thinking runs through the Airis MCP gateway.
 - Questions with obvious answers
 - Tasks that don't require multi-step reasoning
 
-## Workflow
+## Basic Usage
 
-### 1. Load Server (if cold)
-
-```
-mcp__airis-mcp-gateway__airis-find
-  server: "sequential-thinking"
-  query: "think"
-```
-
-### 2. Start Thinking Chain
+Each call represents one thought in your reasoning chain.
 
 ```
-mcp__airis-mcp-gateway__airis-exec
-  tool: "sequential-thinking:sequentialthinking"
-  arguments: {
-    "thought": "First, let me understand the problem. We have X happening when Y...",
-    "nextThoughtNeeded": true,
-    "thoughtNumber": 1,
-    "totalThoughts": 5
-  }
-```
-
-### 3. Continue Chain
-
-```
-mcp__airis-mcp-gateway__airis-exec
-  tool: "sequential-thinking:sequentialthinking"
-  arguments: {
-    "thought": "Based on step 1, the likely cause is Z because...",
-    "nextThoughtNeeded": true,
-    "thoughtNumber": 2,
-    "totalThoughts": 5
-  }
-```
-
-### 4. Revise if Needed
-
-```
-mcp__airis-mcp-gateway__airis-exec
-  tool: "sequential-thinking:sequentialthinking"
-  arguments: {
-    "thought": "Actually, my assumption in thought 2 was wrong. Let me reconsider...",
-    "nextThoughtNeeded": true,
-    "thoughtNumber": 3,
-    "totalThoughts": 6,
-    "isRevision": true,
-    "revisesThought": 2
-  }
-```
-
-### 5. Branch for Alternatives
-
-```
-mcp__airis-mcp-gateway__airis-exec
-  tool: "sequential-thinking:sequentialthinking"
-  arguments: {
-    "thought": "Let me explore an alternative approach from step 2...",
-    "nextThoughtNeeded": true,
-    "thoughtNumber": 4,
-    "totalThoughts": 7,
-    "branchFromThought": 2,
-    "branchId": "alternative-approach"
-  }
-```
-
-### 6. Conclude
-
-```
-mcp__airis-mcp-gateway__airis-exec
-  tool: "sequential-thinking:sequentialthinking"
-  arguments: {
-    "thought": "Based on my analysis, the solution is X because of Y and Z.",
-    "nextThoughtNeeded": false,
-    "thoughtNumber": 5,
-    "totalThoughts": 5
-  }
+mcp__sequential-thinking__sequentialThinking
+  thought: "First, let me understand the problem. We have X happening when Y..."
+  nextThoughtNeeded: true
+  thoughtNumber: 1
+  totalThoughts: 5
 ```
 
 ## Parameters
@@ -135,7 +68,50 @@ mcp__airis-mcp-gateway__airis-exec
 | `revisesThought` | No | Which thought number being revised |
 | `branchFromThought` | No | Thought number to branch from |
 | `branchId` | No | Identifier for the branch |
-| `needsMoreThoughts` | No | `true` if need to extend beyond total |
+
+## Continue Chain
+
+```
+mcp__sequential-thinking__sequentialThinking
+  thought: "Based on step 1, the likely cause is Z because..."
+  nextThoughtNeeded: true
+  thoughtNumber: 2
+  totalThoughts: 5
+```
+
+## Revise if Needed
+
+```
+mcp__sequential-thinking__sequentialThinking
+  thought: "Actually, my assumption in thought 2 was wrong. Let me reconsider..."
+  nextThoughtNeeded: true
+  thoughtNumber: 3
+  totalThoughts: 6
+  isRevision: true
+  revisesThought: 2
+```
+
+## Branch for Alternatives
+
+```
+mcp__sequential-thinking__sequentialThinking
+  thought: "Let me explore an alternative approach from step 2..."
+  nextThoughtNeeded: true
+  thoughtNumber: 4
+  totalThoughts: 7
+  branchFromThought: 2
+  branchId: "alternative-approach"
+```
+
+## Conclude
+
+```
+mcp__sequential-thinking__sequentialThinking
+  thought: "Based on my analysis, the solution is X because of Y and Z."
+  nextThoughtNeeded: false
+  thoughtNumber: 5
+  totalThoughts: 5
+```
 
 ## Best Practices
 
@@ -175,10 +151,14 @@ Thought 4 (revision): "Wait, I should also consider that we're using WordPress b
 Thought 5 (conclusion): "Recommendation: REST API. Reasons: 1) Native WordPress support, 2) Team expertise, 3) Simpler caching. The over-fetching concern can be mitigated with sparse fieldsets."
 ```
 
-## Error Recovery
+## Setup
 
-| Error | Recovery |
-|-------|----------|
-| Server cold | Use `airis-find server="sequential-thinking"` first |
-| Lost context | Start fresh chain with summary of previous findings |
-| Going in circles | Use branching to try alternative approach |
+No API key required. Install with:
+```bash
+bun run scripts/setup-mcp.ts
+```
+
+Or manually:
+```bash
+claude mcp add --scope user sequential-thinking -- npx -y @modelcontextprotocol/server-sequential-thinking@latest
+```

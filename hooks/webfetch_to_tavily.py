@@ -25,11 +25,13 @@ warning = f"""⚠️  CONSIDER Tavily: For web content extraction, Tavily often 
 WebFetch is fine for simple pages, but Tavily extract handles complex pages better.
 
 To use Tavily extract:
-  mcp__airis-mcp-gateway__airis-exec
-    tool: "tavily:tavily_extract"
-    arguments: {{"urls": ["{url}"]}}
+  mcp__tavily__tavily_extract
+    urls: ["{url}"]
+    extract_depth: "basic"
 
-See /mcp-tavily skill for full usage patterns.
+For LinkedIn or protected sites, use extract_depth: "advanced"
+
+See mcp-tavily skill for full usage patterns.
 
 Proceeding with WebFetch...
 """

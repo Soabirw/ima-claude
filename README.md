@@ -4,8 +4,9 @@ IMA's Claude Code Skills - FP patterns, architecture guidance, and team standard
 
 ## What's Included
 
-- **11 Skills**: FP patterns for JS, PHP, React, Vue, Quasar, WordPress
+- **17 Skills**: FP patterns for JS, PHP, React, Vue, Quasar, WordPress + MCP helpers
 - **Architecture guidance**: System design principles
+- **MCP Integration**: Setup script + skills for Tavily, Context7, Memory, Sequential Thinking
 - **Meta-skills**: Create and analyze skills
 - **Personalities**: Fun themed response styles (40K, Templars)
 
@@ -20,30 +21,71 @@ IMA's Claude Code Skills - FP patterns, architecture guidance, and team standard
 
 ima-claude works completely standalone, but integrates beautifully with SuperClaude for additional features like personas, commands, and MCP orchestration.
 
-## MCP Configuration (Highly Recommended)
+## MCP Servers (Highly Recommended)
 
-### airis-mcp-gateway
+ima-claude includes helper skills and an interactive setup script for essential MCP servers:
 
-We recommend [airis-mcp-gateway](https://github.com/agiletec-inc/airis-mcp-gateway) as your primary MCP solution. It consolidates multiple essential MCP servers into a single gateway:
+| MCP Server | Purpose | Requires API Key |
+|------------|---------|------------------|
+| **Tavily** | Web research and current information | ✓ Yes ([tavily.com](https://tavily.com)) |
+| **Context7** | Official library documentation lookup | ✗ No |
+| **Memory** | Persistent knowledge graph across sessions | ✗ No |
+| **Sequential Thinking** | Structured reasoning for complex problems | ✗ No |
+| **Fetch** | Web page content extraction | ✗ No |
+| **Chrome DevTools** | Browser debugging capabilities | ✗ No |
 
-| MCP Server | Purpose |
-|------------|---------|
-| **Context7** | Library documentation lookup |
-| **Tavily** | Web search and content extraction |
-| **Sequential Thinking** | Complex multi-step reasoning |
-| **Magic (21st.dev)** | UI component generation |
-| **BrowserMCP/Playwright** | Browser automation and E2E testing |
-| **Chrome DevTools** | Browser debugging |
-| **Atlassian** | Jira/Confluence integration |
-| **Gitea** | Git repository management |
+### Interactive Setup
 
-**Why use the gateway?**
-- Single configuration vs 8+ separate MCP servers
-- Unified authentication and management
-- Consistent tool naming conventions
-- Easy enable/disable for specific servers
+```bash
+bun run scripts/setup-mcp.ts
+```
 
-See [docs/MCP-SETUP.md](docs/MCP-SETUP.md) for detailed installation instructions.
+The interactive script will:
+- Show currently installed MCP servers
+- Let you select which servers to install
+- Handle API key input (Tavily)
+- Configure servers using official `claude mcp add` commands
+- Optionally remove Airis Gateway if installed
+
+### Manual Installation
+
+Install individual servers:
+
+```bash
+# Tavily (requires API key)
+claude mcp add --scope user -e TAVILY_API_KEY=your-key -- tavily npx -y tavily-mcp@latest
+
+# Context7
+claude mcp add --scope user context7 -- npx -y @upstash/context7-mcp@latest
+
+# Memory
+claude mcp add --scope user memory -- npx -y @modelcontextprotocol/server-memory@latest
+
+# Sequential Thinking
+claude mcp add --scope user sequential-thinking -- npx -y @modelcontextprotocol/server-sequential-thinking@latest
+
+# Fetch
+claude mcp add --scope user fetch -- uvx mcp-server-fetch
+
+# Chrome DevTools
+claude mcp add --scope user chrome-devtools -- npx -y chrome-devtools-mcp@latest
+```
+
+Verify installation:
+```bash
+claude mcp list
+```
+
+### MCP Skills
+
+ima-claude includes skills that help you use MCP servers effectively:
+
+- **mcp-tavily** - Web research patterns and query optimization
+- **mcp-context7** - Library documentation lookup strategies
+- **mcp-memory** - Knowledge graph best practices
+- **mcp-sequential** - Structured reasoning workflows
+
+These skills auto-activate when you use the MCP tools.
 
 ## Quick Install
 
@@ -86,6 +128,18 @@ bunx ima-claude upgrade
 |-------|-------------|
 | `architect` | System design expertise and principles |
 | `docs-organize` | Three-tier documentation organization |
+| `wp-local` | WP-CLI commands for Flywheel Local WP |
+| `rg` | Ripgrep usage patterns |
+| `ima-forms-expert` | WordPress form components (IMA Forms) |
+
+### MCP Integration Skills
+
+| Skill | Description |
+|-------|-------------|
+| `mcp-tavily` | Web research and query optimization |
+| `mcp-context7` | Library documentation lookup strategies |
+| `mcp-memory` | Knowledge graph best practices |
+| `mcp-sequential` | Structured reasoning workflows |
 
 ### Meta Skills
 
