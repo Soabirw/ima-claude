@@ -227,7 +227,20 @@ async function main() {
     log.success(`${isUpgrade ? "Upgraded" : "Installed"} ${commandsInstalled} commands`);
   }
 
-  // Step 12: Create local-skills template directory (only on fresh install)
+  // Step 12: Install IMA_CLAUDE_INIT.md (bootstrap file)
+  const initFile = join(scriptDir, "IMA_CLAUDE_INIT.md");
+  if (existsSync(initFile)) {
+    const dest = join(CLAUDE_DIR, "IMA_CLAUDE_INIT.md");
+    log.step(`${skillVerb} IMA_CLAUDE_INIT.md...`);
+    if (existsSync(dest)) {
+      try { chmodSync(dest, 0o644); } catch {}
+    }
+    copyFileSync(initFile, dest);
+    console.log(`   ${colors.green}${skillSymbol}${colors.reset} IMA_CLAUDE_INIT.md`);
+    log.success("Bootstrap file installed");
+  }
+
+  // Step 13: Create local-skills template directory (only on fresh install)
   const localSkillsDir = join(SKILLS_DIR, ".local");
   if (!existsSync(localSkillsDir)) {
     ensureDir(localSkillsDir);
