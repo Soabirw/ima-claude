@@ -1,6 +1,6 @@
 ---
 name: "php-fp"
-description: "Core FP principles for PHP with anti-over-engineering focus - Simple > Complex | Native > Custom Utilities | MVP > Enterprise"
+description: "Core FP principles with anti-over-engineering focus - Simple > Complex | Evidence > Assumptions"
 ---
 
 # PHP Functional Programming
@@ -17,7 +17,7 @@ Core functional programming principles for PHP with anti-over-engineering enforc
 
 ## CRITICAL: Anti-Over-Engineering (PRIMARY FOCUS)
 
-**Core Principle**: "Simple solutions > Complex abstractions | Native patterns > Custom FP utilities | MVP > Enterprise patterns"
+**Core Principle**: "Simple > Complex | Evidence > Assumptions"
 
 > **Clarification**: This skill prevents CREATING custom FP utility functions (pipe, compose, curry) to make PHP "feel" like Haskell. Using established libraries (Carbon, Collections, etc.) is perfectly fine. FP is a mindset—pure functions, immutability, composition—not a rigid API signature.
 

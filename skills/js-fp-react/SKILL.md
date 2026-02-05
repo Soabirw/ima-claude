@@ -245,7 +245,7 @@ const UserEditModal = ({ isOpen, onClose, user }: {
 )
 ```
 
-## Performance Optimization (MVP-First Approach)
+## Performance Optimization (Evidence-Based)
 
 **⚠️ IMPORTANT**: Follow core principles - optimize only when needed with evidence.
 

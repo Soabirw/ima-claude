@@ -60,10 +60,8 @@ Skills are domain-specific guidance that Claude auto-discovers based on your req
 
 All our skills enforce:
 
-1. **Simple > Complex** - Start with the simplest solution
-2. **Native > Utilities** - Use language idioms, not FP libraries
-3. **MVP > Enterprise** - Build what you need now, evolve later
-4. **Evidence > Assumptions** - Measure before optimizing
+1. **Simple > Complex** - Start with the simplest solution that works
+2. **Evidence > Assumptions** - Add complexity only when you have evidence you need it
 
 ### 4. Example Workflow
 

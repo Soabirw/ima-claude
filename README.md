@@ -2,12 +2,14 @@
 
 IMA's Claude Code Skills - FP patterns, architecture guidance, and team standards.
 
+**Core Philosophy: `Simple > Complex | Evidence > Assumptions`**
+
 ## What's Included
 
-- **20 Skills**: FP patterns for JS, PHP, React, Vue, Quasar, WordPress + MCP helpers + testing + session management
-- **Architecture guidance**: System design principles
-- **MCP Integration**: Setup script + skills for Tavily, Context7, Memory, Sequential Thinking
-- **Session Management**: MCP-based save/resume (no file path confusion)
+- **22+ Skills**: Foundational + FP implementation + domain expert + MCP integration + meta-skills
+- **Default Persona**: "The Practitioner" - 25-year veteran mindset, collaborative, plan-first
+- **MCP Integration**: Setup script + skills for Serena, Tavily, Context7, Memory, Sequential Thinking
+- **Session Management**: MCP-based save/resume via Serena (no file path confusion)
 - **Meta-skills**: Create and analyze skills
 - **Personalities**: Fun themed response styles (40K, Templars)
 
@@ -16,11 +18,11 @@ IMA's Claude Code Skills - FP patterns, architecture guidance, and team standard
 - [Claude Code](https://claude.ai/code) installed
 - [bun](https://bun.sh) - For installation
 
-## Optional (Recommended)
+## Optional
 
-- [SuperClaude](https://github.com/SuperClaude-Org/SuperClaude_Framework) - Enhanced commands & personas
+- [SuperClaude](https://github.com/anthropics/superclaude) - Enhanced commands & workflows
 
-ima-claude works completely standalone, but integrates beautifully with SuperClaude for additional features like personas, commands, and MCP orchestration.
+ima-claude is **fully standalone** with its own persona, skills, and MCP integration. SuperClaude adds additional command workflows if desired.
 
 ## MCP Servers (Highly Recommended)
 
@@ -28,12 +30,15 @@ ima-claude includes helper skills and an interactive setup script for essential 
 
 | MCP Server | Purpose | Requires API Key |
 |------------|---------|------------------|
+| **Serena** | Code symbol operations, refactoring, semantic analysis | ✗ No (requires JetBrains IDE) |
 | **Tavily** | Web research and current information | ✓ Yes ([tavily.com](https://tavily.com)) |
 | **Context7** | Official library documentation lookup | ✗ No |
 | **Memory** | Persistent knowledge graph across sessions | ✗ No |
 | **Sequential Thinking** | Structured reasoning for complex problems | ✗ No |
 | **Fetch** | Web page content extraction | ✗ No |
 | **Chrome DevTools** | Browser debugging capabilities | ✗ No |
+
+> **Note:** Serena is especially recommended - it enables semantic code operations (find references, rename symbols, refactor) and provides cross-session memory for session management.
 
 ### Interactive Setup
 
@@ -54,6 +59,9 @@ The interactive script will:
 Install individual servers:
 
 ```bash
+# Serena (requires JetBrains IDE running with Serena plugin)
+# See: https://github.com/Serena-AI/Serena
+
 # Tavily (requires API key)
 claude mcp add --scope user -e TAVILY_API_KEY=your-key -- tavily npx -y tavily-mcp@latest
 
@@ -82,20 +90,24 @@ claude mcp list
 
 ima-claude includes skills that help you use MCP servers effectively:
 
-- **mcp-tavily** - Web research patterns and query optimization
-- **mcp-context7** - Library documentation lookup strategies
-- **mcp-memory** - Knowledge graph best practices
-- **mcp-sequential** - Structured reasoning workflows
-- **mcp-serena** - Code symbol operations and refactoring
+| Skill | Purpose |
+|-------|---------|
+| **mcp-serena** | Code symbol operations, refactoring, semantic analysis |
+| **mcp-tavily** | Web research patterns and query optimization |
+| **mcp-context7** | Library documentation lookup strategies |
+| **mcp-memory** | Proactive knowledge graph (auto-stores decisions) |
+| **mcp-sequential** | Structured reasoning workflows |
 
 ### Session Management Skills
 
-- **save-session** - Save session state to Serena MCP memory (no file path confusion)
-- **resume-session** - Resume previous session from Serena MCP memory
+| Skill | Purpose |
+|-------|---------|
+| **save-session** | Save session state to Serena MCP memory |
+| **resume-session** | Resume previous session from Serena MCP memory |
 
-Uses Serena MCP for cross-session persistence. No more file path issues!
+> **Requires Serena MCP** for cross-session persistence. No more file path issues!
 
-These skills auto-activate when you use the MCP tools.
+These skills auto-activate based on context.
 
 ## Quick Install
 
@@ -119,7 +131,14 @@ bunx ima-claude upgrade
 
 ## Available Skills
 
-### FP Domain Skills
+### Foundational Skills
+
+| Skill | Description |
+|-------|-------------|
+| `functional-programmer` | FP principles and philosophy (no code - concepts only) |
+| `task-master` | Hierarchical task breakdown, storage strategy, agent delegation |
+
+### FP Implementation Skills
 
 | Skill | Description |
 |-------|-------------|
@@ -147,9 +166,10 @@ bunx ima-claude upgrade
 
 | Skill | Description |
 |-------|-------------|
+| `mcp-serena` | Code symbol operations, refactoring, semantic analysis |
 | `mcp-tavily` | Web research and query optimization |
 | `mcp-context7` | Library documentation lookup strategies |
-| `mcp-memory` | Knowledge graph best practices |
+| `mcp-memory` | Proactive knowledge graph (auto-stores decisions) |
 | `mcp-sequential` | Structured reasoning workflows |
 
 ### Meta Skills
@@ -234,16 +254,18 @@ See [projects/README.md](projects/README.md) for setup guide and instructions fo
 
 ## Architecture
 
-ima-claude follows a **Skills-first** architecture:
+ima-claude follows a **Persona + Skills** architecture:
 
-- **Skills contain expertise** - Domain knowledge, patterns, guidance
-- **Personalities set tone** - How Claude communicates (fun themes)
-- **Commands are deprecated** - Skills replace command-based routing
+- **Default Persona** - "The Practitioner" provides foundational mindset (FP, composition, plan-first)
+- **Skills contain expertise** - Domain knowledge, patterns, implementation guidance
+- **Personalities overlay tone** - Fun themes (40K, Templars) without changing expertise
+- **MCP integration** - Serena for code ops, Memory for persistence, Tavily for research
 
 This makes ima-claude:
-1. **Fully independent** - Works without SuperClaude
-2. **Efficient** - Only loads what's needed
-3. **Maintainable** - Clear separation of concerns
+1. **Fully standalone** - Complete system without dependencies
+2. **Consistent** - Same mindset across all interactions
+3. **Efficient** - Skills load on-demand based on context
+4. **Extensible** - Add your own skills in `~/.claude/skills/`
 
 ## For Teams
 

@@ -4,7 +4,11 @@ IMA's Claude Code Skills for functional programming, architecture, and team stan
 
 ## Available Skills
 
-### FP Skills (Auto-discovered by domain)
+### Foundational Skills (Complement the Default Persona)
+- `functional-programmer` - FP principles and philosophy (triggers on FP discussions)
+- `task-master` - Task breakdown, storage strategy, agent delegation (triggers on planning)
+
+### FP Implementation Skills (Auto-discovered by domain)
 - `js-fp` - JavaScript FP core (anti-over-engineering, native patterns)
 - `js-fp-api` - Node.js API patterns (security-first SQL, middleware DI)
 - `js-fp-react` - React FP patterns (hooks, HOCs, pure components)
@@ -37,7 +41,7 @@ IMA's Claude Code Skills for functional programming, architecture, and team stan
 
 ## Core Philosophy
 
-**"Simple solutions > Complex abstractions | Native patterns > Custom FP utilities | MVP > Enterprise"**
+**"Simple > Complex | Evidence > Assumptions"**
 
 All skills enforce:
 1. **Anti-over-engineering** - Start simple, add complexity only with evidence

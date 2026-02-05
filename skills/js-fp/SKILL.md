@@ -1,6 +1,6 @@
 ---
 name: "js-fp"
-description: "Core FP principles with anti-over-engineering focus - Simple > Complex | Native > Custom Utilities | MVP > Enterprise"
+description: "Core FP principles with anti-over-engineering focus - Simple > Complex | Evidence > Assumptions"
 ---
 
 # JavaScript Functional Programming
@@ -17,7 +17,7 @@ Core functional programming principles for JavaScript with anti-over-engineering
 
 ## ⚠️ CRITICAL: Anti-Over-Engineering (PRIMARY FOCUS)
 
-**Core Principle**: "Simple solutions > Complex abstractions | Native patterns > Custom FP utilities | MVP > Enterprise patterns"
+**Core Principle**: "Simple > Complex | Evidence > Assumptions"
 
 > **Clarification**: This skill prevents CREATING custom FP utility functions (pipe, compose, curry) to make JavaScript "feel" like Haskell. Using established libraries (lodash, date-fns, etc.) is perfectly fine. FP is a mindset—pure functions, immutability, composition—not a rigid API signature.
 
@@ -259,7 +259,7 @@ describe('calculateDiscount - FP Comprehensive', () => {
 })
 ```
 
-## Performance Patterns (MVP-First, Evidence-Based)
+## Performance Patterns (Evidence-Based)
 
 **⚠️ IMPORTANT**: Optimize only when needed with evidence.
 

@@ -5,6 +5,69 @@ All notable changes to ima-claude will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.0] - 2026-02-05
+
+### Added
+
+- **Default Persona: The Practitioner** - Foundational operating mode in `IMA_CLAUDE_INIT.md`
+  - 25-year veteran mindset: FP journey, composition, anti-over-engineering
+  - Collaborative personality: uses "we", humble, light-hearted, loves puns ("LEAN into the KISS")
+  - Working style: "Slow is smooth, smooth is fast" - plan before implementing
+  - Always active; fun personalities (40k, templars) overlay tone only
+
+- **functional-programmer Skill** - FP principles and philosophy (no code examples)
+  - The Seven Pillars: pure functions, immutability, composition, first-class functions, referential transparency, side effect isolation, declarative style
+  - Journey from OOP: why inheritance fails, composition wins
+  - Anti-over-engineering: don't hand-roll utilities, use established libraries
+  - References tech-specific skills (js-fp, php-fp) for implementation
+  - 258 lines, purely conceptual
+
+- **task-master Skill** - Structured task breakdown and delegation
+  - Hierarchical decomposition: Epic → Story → Task
+  - Storage decision tree: Serena memory vs TaskList vs Markdown
+  - Agent delegation patterns: two-level max, minimal context principle
+  - Vertical vs horizontal decomposition for sequential/parallel work
+  - 330 lines, practical and actionable
+
+### Changed
+
+- **mcp-memory Skill rewritten for proactive usage**
+  - From reactive ("use when asked") to proactive ("MUST use automatically")
+  - Session start: automatically search for relevant context
+  - During work: store decisions as they happen (with recognition patterns)
+  - Session end: capture learnings
+  - Before asking: check memory first
+  - Added "What NOT to Store" to prevent over-storage
+  - Key insight: "Memory works when wired into decision-making automatically"
+
+- **Simplified core philosophy tagline** across all skills
+  - From: `Simple > Complex | Native > Custom Utilities | MVP > Enterprise`
+  - To: `Simple > Complex | Evidence > Assumptions`
+  - Removes ambiguity: "MVP" was trimming features; "Native" was blocking libraries
+  - Detailed skills still explain nuances; tagline is now hard to misinterpret
+
+- **Reorganized skill categories** in `CLAUDE.md`
+  - New "Foundational Skills" section for functional-programmer and task-master
+  - Renamed "FP Skills" to "FP Implementation Skills" for clarity
+
+- **Updated IMA_CLAUDE_INIT.md**
+  - Added Default Persona section
+  - Added Foundational Skills references
+  - Clarified that personalities are tone overlays only
+
+- **README.md comprehensively updated**
+  - Added core philosophy tagline
+  - Serena MCP now prominent in all tables and instructions
+  - Added Foundational Skills section
+  - Updated Architecture section to reflect Persona + Skills model
+  - Updated skill count (22+)
+
+### Fixed
+
+- "MVP > Enterprise" no longer causes over-aggressive feature trimming
+- "Native > Utilities" no longer blocks use of third-party libraries
+- Performance section headers now say "Evidence-Based" instead of "MVP-First"
+
 ## [1.6.0] - 2026-01-30
 
 ### Changed - BREAKING

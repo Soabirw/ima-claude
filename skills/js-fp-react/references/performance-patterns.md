@@ -1,6 +1,6 @@
 # React Performance Patterns
 
-Performance optimization strategies following the MVP-first approach: measure first, optimize with evidence.
+Performance optimization strategies: measure first, optimize with evidence.
 
 ## Table of Contents
 

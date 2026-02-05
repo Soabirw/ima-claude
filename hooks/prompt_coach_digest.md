@@ -35,10 +35,9 @@
 ## Team Philosophy
 
 - Simple > Complex
-- Native patterns > Custom utilities
-- MVP > Enterprise
+- Evidence > Assumptions
 - Specific > Generic (generalize with evidence)
-- Start small, add complexity when needed
+- Add complexity only when proven needed
 
 ## When Skills Already Apply (stay silent)
 
