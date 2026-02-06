@@ -1,0 +1,224 @@
+# IMA Brand System Reference
+
+Based on IMA Brand Book v4.0 (September 2025). Plugin: `ima-brand` v4.0.0.
+
+**Plugin location**: `wp-content/plugins/ima-brand/`
+**Import in SCSS**: `@import "../../../plugins/ima-brand/sass/brand";`
+
+---
+
+## Color Palette
+
+### Primary Colors
+
+| Name | Hex | Variable | Usage |
+|------|-----|----------|-------|
+| Trustworthy Indigo | `#040C53` | `$ima-brand-primary` | Headers, titles, emphasis |
+| Aquatic Pulse | `#0296A1` | `$ima-brand-secondary` | Buttons, CTAs, links |
+| Bright Teal | `#00B8B8` | `$ima-brand-accent-teal` | Highlights, hover states |
+| Guidance Sky | `#A2CFF0` | `$ima-brand-sky` | Light backgrounds, accents |
+
+### Secondary Colors
+
+| Name | Hex | Variable | Usage |
+|------|-----|----------|-------|
+| Vital Gold | `#FFCC00` | `$ima-brand-gold` | Warnings, prescriber tags |
+| Red Ribbon | `#DD153B` | `$ima-brand-red` | Errors, urgent items |
+| Plum Velvet | `#7B024D` | `$ima-brand-plum` | Accent color |
+
+### Grayscale
+
+| Name | Hex | Variable | Usage |
+|------|-----|----------|-------|
+| Calm Stone | `#919396` | `$ima-brand-gray` | Form labels, secondary text |
+| Clarity Wash | `#F2F3F5` | `$ima-brand-gray-light` | Backgrounds, cards |
+| Slate Neutral | `#8A93A5` | `$ima-brand-slate` | Alternative gray |
+| Gravel | `#494949` | `$ima-brand-gray-dark` | Dark gray |
+| White | `#FFFFFF` | `$ima-brand-white` | White text/backgrounds |
+| Black | `#000000` | `$ima-brand-black` | Black text |
+
+### Special
+
+| Name | Value | Variable |
+|------|-------|----------|
+| Accessible Teal | `#007BB4` | `$ima-brand-teal-accessible` |
+| Brand Gradient | `150deg, #00066F → #00B8B8` | `$ima-gradient` |
+
+### Semantic Tag Colors
+
+| Tag | Hex | Variable |
+|-----|-----|----------|
+| Telehealth | `#040C53` | `$ima-tag-telehealth` |
+| Prescriber | `#FFCC00` | `$ima-tag-prescriber` |
+| Family | `#A2CFF0` | `$ima-tag-family` |
+
+---
+
+## Typography
+
+### Font Families
+- **Lato** (`$ima-font-family-primary`): Headings, buttons, labels — Bold/Black weights
+- **Proxima Nova / Open Sans** (`$ima-font-family-secondary`): Body text, forms — Regular/Bold weights
+
+### Font Weights
+| Variable | Value |
+|----------|-------|
+| `$ima-font-weight-light` | 300 |
+| `$ima-font-weight-normal` | 400 |
+| `$ima-font-weight-semibold` | 600 |
+| `$ima-font-weight-bold` | 700 |
+| `$ima-font-weight-black` | 900 |
+
+### Font Size Scale
+| Variable | Size | Usage |
+|----------|------|-------|
+| `$ima-font-size-xs` | 14px | Form labels |
+| `$ima-font-size-sm` | 16px | Body text |
+| `$ima-font-size-base` | 18px | Buttons, links |
+| `$ima-font-size-md` | 20px | Section headers |
+| `$ima-font-size-lg` | 28px | Subsection titles |
+| `$ima-font-size-xl` | 32px | Doctor titles |
+| `$ima-font-size-xxl` | 40px | Page headers |
+
+### Line Heights
+- `$ima-line-height-base`: 1 (headers)
+- `$ima-line-height-comfortable`: 1.5 (body text)
+
+---
+
+## Typography Mixins
+
+```scss
+@include ima-page-header;         // Lato Bold 40px, uppercase, primary color
+@include ima-section-header;      // Lato Bold 20px, primary color
+@include ima-provider-title;      // Lato Semi Bold 32px, primary color
+@include ima-provider-title-bold; // Lato Bold 1.4em
+@include ima-form-label;          // Open Sans 14px, gray
+@include ima-button-text;         // Lato Bold 18px, uppercase
+@include ima-body-text;           // Proxima Nova Regular 16px
+@include ima-h1;                  // Lato Black 40px
+@include ima-h2;                  // Lato Bold 32px
+@include ima-h3;                  // Lato Regular 28px, red
+@include ima-footer-menu;         // Lato Bold 18px, white
+```
+
+---
+
+## Component Mixins
+
+### Buttons
+```scss
+@include ima-button-primary;      // Aquatic Pulse bg, white text, 20px/40px padding, 10px radius
+@include ima-button-primary-wide; // Same, 80px horizontal padding
+@include ima-button-outline;      // Transparent bg, primary border
+```
+- Hover: Bright Teal (#00B8B8) background
+- Font: Lato Bold 18px, uppercase
+
+### Forms
+```scss
+@include ima-form-field;   // 15px radius, 1px gray border, 16px padding, teal focus
+@include ima-form-label;   // Open Sans 14px, gray (#919396)
+```
+
+### Cards
+```scss
+@include ima-card;         // Light gray bg (#F2F3F5), 10px radius, 24px padding, NO shadow
+@include ima-card-white;   // White bg, 1px gray border, 10px radius, 24px padding
+```
+
+### Tags/Badges
+```scss
+@include ima-tag-telehealth;  // Dark blue bg, white text, 5px radius
+@include ima-tag-prescriber;  // Gold bg, black text
+@include ima-tag-family;      // Sky blue bg, black text
+```
+- Padding: 4px 16px, Lato Bold 14px uppercase
+
+### Layout
+```scss
+@include ima-gradient-bg;  // Brand gradient background
+
+// Utility classes (in HTML):
+.ima-section           // 48px vertical, 24px horizontal padding
+.ima-container-sm      // 720px max-width, centered
+.ima-container-md      // 960px max-width, centered
+.ima-container-lg      // 1140px max-width, centered
+```
+
+---
+
+## Spacing Variables
+
+| Variable | Value |
+|----------|-------|
+| `$ima-spacer` | 1rem (16px) |
+| `$ima-spacing-0` | 0 |
+| `$ima-spacing-1` | 4px |
+| `$ima-spacing-2` | 8px |
+| `$ima-spacing-3` | 16px |
+| `$ima-spacing-4` | 24px |
+| `$ima-spacing-5` | 48px |
+
+## Border Radius
+
+| Variable | Value | Usage |
+|----------|-------|-------|
+| `$ima-border-radius-sm` | 5px | Tags, small badges |
+| `$ima-border-radius-md` | 10px | Buttons, cards |
+| `$ima-border-radius-lg` | 15px | Form fields |
+| `$ima-border-radius-xl` | 20px | Large/digital buttons |
+
+## Component Spacing
+
+| Variable | Value |
+|----------|-------|
+| `$ima-button-padding-x` | 40px |
+| `$ima-button-padding-y` | 20px |
+| `$ima-button-padding-x-alt` | 80px (wide) |
+| `$ima-form-field-padding` | 16px |
+| `$ima-form-field-margin-bottom` | 24px |
+| `$ima-card-padding` | 24px |
+
+---
+
+## Bootstrap Integration
+
+The IMA brand plugin maps to Bootstrap's theme colors:
+
+```scss
+$primary:   $ima-brand-primary;        // #040C53
+$secondary: $ima-brand-secondary;      // #0296A1
+$success:   #28A745;
+$warning:   $ima-brand-gold;           // #FFCC00
+$danger:    $ima-brand-red;            // #DD153B
+$info:      $ima-brand-teal-accessible; // #007BB4
+$light:     $ima-brand-gray-light;     // #F2F3F5
+$dark:      $ima-brand-primary;        // #040C53
+```
+
+This means `.btn-primary`, `.bg-primary`, `.text-primary` etc. all use IMA brand colors automatically.
+
+---
+
+## WCAG Accessibility
+
+| Element | Ratio | Level |
+|---------|-------|-------|
+| Header 1 (Lato Black) | 16.5:1 | AAA |
+| Header 2 (Lato Bold) | 5.04:1 | AA |
+| Header 3 (Lato Regular) | 4.94:1 | AA |
+| Body Text (Proxima Nova) | 9:1 | AAA |
+
+High-contrast teal alternative: `$ima-brand-teal-accessible` (#007BB4)
+
+---
+
+## Design Notes
+
+1. **No drop shadows** on cards (per brand feedback)
+2. **Uppercase buttons** standard (text-transform: uppercase)
+3. **Form radius: 15px**, button radius: 10px-20px (20px for digital/lg)
+4. **Form labels**: Open Sans 14px gray (not Lato)
+5. **Page headers**: uppercase
+6. **Font-weight fixes** included for Chrome/Brave consistency

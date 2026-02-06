@@ -5,6 +5,28 @@ All notable changes to ima-claude will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.8.0] - 2026-02-06
+
+### Added
+
+- **ima-bootstrap Skill** - Bootstrap 5.3 + IMA brand integration
+  - Utility-first CSS approach with decision tree and anti-patterns table
+  - Bootstrap utility quick reference (spacing, display, flex, grid, text, colors, borders)
+  - Key component patterns (cards, modals, accordions, buttons, tables)
+  - IMA brand color/typography/mixin reference integrated with Bootstrap class mappings
+  - Three progressive-disclosure reference files:
+    - `references/ima-brand.md` - Full IMA color palette, typography mixins, component mixins
+    - `references/theme-integration.md` - Picostrap5 SCSS pipeline, variable override chain
+    - `references/bootstrap-patterns.md` - Extended Bootstrap patterns, Sass customization, JS API
+  - Context7 integration for deep Bootstrap API lookups (`/websites/getbootstrap`)
+  - Follows quasar-fp structural pattern
+  - SKILL.md: 248 lines, references: 787 lines total
+
+### Changed
+
+- Added `*.skill` to `.gitignore` (packaged skill bundles are build artifacts)
+- Synced `package.json` version with `utils.ts` VERSION constant
+
 ## [1.7.0] - 2026-02-05
 
 ### Added

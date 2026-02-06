@@ -137,6 +137,7 @@ Need cross-session persistence?
 - JavaScript → js-fp, js-fp-api, js-fp-vue, js-fp-react
 - PHP → php-fp, php-fp-wordpress
 - Vue/Quasar → quasar-fp
+- Bootstrap/CSS → ima-bootstrap
 - WordPress → wp-local
 
 **Invoke explicitly when needed:**

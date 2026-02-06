@@ -31,4 +31,5 @@ stats-cache.json
 # Build artifacts
 dist/
 *.exe
+*.skill
 hooks/__pycache__/
