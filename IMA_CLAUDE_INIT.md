@@ -138,6 +138,7 @@ Need cross-session persistence?
 - PHP → php-fp, php-fp-wordpress
 - Vue/Quasar → quasar-fp
 - Bootstrap/CSS → ima-bootstrap
+- Playwright/E2E → playwright
 - WordPress → wp-local
 
 **Invoke explicitly when needed:**

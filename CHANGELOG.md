@@ -5,6 +5,28 @@ All notable changes to ima-claude will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.9.0] - 2026-02-06
+
+### Added
+
+- **playwright Skill** - E2E testing and QA automation with Playwright + TypeScript
+  - Combined QA strategy layer (what/why to test) with Playwright implementation (how to test)
+  - QA strategy: test pyramid for E2E, test independence, what makes a good E2E test
+  - Locator strategy: priority table (role > label > placeholder > text > testid > CSS)
+  - Web-first assertions: auto-wait patterns with common anti-patterns
+  - Page Object Model: full POM class pattern with fixture registration
+  - Custom fixtures: auth state persistence, global setup, composable fixtures
+  - Project structure: recommended folder layout for scalable test suites
+  - Configuration: complete `playwright.config.ts` with projects, webServer, CI settings
+  - Anti-patterns: hard-coded waits, brittle selectors, manual assertions, shared state
+  - Linting: eslint-plugin-playwright integration
+  - Four progressive-disclosure reference files:
+    - `references/network-mocking.md` - HAR recording/playback, error simulation, API-first setup, route management
+    - `references/visual-regression.md` - Deterministic screenshots, animation handling, CI baselines, diff workflow
+    - `references/accessibility-testing.md` - axe-core/WCAG fixtures, targeted scanning, common violations
+    - `references/ci-cd.md` - GitHub Actions, sharding with report merging, Docker, reporters
+  - SKILL.md: 434 lines, references: 906 lines total
+
 ## [1.8.0] - 2026-02-06
 
 ### Added

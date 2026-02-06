@@ -21,6 +21,7 @@ IMA's Claude Code Skills for functional programming, architecture, and team stan
 ### Domain Expert Skills
 - `architect` - System design, scalability, long-term architecture
 - `ima-bootstrap` - Bootstrap 5.3 + IMA brand (utility-first CSS, components, SCSS)
+- `playwright` - E2E testing and QA automation (Playwright + TypeScript, POM, fixtures, mocking)
 - `docs-organize` - Three-tier documentation (Active/Archive/Transient)
 - `wp-local` - WP-CLI commands in Flywheel Local WP environments
 - `rg` - Ripgrep usage patterns (prefer over grep/find)
