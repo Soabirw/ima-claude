@@ -129,6 +129,21 @@ bun run scripts/install.ts
 bunx ima-claude upgrade
 ```
 
+## Tips
+
+> **Tip:** When using `task-master` or other skills that spawn multiple agents, those sub-agents will often get stuck waiting for permission prompts you can't accept. Use `--dangerously-skip-permissions` to let agents run autonomously:
+>
+> ```bash
+> claude --dangerously-skip-permissions
+> ```
+>
+> Recommended alias:
+> ```bash
+> alias claude-danger='claude --dangerously-skip-permissions'
+> ```
+>
+> **Use with care** — this skips all permission checks. Best suited for local development on trusted codebases where you're comfortable with Claude acting autonomously.
+
 ## Available Skills
 
 ### Foundational Skills
