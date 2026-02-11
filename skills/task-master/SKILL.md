@@ -168,6 +168,44 @@ Deeper hierarchies create:
 
 **If you think you need 3+ levels, restructure the work instead.**
 
+### Model Selection for Subagents
+
+**Opus orchestrates. Sonnet executes. Haiku handles the trivial.**
+
+When the orchestrator is running on Opus, most delegated tasks should use Sonnet via the
+`model` parameter on the Task tool. Opus tokens are expensive - reserve them for the
+orchestration layer and genuinely complex subtasks.
+
+```
+Task(subagent_type="general-purpose", model="sonnet", ...)  # Default for delegation
+Task(subagent_type="general-purpose", model="opus", ...)    # Only when justified
+Task(subagent_type="Explore", model="haiku", ...)           # Quick file lookups
+```
+
+**Model decision tree:**
+
+```
+Is the subtask...
+├── Simple/mechanical (search, read, write, format, list)?
+│   → sonnet (or haiku for pure exploration)
+├── Requires judgment but well-scoped (implement feature, write tests, refactor)?
+│   → sonnet
+├── Requires architectural reasoning, complex trade-offs, or multi-step analysis?
+│   → opus
+└── Uncertain?
+    → Start with sonnet. Escalate to opus only if quality is insufficient.
+```
+
+| Model | Cost | Use For |
+|-------|------|---------|
+| **haiku** | Lowest | File searches, quick lookups, simple reads |
+| **sonnet** | Medium | Most delegated work: implementation, research, testing, formatting |
+| **opus** | Highest | Orchestration (main agent), complex reasoning, architecture decisions |
+
+**Rule of thumb:** If you can describe the task in 2-3 sentences with clear success criteria,
+Sonnet can handle it. If the agent needs to make judgment calls about ambiguous trade-offs,
+consider Opus.
+
 ### Minimal Context Principle
 
 **Give subagents only what they need: task in, result out.**
@@ -239,6 +277,12 @@ Before delegating to a subagent, ask:
 - If the subagent fails, can you retry or fix easily?
 - Does failure cascade to other work?
 - High risk? → Do it yourself or add verification.
+
+**5. What model does this need?**
+- Is the task well-scoped with clear criteria? → `model: "sonnet"`
+- Is it a quick file search or lookup? → `model: "haiku"`
+- Does it require complex reasoning or ambiguous trade-offs? → `model: "opus"`
+- Default to Sonnet. Opus orchestrates, Sonnet executes.
 
 ## The Breakdown Process
 
@@ -318,6 +362,7 @@ Before starting any significant work:
 | "Just one more level of agents" | Debugging nightmare | Max 2 levels, restructure |
 | "This task is simple enough" | Scope creep | Still write it down |
 | "I'll remember the plan" | Context loss after compact | Use TaskList or Serena |
+| "Every agent needs Opus" | Wastes expensive tokens | Sonnet for most tasks, Opus for orchestration |
 
 ## Integration Points
 
