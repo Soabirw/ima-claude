@@ -27,6 +27,7 @@ IMA's Claude Code Skills for functional programming, architecture, and team stan
 - `rg` - Ripgrep usage patterns (prefer over grep/find)
 
 ### MCP Integration Skills
+- `mcp-atlassian` - Jira & Confluence operations (issues, pages, search, user mentions)
 - `mcp-tavily` - Web research via Tavily (prefer over WebSearch/WebFetch)
 - `mcp-context7` - Library documentation lookup
 - `mcp-serena` - Code symbol operations (find references, rename, refactor)

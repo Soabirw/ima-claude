@@ -5,6 +5,23 @@ All notable changes to ima-claude will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.10.0] - 2026-02-11
+
+### Added
+
+- **mcp-atlassian Skill** - Jira & Confluence operations via Claude's bundled Atlassian MCP
+  - Complete catalog of all 28 MCP tools organized by category with token-saving tips
+  - User mention (@tagging) patterns that actually work - the critical missing piece:
+    - Confluence pages: ADF format with mention nodes (reliable)
+    - Jira descriptions: `editJiraIssue` with ADF fields (reliable)
+    - Comments: Markdown-only limitation documented with workarounds
+  - `lookupJiraAccountId` → `accountId` flow for both Jira and Confluence
+  - 6 common mention pitfalls with symptoms and fixes (JSON.stringify, inline nodes, wiki notation)
+  - Token-saving strategies: field filtering, Markdown reads, result limits, session caching
+  - Decision logic for search tools (Rovo vs JQL vs CQL)
+  - Common workflows: create+assign issues, transition status, create pages with mentions
+  - SKILL.md: 339 lines
+
 ## [1.9.0] - 2026-02-06
 
 ### Added
