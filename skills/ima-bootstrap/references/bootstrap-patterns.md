@@ -84,7 +84,7 @@ $utilities: map-merge(
 </div>
 ```
 
-### Responsive Breakpoints
+### Responsive Breakpoints (VIEWPORT-based)
 
 | Breakpoint | Class infix | Dimensions |
 |-----------|-------------|------------|
@@ -94,6 +94,11 @@ $utilities: map-merge(
 | Large | `lg` | ≥992px |
 | Extra large | `xl` | ≥1200px |
 | Extra extra large | `xxl` | ≥1400px |
+
+**Important limitation:** These breakpoints respond to the browser viewport, NOT the
+parent container. A `.col-md-6` in a narrow sidebar on a desktop will NOT stack — the
+viewport is still wide. For container-responsive layouts, use the IMA Container Grid
+(`.ima-row` + `.ima-col-sm-6`) from `ima-brand/sass/_container-grid.scss`.
 
 ### Gutters
 - Default: `1.5rem` (24px)

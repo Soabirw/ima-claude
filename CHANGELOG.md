@@ -5,6 +5,20 @@ All notable changes to ima-claude will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.10.2] - 2026-02-12
+
+### Changed
+
+- **ima-bootstrap Skill** - Added IMA Container Grid documentation
+  - New "Bootstrap Grid vs IMA Container Grid" decision section in SKILL.md
+  - Container query grid: `.ima-row` + `.ima-col-{bp}-{n}` responds to parent container width, not viewport
+  - Breakpoints: `sm`≥400px, `md`≥600px, `lg`≥800px (container-based)
+  - Updated decision tree with container-responsive layout option
+  - Added anti-patterns: `.col-md-6` in reusable components, inline flex hacks
+  - Updated file structure to include `_container-grid.scss`
+  - `references/ima-brand.md` - Full container grid reference with examples, breakpoint table, SCSS variables
+  - `references/bootstrap-patterns.md` - Added viewport limitation note with container grid cross-reference
+
 ## [1.10.1] - 2026-02-11
 
 ### Changed

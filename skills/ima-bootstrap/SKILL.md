@@ -22,7 +22,8 @@ Need deep Bootstrap API details? → Context7: /websites/getbootstrap
 
 ```
 Writing HTML/template markup?
-├── Layout → .container, .row, .col-{bp}-{n} (12-column grid)
+├── Layout (viewport-responsive) → .container, .row, .col-{bp}-{n}
+├── Layout (container-responsive) → .ima-row, .ima-col-{bp}-{n} ← USE FOR COMPONENTS
 ├── Spacing → .m{side}-{size}, .p{side}-{size} (0-5 scale)
 ├── Display → .d-{value}, .d-{bp}-{value}
 ├── Flex → .d-flex, .justify-content-{v}, .align-items-{v}
@@ -38,6 +39,22 @@ Writing SCSS?
 └── Custom utility? → Probably Bootstrap already has it
 ```
 
+### Bootstrap Grid vs IMA Container Grid
+
+```
+Need columns that respond to VIEWPORT width?
+  → Bootstrap: .row + .col-md-6 (page-level layouts)
+
+Need columns that respond to CONTAINER width?
+  → IMA: .ima-row + .ima-col-sm-6 (components, forms, widgets, sidebars)
+```
+
+**Rule of thumb:** Page structure = Bootstrap grid. Reusable components = IMA container grid.
+
+Bootstrap's `.col-md-6` breaks at viewport ≥768px — useless when a form sits in a narrow
+sidebar on a wide screen. IMA's `.ima-col-sm-6` breaks at container ≥400px regardless of
+viewport, so the same form works in a sidebar, card, modal, or full-width page.
+
 ## Anti-Patterns
 
 | BAD | GOOD | Why |
@@ -49,6 +66,8 @@ Writing SCSS?
 | `border-radius: 10px` on every element | Already set via `$border-radius` | Global override |
 | Custom `.my-card { padding: 24px; ... }` | `class="card"` | Cards already IMA-branded |
 | `@media (min-width: 768px)` for layout | `class="col-md-6"` | Grid handles it |
+| `.col-md-6` in a reusable component | `.ima-col-sm-6` | Container-responsive |
+| Inline `style="flex: 1 1 200px"` hacks | `.ima-row` + `.ima-col-sm-6` | Utility classes |
 
 ## Bootstrap Utility Quick Reference
 
@@ -66,11 +85,21 @@ Writing SCSS?
 - `align-items-{start|center|end|stretch|baseline}`
 - `gap-{0-5}`, `row-gap-{n}`, `column-gap-{n}`
 
-### Grid (12-column)
+### Grid (12-column, viewport-based)
 - `.container` (responsive), `.container-fluid` (full-width)
 - `.col`, `.col-{1-12}`, `.col-{bp}-{1-12}`
 - Breakpoints: `sm`≥576, `md`≥768, `lg`≥992, `xl`≥1200, `xxl`≥1400
 - `.offset-{bp}-{n}`, `.order-{bp}-{n}`
+- **Use for page-level layouts only** — see IMA Container Grid for components
+
+### IMA Container Grid (12-column, container-based)
+- `.ima-row` (establishes container query context + CSS grid)
+- `.ima-col-{1-12}` (always that width), `.ima-col-{bp}-{1-12}` (responsive)
+- Breakpoints: `sm`≥400px, `md`≥600px, `lg`≥800px (container width, NOT viewport)
+- Default: all columns stack full-width (mobile-first)
+- Gap: `1rem` default
+- **Use for reusable components** — forms, widgets, cards, anything in sidebars/modals
+- Source: `ima-brand/sass/_container-grid.scss`
 
 ### Text & Typography
 - `text-start`, `text-center`, `text-end`
@@ -226,7 +255,8 @@ plugins/ima-brand/sass/
 ├── brand.scss                   ← Main import
 ├── _variables.scss              ← Colors, typography, spacing
 ├── _typography.scss             ← Font mixins
-└── _spacing.scss                ← Component mixins, layout
+├── _spacing.scss                ← Component mixins, layout
+└── _container-grid.scss         ← Container query grid (.ima-row/.ima-col-*)
 ```
 
 **Import order**: Bootstrap functions → IMA brand → theme variables → Bootstrap variables → Bootstrap components → custom styles

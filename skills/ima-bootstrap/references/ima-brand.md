@@ -146,6 +146,55 @@ Based on IMA Brand Book v4.0 (September 2025). Plugin: `ima-brand` v4.0.0.
 .ima-container-lg      // 1140px max-width, centered
 ```
 
+### Container Query Grid
+
+Container-responsive 12-column grid using CSS Container Queries (`@container`).
+Columns respond to their **parent container's width**, not the viewport — works correctly
+in sidebars, modals, cards, and any narrow context on wide screens.
+
+```html
+<!-- Stacked by default, side-by-side when container ≥ 400px -->
+<div class="ima-row">
+  <div class="ima-col-sm-6">First Name</div>
+  <div class="ima-col-sm-6">Last Name</div>
+</div>
+
+<!-- Three columns when container is wide enough -->
+<div class="ima-row">
+  <div class="ima-col-md-4">Col 1</div>
+  <div class="ima-col-md-4">Col 2</div>
+  <div class="ima-col-md-4">Col 3</div>
+</div>
+
+<!-- Always 50% (no breakpoint) -->
+<div class="ima-row">
+  <div class="ima-col-6">Left</div>
+  <div class="ima-col-6">Right</div>
+</div>
+```
+
+**Container breakpoints** (based on parent width):
+
+| Class prefix | Container width | Use case |
+|-------------|----------------|----------|
+| `ima-col-sm-` | ≥ 400px | Sidebar forms, narrow widgets |
+| `ima-col-md-` | ≥ 600px | Medium columns, cards |
+| `ima-col-lg-` | ≥ 800px | Wide columns, full-width areas |
+| `ima-col-` | Always | Fixed layout (no breakpoint) |
+
+**When to use which grid:**
+- **Bootstrap** `.row` + `.col-md-*` → Page-level layouts (responds to viewport)
+- **IMA** `.ima-row` + `.ima-col-sm-*` → Reusable components (responds to container)
+
+**SCSS variables** (all `!default`, overridable):
+```scss
+$ima-cq-columns: 12;
+$ima-cq-gap: 1rem;
+$ima-cq-breakpoints: (sm: 400px, md: 600px, lg: 800px);
+```
+
+Source: `ima-brand/sass/_container-grid.scss`
+
 ---
 
 ## Spacing Variables
