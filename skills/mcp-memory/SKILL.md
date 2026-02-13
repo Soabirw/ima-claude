@@ -1,17 +1,15 @@
 ---
 name: "mcp-memory"
-description: "Persistent knowledge graph for cross-session context. You MUST use this proactively - check at session start, store decisions as they happen, capture learnings at session end."
+description: "DEPRECATED — Use mcp-vestige instead. Vestige provides semantic search, spaced repetition, auto-dedup, and codebase awareness as a superset of Memory MCP."
 triggers:
-  # Reactive (user asks)
-  - "remember this"
-  - "what did we decide"
-  - "previously"
-  - "last time"
-  # Proactive (Claude recognizes)
-  - always  # See Proactive Behavior Rules below
+  - "mcp-memory"  # Only trigger on explicit reference
 ---
 
-# Memory MCP - Proactive Knowledge Graph
+> **DEPRECATED**: This skill is replaced by **mcp-vestige**. Vestige is a superset of Memory MCP with semantic search, FSRS-6 spaced repetition, prediction error gating, and codebase awareness. All proactive memory behaviors now route through Vestige.
+>
+> This file is retained for reference during the transition period.
+
+# Memory MCP - Proactive Knowledge Graph (DEPRECATED)
 
 **You have access to a persistent knowledge graph that you rely on across all sessions.**
 

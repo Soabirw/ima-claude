@@ -38,8 +38,9 @@ A 25-year software development veteran who learned through the School of Hard Kn
 **At session start, BEFORE asking questions:**
 
 ```
-mcp__memory__open_nodes names: ["user-{username}"]
-mcp__memory__search_nodes query: "{project-name}"
+mcp__vestige__search query: "user-{username} preferences" limit: 5
+mcp__vestige__search query: "{project-name}" limit: 5
+mcp__vestige__intention action: "check"
 ```
 
 This prevents re-learning known context. If working in a Serena-activated project, also check:
@@ -47,7 +48,7 @@ This prevents re-learning known context. If working in a Serena-activated projec
 mcp__serena__list_memories
 ```
 
-> **Setup:** Create your user entity in Memory MCP: `mcp__memory__create_entities` with name `user-{your-name}` and your preferences as observations.
+> **Setup:** Store your preferences via Vestige: `mcp__vestige__smart_ingest` with your preferences as content and node_type: "preference".
 
 ---
 
@@ -68,8 +69,11 @@ Need code symbols (find refs, rename, refactor)?
 Need complex reasoning (debug, architecture, trade-offs)?
   → Sequential Thinking
 
-Need cross-session persistence?
-  → Memory MCP
+Need cross-session persistence (preferences, decisions, patterns)?
+  → Vestige
+
+Need future reminders or intentions?
+  → Vestige
 ```
 
 ### Quick Reference
@@ -80,7 +84,8 @@ Need cross-session persistence?
 | Library name + API question | Context7 | Current events (Tavily) |
 | "where is X used", "rename", "refactor" | Serena | Simple text search (Grep) |
 | "think through", "debug", "trade-offs" | Sequential | Simple questions |
-| Preference stated, decision made | Memory | Temporary debug info |
+| Preference stated, decision made | Vestige | Temporary debug info |
+| "remind me", "next session", "intention" | Vestige | Session state (Serena) |
 
 ### Before Using Web Tools
 
@@ -92,15 +97,16 @@ Need cross-session persistence?
 
 ## Proactive Memory Storage
 
-**Store automatically (don't wait to be asked):**
+**Store automatically via Vestige (don't wait to be asked):**
 
 | When you hear... | Action |
 |------------------|--------|
-| "I prefer..." / "I like..." / "I always..." | Add to user's entity |
-| "Let's go with X because..." | Create `decision-{topic}` |
-| "The reason this failed was..." | Create `bug-{description}` |
-| "From now on..." / "Going forward..." | Update relevant entity |
-| User corrects your approach | Update user's entity |
+| "I prefer..." / "I like..." / "I always..." | `smart_ingest` node_type: "preference" |
+| "Let's go with X because..." | `smart_ingest` node_type: "decision" |
+| "The reason this failed was..." | `smart_ingest` node_type: "bug" |
+| "From now on..." / "Going forward..." | `smart_ingest` node_type: "preference" |
+| User corrects your approach | `smart_ingest` node_type: "preference" |
+| "Remind me..." / "Next session..." | `intention` action: "set" |
 
 **Don't store**: Temporary debug info, one-off fixes, info in project docs.
 
@@ -110,11 +116,11 @@ Need cross-session persistence?
 
 **Save session** (before ending significant work):
 - `/save-session` → Serena memory for project-specific state
-- Memory MCP → Cross-project decisions and preferences
+- Vestige → Cross-project decisions and preferences (via `smart_ingest`)
 
 **Resume session**:
-- `/resume-session` → Load Serena project memory
-- Memory MCP check → Load user preferences
+- `/resume-session` → Load Serena project memory + Vestige context search
+- Vestige intention check → Surface pending reminders
 
 ---
 

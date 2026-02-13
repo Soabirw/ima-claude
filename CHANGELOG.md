@@ -5,6 +5,30 @@ All notable changes to ima-claude will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.12.0] - 2026-02-13
+
+### Added
+
+- **mcp-vestige Skill** - Cognitive memory engine replacing Memory MCP
+  - Vestige MCP integration: semantic search, FSRS-6 spaced repetition, prediction error gating, codebase awareness
+  - 14 tools documented: search, smart_ingest, ingest, memory, codebase, intention, session_checkpoint, promote/demote, find_duplicates, consolidate, importance_score, memory_timeline, health_check
+  - Smart ingest thresholds: >92% REINFORCE, 75-92% UPDATE, <75% CREATE (auto-dedup)
+  - Node types: preference, decision, pattern, bug, codebase, intention, note
+  - Memory states: Active, Dormant, Silent, Unavailable (natural decay via FSRS-6)
+  - Proactive behavior rules: session start search, automatic storage triggers, intention checking
+  - Migration mapping from Memory MCP entities/relations to Vestige equivalents
+
+### Changed
+
+- **Memory architecture** - 3-tier clean separation: Vestige (persistent knowledge), Serena (session state), Claude auto-memory (MEMORY.md)
+- **mcp-memory Skill** - Deprecated with notice pointing to mcp-vestige; triggers narrowed to explicit reference only
+- **IMA_CLAUDE_INIT.md** - Memory Bootstrap, MCP Tool Selection, Proactive Storage, and Session Lifecycle all updated from Memory MCP to Vestige
+- **Global CLAUDE.md** - "Store decisions" summary updated to reference Vestige
+- **Project CLAUDE.md** - mcp-vestige added to MCP Integration Skills, mcp-memory marked deprecated
+- **task-master Skill** - Integration Points updated: mcp-memory → mcp-vestige
+- **resume-session Skill** - Added Vestige search + intention check to resume protocol
+- **save-session Skill** - Added note: persistent knowledge goes to Vestige, not Serena
+
 ## [1.11.0] - 2026-02-13
 
 ### Added

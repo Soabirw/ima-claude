@@ -368,7 +368,7 @@ Before starting any significant work:
 
 This skill works with:
 - **mcp-serena** - For persistent memory across sessions
-- **mcp-memory** - For cross-project decisions and patterns
+- **mcp-vestige** - For cross-project decisions, patterns, and intentions
 - **architect** - For evaluating architectural choices during planning
 - **save-session / resume-session** - For session state management
 

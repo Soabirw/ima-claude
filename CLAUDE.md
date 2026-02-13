@@ -29,11 +29,12 @@ IMA's Claude Code Skills for functional programming, architecture, and team stan
 
 ### MCP Integration Skills
 - `mcp-atlassian` - Jira & Confluence operations (issues, pages, search, user mentions)
+- `mcp-vestige` - Cognitive memory engine (semantic search, spaced repetition, intentions, codebase awareness)
 - `mcp-tavily` - Web research via Tavily (prefer over WebSearch/WebFetch)
 - `mcp-context7` - Library documentation lookup
 - `mcp-serena` - Code symbol operations (find references, rename, refactor)
 - `mcp-sequential` - Structured reasoning for complex problems
-- `mcp-memory` - Persistent knowledge graph across sessions
+- ~~`mcp-memory`~~ - **Deprecated** — replaced by `mcp-vestige`
 
 ### Session Management Skills
 - `save-session` - Save session state to Serena MCP memory (no file path confusion)

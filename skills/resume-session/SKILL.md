@@ -18,8 +18,10 @@ Resume a previously saved session from Serena MCP memory.
 ## Instructions
 
 1. Use `mcp__serena__read_memory` with memory name `session-state`
-2. Parse the content and provide a brief status summary
-3. Wait for user direction before taking action
+2. Search Vestige for project context: `mcp__vestige__search query: "{project-name}" limit: 5`
+3. Check for pending intentions: `mcp__vestige__intention action: "check"`
+4. Parse the content and provide a brief status summary
+5. Wait for user direction before taking action
 
 ## Output Format
 

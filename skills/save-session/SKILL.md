@@ -71,6 +71,8 @@ Saved: {current_date_time}
 
 Confirm with: "Session saved to Serena memory 'session-state'"
 
+**Note:** For persistent knowledge (decisions, patterns, preferences) that should survive beyond this session, use Vestige via `smart_ingest` — not Serena memory. Serena is for ephemeral session state only.
+
 ## Technical Notes
 
 - Uses Serena MCP `write_memory` tool (no file path confusion)
