@@ -5,6 +5,22 @@ All notable changes to ima-claude will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.11.0] - 2026-02-13
+
+### Added
+
+- **ima-brand Skill** - IMA Brand Book v4.0 knowledge for brand-aligned decisions
+  - Brand identity: mission, vision, values (7 core values), audience profiles (consumer vs professional)
+  - Brand persona: 5 tones (Professional, Friendly, Inspirational, Supportive, Informative) with channel mapping
+  - Copywriting rules: do's, don'ts, terminology guide (FLCCC → IMA, precision language)
+  - Visual system: full color palette (11 colors + gradient) with hex/CMYK/RGB, typography hierarchy
+  - Logo system: 3 variants (horizontal, vertical, lettermark), 5 lockup colors, usage rules, improper uses
+  - Imagery guidelines: photography style by content type, treatment rules
+  - Digital standards: WCAG contrast ratios, social media specs (4 platforms, image sizes, content pillars)
+  - Legal: medical disclaimer text, copyright format, sponsored content disclosure, approval workflow
+  - Clear boundary: brand knowledge here, CSS/SCSS implementation in `ima-bootstrap`
+  - SKILL.md (~110 lines) + 3 reference files (brand-identity.md, visual-system.md, digital-standards.md)
+
 ## [1.10.2] - 2026-02-12
 
 ### Changed
