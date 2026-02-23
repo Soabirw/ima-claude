@@ -5,6 +5,16 @@ All notable changes to ima-claude will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.14.1] - 2026-02-23
+
+### Added
+
+- **quickstart Skill** - Scannable team cheat sheet for new members
+  - Organized by intent: starting sessions, planning, writing code, reviewing, research, memory
+  - Table-heavy, zero narrative — just what to type
+  - Covers all key workflows: Compound Engineering pipeline, FP skill auto-activation, MCP tool selection, memory tiers
+  - Triggers on "quickstart", "cheat sheet", "what can I do", "getting started"
+
 ## [1.14.0] - 2026-02-23
 
 ### Added

@@ -4,6 +4,9 @@ IMA's Claude Code Skills for functional programming, architecture, and team stan
 
 ## Available Skills
 
+### Quick Reference
+- `quickstart` - Team cheat sheet (common workflows, commands, MCP tools at a glance)
+
 ### Foundational Skills (Complement the Default Persona)
 - `functional-programmer` - FP principles and philosophy (triggers on FP discussions)
 - `task-master` - Task breakdown, storage strategy, agent delegation (triggers on planning)
