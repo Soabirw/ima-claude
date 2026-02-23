@@ -6,9 +6,10 @@ IMA's Claude Code Skills - FP patterns, architecture guidance, and team standard
 
 ## What's Included
 
-- **22+ Skills**: Foundational + FP implementation + domain expert + MCP integration + meta-skills
+- **30+ Skills**: Foundational + FP implementation + domain expert + integration + meta-skills
 - **Default Persona**: "The Practitioner" - 25-year veteran mindset, collaborative, plan-first
-- **MCP Integration**: Setup script + skills for Serena, Tavily, Context7, Memory, Sequential Thinking
+- **MCP Integration**: Skills for Serena, Vestige, Qdrant, Tavily, Context7, Sequential Thinking
+- **Compound Engineering**: Bridge skill for Every.to's structured workflows (brainstorm → plan → work → review → compound)
 - **Session Management**: MCP-based save/resume via Serena (no file path confusion)
 - **Meta-skills**: Create and analyze skills
 - **Personalities**: Fun themed response styles (40K, Templars)
@@ -18,58 +19,60 @@ IMA's Claude Code Skills - FP patterns, architecture guidance, and team standard
 - [Claude Code](https://claude.ai/code) installed
 - [bun](https://bun.sh) - For installation
 
-## Optional
-
-- [SuperClaude](https://github.com/anthropics/superclaude) - Enhanced commands & workflows
-
-ima-claude is **fully standalone** with its own persona, skills, and MCP integration. SuperClaude adds additional command workflows if desired.
-
 ## MCP Servers (Highly Recommended)
 
-ima-claude includes helper skills and an interactive setup script for essential MCP servers:
+ima-claude includes helper skills for these MCP servers. Install any that fit your workflow:
 
-| MCP Server | Purpose | Requires API Key |
-|------------|---------|------------------|
-| **Serena** | Code symbol operations, refactoring, semantic analysis | ✗ No (requires JetBrains IDE) |
-| **Tavily** | Web research and current information | ✓ Yes ([tavily.com](https://tavily.com)) |
-| **Context7** | Official library documentation lookup | ✗ No |
-| **Memory** | Persistent knowledge graph across sessions | ✗ No |
-| **Sequential Thinking** | Structured reasoning for complex problems | ✗ No |
-| **Fetch** | Web page content extraction | ✗ No |
-| **Chrome DevTools** | Browser debugging capabilities | ✗ No |
+### Core MCP Servers
 
-> **Note:** Serena is especially recommended - it enables semantic code operations (find references, rename symbols, refactor) and provides cross-session memory for session management.
+| MCP Server | Purpose | Setup |
+|------------|---------|-------|
+| **Serena** | Code symbol operations, refactoring, session memory | JetBrains IDE + Serena plugin |
+| **Vestige** | Cognitive memory engine (preferences, decisions, patterns) | Cargo or binary install |
+| **Qdrant** | Document-scale RAG (PRDs, plans, solutions) | Docker |
+| **Tavily** | Web research and current information | API key ([tavily.com](https://tavily.com)) |
+| **Context7** | Official library documentation lookup | npx |
+| **Sequential Thinking** | Structured reasoning for complex problems | npx |
 
-### Interactive Setup
+### Optional MCP Servers
 
-```bash
-bun run scripts/setup-mcp.ts
-```
+| MCP Server | Purpose | Setup |
+|------------|---------|-------|
+| **Fetch** | Web page content extraction | uvx |
+| **Chrome DevTools** | Browser debugging capabilities | npx |
 
-The interactive script will:
-- Show currently installed MCP servers
-- Let you select which servers to install
-- Handle API key input (Tavily)
-- Configure servers using official `claude mcp add` commands
-- Optionally remove Airis Gateway from configuration
-- Provide guidance for managing Docker containers (no automatic operations)
+> **Recommended minimum**: Serena + Vestige + Context7 + Tavily. These four cover code ops, memory, docs, and web research.
 
-### Manual Installation
+### Marketplace Plugin (Recommended)
 
-Install individual servers:
+| Plugin | Purpose | Install |
+|--------|---------|---------|
+| **[Compound Engineering](https://every.to/guides/compound-engineering)** | Structured workflows: brainstorm → plan → work → review → compound. 15 specialized review agents, research agents, brainstorm workflows. | Claude Code marketplace |
+
+The `compound-bridge` skill connects Compound workflows with ima-claude's memory (Vestige/Qdrant) and coding standards.
+
+### Installation Commands
 
 ```bash
 # Serena (requires JetBrains IDE running with Serena plugin)
 # See: https://github.com/Serena-AI/Serena
+
+# Vestige (cognitive memory)
+cargo install vestige-mcp
+claude mcp add --scope user vestige -- vestige-mcp
+
+# Qdrant (document RAG)
+docker run -d --name qdrant -p 6333:6333 -v qdrant_storage:/qdrant/storage qdrant/qdrant:latest
+claude mcp add --transport stdio --scope user qdrant-memory \
+  --env QDRANT_URL="http://localhost:6333" \
+  --env COLLECTION_NAME="ima-knowledge" \
+  -- uvx mcp-server-qdrant
 
 # Tavily (requires API key)
 claude mcp add --scope user -e TAVILY_API_KEY=your-key -- tavily npx -y tavily-mcp@latest
 
 # Context7
 claude mcp add --scope user context7 -- npx -y @upstash/context7-mcp@latest
-
-# Memory
-claude mcp add --scope user memory -- npx -y @modelcontextprotocol/server-memory@latest
 
 # Sequential Thinking
 claude mcp add --scope user sequential-thinking -- npx -y @modelcontextprotocol/server-sequential-thinking@latest
@@ -88,15 +91,18 @@ claude mcp list
 
 ### MCP Skills
 
-ima-claude includes skills that help you use MCP servers effectively:
+ima-claude includes skills that teach Claude how to use each MCP server effectively:
 
 | Skill | Purpose |
 |-------|---------|
+| **mcp-vestige** | Cognitive memory: semantic search, spaced repetition, proactive storage |
+| **mcp-qdrant** | Document-scale RAG: PRDs, architecture docs, solutions |
 | **mcp-serena** | Code symbol operations, refactoring, semantic analysis |
 | **mcp-tavily** | Web research patterns and query optimization |
 | **mcp-context7** | Library documentation lookup strategies |
-| **mcp-memory** | Proactive knowledge graph (auto-stores decisions) |
 | **mcp-sequential** | Structured reasoning workflows |
+| **mcp-atlassian** | Jira & Confluence operations (Claude's bundled integration) |
+| **compound-bridge** | Compound Engineering integration (memory bridge, role separation) |
 
 ### Session Management Skills
 
@@ -105,7 +111,7 @@ ima-claude includes skills that help you use MCP servers effectively:
 | **save-session** | Save session state to Serena MCP memory |
 | **resume-session** | Resume previous session from Serena MCP memory |
 
-> **Requires Serena MCP** for cross-session persistence. No more file path issues!
+> **Requires Serena MCP** for cross-session persistence.
 
 These skills auto-activate based on context.
 
@@ -131,18 +137,13 @@ bunx ima-claude upgrade
 
 ## Tips
 
-> **Tip:** When using `task-master` or other skills that spawn multiple agents, those sub-agents will often get stuck waiting for permission prompts you can't accept. Use `--dangerously-skip-permissions` to let agents run autonomously:
+> **Tip:** When using `task-master` or Compound Engineering workflows that spawn multiple agents, sub-agents may get stuck waiting for permission prompts. Use `--dangerously-skip-permissions` to let agents run autonomously:
 >
 > ```bash
 > claude --dangerously-skip-permissions
 > ```
 >
-> Recommended alias:
-> ```bash
-> alias claude-danger='claude --dangerously-skip-permissions'
-> ```
->
-> **Use with care** — this skips all permission checks. Best suited for local development on trusted codebases where you're comfortable with Claude acting autonomously.
+> **Use with care** — this skips all permission checks. Best for local development on trusted codebases.
 
 ## Available Skills
 
@@ -162,6 +163,7 @@ bunx ima-claude upgrade
 | `js-fp-react` | React FP patterns with hooks and HOCs |
 | `js-fp-vue` | Vue 3 FP patterns with composables |
 | `js-fp-wordpress` | WordPress JS patterns for Bootstrap/jQuery |
+| `jquery` | jQuery patterns and API reference (WordPress-native) |
 | `php-fp` | PHP FP core principles |
 | `php-fp-wordpress` | Security-first WordPress PHP development |
 | `quasar-fp` | Quasar Framework with utility-first CSS |
@@ -171,21 +173,29 @@ bunx ima-claude upgrade
 | Skill | Description |
 |-------|-------------|
 | `architect` | System design expertise and principles |
+| `ima-brand` | IMA Brand Book v4.0 (identity, voice, logo, content) |
+| `ima-bootstrap` | Bootstrap 5.3 + IMA brand (utility-first CSS, SCSS) |
+| `playwright` | E2E testing with Playwright + TypeScript |
 | `docs-organize` | Three-tier documentation organization |
 | `wp-local` | WP-CLI commands for Flywheel Local WP |
+| `jira-checkpoint` | Jira awareness checkpoints for team visibility |
 | `phpunit-wp` | PHPUnit testing for WordPress plugins with FP principles |
 | `rg` | Ripgrep usage patterns |
 | `ima-forms-expert` | WordPress form components (IMA Forms) |
 
-### MCP Integration Skills
+### Integration Skills
 
 | Skill | Description |
 |-------|-------------|
+| `compound-bridge` | Compound Engineering integration (memory bridge, role separation) |
+| `mcp-vestige` | Cognitive memory: preferences, decisions, patterns |
+| `mcp-qdrant` | Document-scale RAG: PRDs, plans, solutions |
 | `mcp-serena` | Code symbol operations, refactoring, semantic analysis |
+| `mcp-atlassian` | Jira & Confluence operations |
 | `mcp-tavily` | Web research and query optimization |
 | `mcp-context7` | Library documentation lookup strategies |
-| `mcp-memory` | Proactive knowledge graph (auto-stores decisions) |
 | `mcp-sequential` | Structured reasoning workflows |
+| ~~`mcp-memory`~~ | **Deprecated** — replaced by `mcp-vestige` |
 
 ### Meta Skills
 
@@ -274,7 +284,7 @@ ima-claude follows a **Persona + Skills** architecture:
 - **Default Persona** - "The Practitioner" provides foundational mindset (FP, composition, plan-first)
 - **Skills contain expertise** - Domain knowledge, patterns, implementation guidance
 - **Personalities overlay tone** - Fun themes (40K, Templars) without changing expertise
-- **MCP integration** - Serena for code ops, Memory for persistence, Tavily for research
+- **MCP integration** - Serena for code ops, Vestige for memory, Qdrant for RAG, Tavily for research
 
 This makes ima-claude:
 1. **Fully standalone** - Complete system without dependencies

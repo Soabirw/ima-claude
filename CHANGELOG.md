@@ -5,6 +5,52 @@ All notable changes to ima-claude will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.14.0] - 2026-02-23
+
+### Added
+
+- **compound-bridge Skill** - Compound Engineering + ima-claude integration
+  - Memory bridge: Compound → Vestige (root causes, decisions, review findings auto-stored)
+  - Memory bridge: Compound → Qdrant (full solutions >500 words stored for RAG)
+  - Memory bridge: Vestige → Compound research (cross-project knowledge supplements learnings-researcher)
+  - Role separation: `/workflows:plan` for formal planning, `task-master` for ad-hoc breakdown
+  - `compound-engineering.local.md` template for per-project review agent config + coding standards
+  - Boring on purpose: removing the skill returns both systems to standalone behavior
+
+- **mcp-qdrant Skill** - Persistent knowledge base with semantic search
+  - Local RAG system for document-scale knowledge (PRDs, architecture docs, plans, solutions)
+  - Complements Vestige (atomic decisions) with document-scale retrieval
+  - Proactive behavior: auto-store PRDs and plans, auto-search before implementation
+  - Chunking guidance for large documents, metadata conventions
+  - Docker + uvx setup, FastEmbed (no API keys, all data stays local)
+
+- **jquery Skill** - jQuery patterns and API reference for WordPress/Bootstrap environments
+  - FP-aligned: chaining as composition, $.map/$.grep as declarative transforms, pure logic extraction
+  - Decision tree: when to use jQuery vs vanilla JS (jQuery is default for DOM work in WordPress)
+  - Quick reference: selectors, traversal, manipulation, events, AJAX, utilities
+  - Common patterns: IIFE wrapper, caching selections, delegated events, UI state management
+  - WordPress coding standards integration (tabs, spaces in parens, var declarations)
+  - Context7 library ID `/jquery/jquery` for deep API lookups
+
+- **jira-checkpoint Skill** - Lightweight Jira awareness checkpoints for team visibility
+  - Three checkpoints: Before Work (search FNR for related stories), During Work (auto-fetch issue context), After Work (prompt to update status/comment)
+  - Companion to task-master (no overlap): task-master = execution, jira-checkpoint = team visibility
+  - References mcp-atlassian for all API operations (no duplication)
+  - Decision trees for when to checkpoint vs stay silent (significant work only)
+  - Vestige integration: learns user preferences over time (skip patterns, sync habits)
+
+### Changed
+
+- **mcp-vestige Skill** - Added Compound workflow events to proactive storage table
+  - `/workflows:compound` solutions → Vestige pattern
+  - `/workflows:plan` research → Vestige decision
+  - `/workflows:review` P1/P2 findings → Vestige pattern
+- **IMA_CLAUDE_INIT.md** - Added Qdrant to MCP tool selection decision tree, jQuery to auto-detected skills, Compound Engineering workflows section
+- **CLAUDE.md** - Renamed "MCP Integration Skills" to "Integration Skills", added compound-bridge/mcp-qdrant, replaced SuperClaude section with Compound Engineering note
+- **README.md** - Modernized ecosystem: added Vestige, Qdrant, Compound Engineering marketplace plugin to recommendations; updated all skill tables; reduced SuperClaude prominence; updated skill count to 30+
+- **scripts/install.ts** - Removed SuperClaude check (purely optional, no install impact), added MCP server recommendation on fresh install
+- **scripts/utils.ts** - Removed `checkSuperClaude()`, added `compound-bridge`, `jquery`, `jira-checkpoint`, `mcp-qdrant` to `SKILLS_TO_INSTALL`
+
 ## [1.12.0] - 2026-02-13
 
 ### Added

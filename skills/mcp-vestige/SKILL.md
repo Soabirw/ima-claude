@@ -158,6 +158,9 @@ When ANY of these occur, **immediately store without being asked**:
 | Pattern chosen over alternatives | `smart_ingest` with node_type: "pattern" |
 | User corrects your approach | `smart_ingest` with node_type: "preference" |
 | Codebase pattern discovered | `codebase` with appropriate pattern_type |
+| `/workflows:compound` creates solution | `smart_ingest` with node_type: "pattern" (root cause + insight) |
+| `/workflows:plan` research completes | `smart_ingest` with node_type: "decision" (approach chosen) |
+| `/workflows:review` finds P1/P2 | `smart_ingest` with node_type: "pattern" (finding summary) |
 
 **Recognition patterns** — store when you hear:
 - "I prefer..." / "I like..." / "I always..." / "I never..."

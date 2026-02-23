@@ -72,6 +72,9 @@ Need complex reasoning (debug, architecture, trade-offs)?
 Need cross-session persistence (preferences, decisions, patterns)?
   → Vestige
 
+Need document-scale knowledge (PRDs, plans, guides, solutions)?
+  → Qdrant
+
 Need future reminders or intentions?
   → Vestige
 ```
@@ -85,6 +88,7 @@ Need future reminders or intentions?
 | "where is X used", "rename", "refactor" | Serena | Simple text search (Grep) |
 | "think through", "debug", "trade-offs" | Sequential | Simple questions |
 | Preference stated, decision made | Vestige | Temporary debug info |
+| PRD, plan, guide, large doc | Qdrant | Atomic decisions (Vestige) |
 | "remind me", "next session", "intention" | Vestige | Session state (Serena) |
 
 ### Before Using Web Tools
@@ -142,6 +146,7 @@ Need future reminders or intentions?
 **Language/Framework skills load automatically when detected:**
 - JavaScript → js-fp, js-fp-api, js-fp-vue, js-fp-react
 - PHP → php-fp, php-fp-wordpress
+- jQuery → jquery (WordPress/Bootstrap contexts)
 - Vue/Quasar → quasar-fp
 - Bootstrap/CSS → ima-bootstrap
 - Playwright/E2E → playwright
@@ -151,6 +156,13 @@ Need future reminders or intentions?
 - `/architect` - Architecture brainstorming
 - `/skill-creator` - Creating new skills
 - `/save-session`, `/resume-session` - Session management
+- `/jira-checkpoint` - Team visibility sync
+
+**Compound Engineering workflows** (Every.to marketplace plugin):
+- `/workflows:brainstorm` → `/workflows:plan` → `/workflows:work` → `/workflows:review` → `/workflows:compound`
+- `compound-bridge` skill handles memory integration (Compound → Vestige/Qdrant) and role separation
+- FP skills auto-activate during `/workflows:work` by file type
+- See `compound-engineering.local.md` template in `compound-bridge` for per-project review config
 
 ---
 

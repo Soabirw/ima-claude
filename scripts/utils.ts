@@ -7,7 +7,7 @@ export const SKILLS_DIR = join(CLAUDE_DIR, "skills");
 export const HOOKS_DIR = join(CLAUDE_DIR, "hooks");
 export const COMMANDS_DIR = join(CLAUDE_DIR, "commands");
 export const SETTINGS_FILE = join(CLAUDE_DIR, "settings.json");
-export const VERSION = "1.12.0";
+export const VERSION = "1.14.0";
 
 export const colors = {
   reset: "\x1b[0m",
@@ -62,11 +62,6 @@ export function copyDirRecursive(src: string, dest: string): void {
 
 export function checkClaudeCode(): boolean {
   return existsSync(CLAUDE_DIR);
-}
-
-export function checkSuperClaude(): boolean {
-  // Check for SuperClaude by looking for COMMANDS.md
-  return existsSync(join(CLAUDE_DIR, "COMMANDS.md"));
 }
 
 /**
@@ -138,6 +133,7 @@ export const SKILLS_TO_INSTALL = [
   "php-fp",
   "php-fp-wordpress",
   "quasar-fp",
+  "jquery",
   // Domain expert skills
   "architect",
   "docs-organize",
@@ -146,8 +142,11 @@ export const SKILLS_TO_INSTALL = [
   "ima-forms-expert",
   "ima-brand",
   "ima-bootstrap",
+  "jira-checkpoint",
   // Testing skills
   "playwright",
+  // Integration skills
+  "compound-bridge",
   // MCP integration skills
   "mcp-atlassian",
   "mcp-tavily",
@@ -156,6 +155,7 @@ export const SKILLS_TO_INSTALL = [
   "mcp-sequential",
   "mcp-memory",
   "mcp-vestige",
+  "mcp-qdrant",
   // Session management skills
   "save-session",
   "resume-session",

@@ -14,6 +14,7 @@ IMA's Claude Code Skills for functional programming, architecture, and team stan
 - `js-fp-react` - React FP patterns (hooks, HOCs, pure components)
 - `js-fp-vue` - Vue 3 FP patterns (composables, wrappers)
 - `js-fp-wordpress` - WordPress JS (Bootstrap/jQuery, pure business logic)
+- `jquery` - jQuery patterns and API reference (FP-aligned, WordPress-native)
 - `php-fp` - PHP FP core (strict types, native patterns)
 - `php-fp-wordpress` - WordPress PHP (security-first, nonce verification)
 - `quasar-fp` - Quasar Framework (utility-first CSS, composables)
@@ -25,11 +26,14 @@ IMA's Claude Code Skills for functional programming, architecture, and team stan
 - `playwright` - E2E testing and QA automation (Playwright + TypeScript, POM, fixtures, mocking)
 - `docs-organize` - Three-tier documentation (Active/Archive/Transient)
 - `wp-local` - WP-CLI commands in Flywheel Local WP environments
+- `jira-checkpoint` - Jira awareness checkpoints for team visibility (before/during/after work sync)
 - `rg` - Ripgrep usage patterns (prefer over grep/find)
 
-### MCP Integration Skills
+### Integration Skills
+- `compound-bridge` - Compound Engineering integration (memory bridge, role separation, per-project config)
 - `mcp-atlassian` - Jira & Confluence operations (issues, pages, search, user mentions)
 - `mcp-vestige` - Cognitive memory engine (semantic search, spaced repetition, intentions, codebase awareness)
+- `mcp-qdrant` - Persistent knowledge base with semantic search (local RAG for docs, plans, solutions)
 - `mcp-tavily` - Web research via Tavily (prefer over WebSearch/WebFetch)
 - `mcp-context7` - Library documentation lookup
 - `mcp-serena` - Code symbol operations (find references, rename, refactor)
@@ -81,11 +85,6 @@ Fun themed response styles (tone only, no expertise change):
 "Enable templars"  # Templar crusader themed
 ```
 
-## Integration with SuperClaude
+## Compound Engineering
 
-If SuperClaude is installed, these skills integrate with:
-- Persona auto-activation (`--persona-functional`)
-- MCP server coordination (Context7, Sequential)
-- Quality gates and validation
-
-Without SuperClaude, skills work independently with full functionality.
+The `compound-bridge` skill integrates with the [Compound Engineering](https://every.to/guides/compound-engineering) marketplace plugin. Memory bridges, role separation, and per-project config are documented there. Runtime workflow instructions are in `IMA_CLAUDE_INIT.md`.

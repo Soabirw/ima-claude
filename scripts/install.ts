@@ -13,7 +13,7 @@ import {
   ensureDir,
   copyDirRecursive,
   checkClaudeCode,
-  checkSuperClaude,
+
   isImaClaudeInstalled,
   mergeHooksIntoSettings,
   SKILLS_TO_INSTALL,
@@ -40,20 +40,7 @@ async function main() {
   }
   log.success("Claude Code detected");
 
-  // Step 2: Check for SuperClaude (optional) - only on fresh install
-  if (!isUpgrade) {
-    const hasSuperClaude = checkSuperClaude();
-    if (hasSuperClaude) {
-      log.success("SuperClaude detected - skills will integrate with personas");
-    } else {
-      log.warn("SuperClaude not detected");
-      console.log("   ima-claude works best with SuperClaude installed.");
-      console.log("   Visit: https://github.com/SuperClaude-Org/SuperClaude_Framework\n");
-      console.log("   Continuing with standalone installation...\n");
-    }
-  }
-
-  // Step 3: Get script directory (where ima-claude source is)
+  // Step 2: Get script directory (where ima-claude source is)
   const scriptDir = dirname(import.meta.dir);
   const skillsSource = join(scriptDir, "skills");
   const personalitiesSource = join(scriptDir, "personalities");
@@ -284,11 +271,8 @@ my-project-skill/
     console.log(`   ${colors.cyan}/save-session${colors.reset} - Save session state`);
     console.log(`   ${colors.cyan}/resume-session${colors.reset} - Resume saved session`);
     console.log("");
-
-    if (!checkSuperClaude()) {
-      console.log(`   ${colors.yellow}Tip: Install SuperClaude for enhanced features${colors.reset}`);
-      console.log("");
-    }
+    console.log(`   ${colors.yellow}Tip: See README.md for recommended MCP servers (Serena, Vestige, Qdrant, Tavily)${colors.reset}`);
+    console.log("");
   }
 }
 
