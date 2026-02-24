@@ -137,6 +137,67 @@ These integrate naturally — no bridge needed:
 - Compound's 15 specialized review agents complement our FP-focused standards
 - Compound's brainstorm workflow is genuinely new capability
 
+## Artifact Resilience: Surviving Branch Switches & Context Compaction
+
+Compound workflows write artifacts to the working tree (`docs/brainstorms/`, `docs/plans/`, `docs/solutions/`, `todos/`). These files are **not committed** during workflows. Git branch switching during `/workflows:work` **destroys them**. Context compaction loses agent results that reference them. This section prevents that.
+
+### Rule 1: Shadow Copy to `.claude/compound/`
+
+**After EVERY workflow artifact write**, immediately copy the file to `.claude/compound/`:
+
+```
+# After /workflows:brainstorm writes to docs/brainstorms/
+cp docs/brainstorms/{file}.md .claude/compound/brainstorms/{file}.md
+
+# After /workflows:plan writes to docs/plans/
+cp docs/plans/{file}.md .claude/compound/plans/{file}.md
+
+# After /workflows:compound writes to docs/solutions/
+cp docs/solutions/{category}/{file}.md .claude/compound/solutions/{category}/{file}.md
+
+# After /workflows:review writes to todos/
+cp todos/{file}.md .claude/compound/todos/{file}.md
+```
+
+Create directories with `mkdir -p` as needed. The `.claude/` directory is gitignored and **survives branch switches** — just like Claude Code's own plan files.
+
+**Also shadow-copy on edits**: When `/workflows:work` updates plan checkboxes (`- [ ]` → `- [x]`), copy the updated plan to the shadow location too.
+
+### Rule 2: Eager Memory Bridge (Store Immediately, Not Just at Completion)
+
+Don't wait until a workflow finishes to bridge to memory. Store **immediately after each artifact write**:
+
+| After Writing | Store Immediately |
+|---|---|
+| Brainstorm document | Vestige `smart_ingest`: key decisions + open questions, node_type: `decision` |
+| Plan document | Vestige `smart_ingest`: approach + task list summary, node_type: `decision` |
+| Plan checkbox update | Vestige `smart_ingest`: progress snapshot (X of Y tasks done), node_type: `observation` |
+| Review todo file | Vestige `smart_ingest`: finding summary + priority, node_type: `pattern` |
+| Solution document | Vestige + Qdrant (per existing rules above) |
+
+This ensures that even if context compacts or the session dies, the knowledge survives in memory.
+
+### Rule 3: Pre-Branch-Switch Checkpoint
+
+**Before ANY `git checkout`, `git switch`, or worktree operation** during a Compound workflow:
+
+1. Verify all workflow artifacts have shadow copies in `.claude/compound/`
+2. If any are missing, create them immediately
+3. Store a Vestige snapshot: `smart_ingest` with content summarizing current workflow state (which phase, what's done, what's next), node_type: `observation`
+
+### Rule 4: Recovery from Shadow Copies
+
+If workflow artifacts are lost (branch switch, reset, or interrupted session):
+
+1. Check `.claude/compound/` for shadow copies
+2. Restore them to their working-tree locations (`docs/plans/`, etc.)
+3. Check Vestige for the most recent workflow state snapshot
+4. Resume from where we left off
+
+### Rule 5: Commit `compound-engineering.local.md` Early
+
+This file is **persistent project config**, not a transient artifact. When creating or modifying `compound-engineering.local.md`, commit it to the current branch promptly so it survives branch switches via git rather than shadow copies.
+
 ## What This Skill Does NOT Do
 
 - Modify the Compound Engineering plugin — it stays as-is from the marketplace

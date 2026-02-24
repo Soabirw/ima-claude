@@ -5,6 +5,18 @@ All notable changes to ima-claude will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.14.2] - 2026-02-24
+
+### Changed
+
+- **compound-bridge Skill** - Added "Artifact Resilience" section to prevent data loss during branch switches
+  - Rule 1: Shadow copy all workflow artifacts to `.claude/compound/` (gitignored, survives branch switches)
+  - Rule 2: Eager memory bridge — store to Vestige immediately after each artifact write, not just at workflow completion
+  - Rule 3: Pre-branch-switch checkpoint — verify shadow copies exist before any `git checkout`/`git switch`
+  - Rule 4: Recovery from shadow copies — restore lost artifacts from `.claude/compound/` + Vestige
+  - Rule 5: Commit `compound-engineering.local.md` early (persistent config, not transient)
+- **IMA_CLAUDE_INIT.md** - Added artifact resilience note to Compound Engineering workflows section
+
 ## [1.14.1] - 2026-02-23
 
 ### Added
