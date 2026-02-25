@@ -109,6 +109,38 @@ add_filter('product_price', function($price) {
 });
 ```
 
+## Inter-Plugin Communication: Hooks Only
+
+**Rule**: ALL cross-plugin calls use WordPress hooks. NEVER `function_exists()`.
+
+Hooks are safe no-ops — if nobody listens, nothing happens. `function_exists()` is tight coupling disguised as loose coupling.
+
+```php
+<?php
+// BAD — tight coupling, breaks silently on rename
+if (function_exists('ima_discourse_refresh_user_meta')) {
+    ima_discourse_refresh_user_meta($user_id);
+}
+
+// GOOD — fire-and-forget side effect
+do_action('ima_discourse_refresh_user_meta', $user_id);
+
+// GOOD — transform with safe default (function composition via WP)
+$result = apply_filters('ima_membership_cancel_subscription', ['success' => true], $user_id, $sub_id);
+```
+
+**Actions** (`do_action`): Side effects — "something happened, react if you care."
+**Filters** (`apply_filters`): Data transformation — chained function composition with a default return.
+
+The handler registers itself:
+```php
+<?php
+// ima-discourse registers once — or doesn't. Either way, callers don't crash.
+add_action('ima_discourse_refresh_user_meta', 'ima_discourse_refresh_user_meta', 10, 1);
+```
+
+**When `function_exists()` is acceptable**: Internal guard clauses within a single plugin checking if its own functions are loaded, or checking PHP extensions (`function_exists('sodium_crypto_secretbox')`).
+
 ## Plugin Complexity Guide
 
 | Size | Lines | Pattern |
@@ -142,6 +174,7 @@ my-plugin/
 - [ ] SQL uses `$wpdb->prepare()`
 - [ ] File uploads use `wp_handle_upload()`
 - [ ] No hardcoded credentials
+- [ ] Cross-plugin calls use hooks, not `function_exists()`
 
 ## Quality Gates
 

@@ -6,6 +6,7 @@ IMA's Claude Code Skills for functional programming, architecture, and team stan
 
 ### Quick Reference
 - `quickstart` - Team cheat sheet (common workflows, commands, MCP tools at a glance)
+- `scorecard` - Project quality scorecard for README (code standards, security, tests, docs, maintainability)
 
 ### Foundational Skills (Complement the Default Persona)
 - `functional-programmer` - FP principles and philosophy (triggers on FP discussions)

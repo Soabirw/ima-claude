@@ -5,6 +5,34 @@ All notable changes to ima-claude will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.15.0] - 2026-02-25
+
+### Added
+
+- **scorecard Skill** - Project quality scorecard for READMEs
+  - Scores codebase on 5 categories: Code Standards, Security, Test Coverage, Documentation, Maintainability
+  - Compact Markdown table with letter grades (A-F) and color indicators (🟢🟡🔴)
+  - Domain skills passed as arguments define the "Code Standards" rubric (e.g., `/scorecard js-fp js-fp-api`)
+  - Auto-detects project language/framework when no skills specified
+  - Uses `task-master` for orchestration with parallel Sonnet agents per category
+  - Date-stamped for freshness; inserts/replaces `## Scorecard` section in README
+
+### Changed
+
+- **php-fp-wordpress Skill** - Added inter-plugin communication section
+  - Rule: all cross-plugin calls use WordPress hooks (`do_action`/`apply_filters`), never `function_exists()`
+  - Hooks are safe no-ops; `function_exists()` is tight coupling disguised as loose coupling
+  - Added checklist item for cross-plugin hook usage
+- **CLAUDE.md** - Added scorecard to Quick Reference section
+- **scripts/utils.ts** - Added `scorecard` to `SKILLS_TO_INSTALL`
+
+### Fixed
+
+- **wp-local** - Fixed WP-CLI 2.12+ MySQL socket resolution
+  - WP-CLI 2.12+ passes `--no-defaults` to mysql binary, bypassing `MYSQL_HOME/my.cnf`
+  - Now exports `MYSQL_UNIX_PORT` from `my.cnf` socket path as fallback
+  - Fixes `ERROR 2002: Can't connect to local MySQL server through socket '/tmp/mysql.sock'`
+
 ## [1.14.2] - 2026-02-24
 
 ### Changed

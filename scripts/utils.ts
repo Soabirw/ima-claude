@@ -7,7 +7,7 @@ export const SKILLS_DIR = join(CLAUDE_DIR, "skills");
 export const HOOKS_DIR = join(CLAUDE_DIR, "hooks");
 export const COMMANDS_DIR = join(CLAUDE_DIR, "commands");
 export const SETTINGS_FILE = join(CLAUDE_DIR, "settings.json");
-export const VERSION = "1.14.2";
+export const VERSION = "1.15.0";
 
 export const colors = {
   reset: "\x1b[0m",
@@ -158,6 +158,7 @@ export const SKILLS_TO_INSTALL = [
   "mcp-qdrant",
   // Quick reference
   "quickstart",
+  "scorecard",
   // Session management skills
   "save-session",
   "resume-session",

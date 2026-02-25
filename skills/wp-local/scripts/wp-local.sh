@@ -47,6 +47,15 @@ if [[ ! -f "$ENV_SCRIPT" ]]; then
   exit 1
 fi
 
-# Source environment (suppress echo statements) and run wp
+# Source environment (suppress echo statements)
 source <(grep -v "^echo" "$ENV_SCRIPT" | grep -v "^exec")
+
+# WP-CLI 2.12+ passes --no-defaults to the mysql binary, which causes it to
+# ignore MYSQL_HOME/my.cnf and fall back to /tmp/mysql.sock (wrong).
+# MYSQL_UNIX_PORT is respected regardless of --no-defaults.
+if [[ -n "${MYSQL_HOME:-}" && -f "$MYSQL_HOME/my.cnf" ]]; then
+  MYSQL_UNIX_PORT=$(grep "^socket" "$MYSQL_HOME/my.cnf" | head -1 | awk -F= '{print $2}' | tr -d ' ')
+  export MYSQL_UNIX_PORT
+fi
+
 exec wp "$@"
