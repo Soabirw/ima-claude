@@ -23,6 +23,9 @@ IMA's Claude Code Skills for functional programming, architecture, and team stan
 - `php-fp-wordpress` - WordPress PHP (security-first, nonce verification)
 - `quasar-fp` - Quasar Framework (utility-first CSS, composables)
 
+### Payment & API Skills
+- `php-authnet` - Authorize.Net PHP SDK (transactions, CIM profiles, ARB subscriptions, Accept.js, webhooks)
+
 ### Domain Expert Skills
 - `architect` - System design, scalability, long-term architecture
 - `ima-brand` - IMA Brand Book v4.0 (identity, voice, logo rules, content guidelines, audience)

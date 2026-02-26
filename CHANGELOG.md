@@ -5,6 +5,23 @@ All notable changes to ima-claude will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.16.0] - 2026-02-26
+
+### Added
+
+- **php-authnet Skill** - Authorize.Net PHP SDK patterns for payment processing
+  - Three-layer FP architecture: pure request builders → SDK adapters → pure response parsers
+  - Transaction types: auth/capture, auth-only, refund, void, prior auth capture
+  - Accept.js integration: opaque payment nonce consumption, PCI compliance patterns
+  - CIM customer profiles: create, update, delete, payment profiles, charge stored profiles
+  - ARB recurring billing: subscriptions, schedules, trials, cancel, status checks
+  - Webhook handling: HMAC-SHA512 signature validation, event types, idempotency
+  - Error handling: two-level response parsing, E00039 duplicate recovery, common error codes
+  - References: full API reference (`references/api-reference.md`), sandbox & testing guide (`references/sandbox-testing.md`)
+  - Complements `php-fp` and `php-fp-wordpress` skills
+- **CLAUDE.md** - Added "Payment & API Skills" section with `php-authnet`
+- **scripts/utils.ts** - Added `php-authnet` to `SKILLS_TO_INSTALL`
+
 ## [1.15.1] - 2026-02-26
 
 ### Fixed

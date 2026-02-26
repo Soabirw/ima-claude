@@ -134,6 +134,8 @@ export const SKILLS_TO_INSTALL = [
   "php-fp-wordpress",
   "quasar-fp",
   "jquery",
+  // Payment & API skills
+  "php-authnet",
   // Domain expert skills
   "architect",
   "docs-organize",
