@@ -5,6 +5,16 @@ All notable changes to ima-claude will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.15.1] - 2026-02-26
+
+### Fixed
+
+- **scorecard Skill** - Clarified grading format rules to prevent rendering issues
+  - Added explicit rule: use exact emoji characters (`🟢` `🟡` `🔴`), never GitHub shortcodes or geometric shapes
+  - Added explicit rule: whole letter grades only (A–F), no `+`/`-` modifiers
+  - Added explicit format: `🟢 A` (emoji + space + letter), no backticks in README output
+  - Updated grading scale table to show full indicator format (e.g., `🟢 A`) instead of color name only
+
 ## [1.15.0] - 2026-02-25
 
 ### Added
