@@ -66,13 +66,18 @@ Collect agent results into the scorecard table format:
 
 ### Grading Scale
 
-| Grade | Color | Meaning |
-|-------|-------|---------|
-| A | 🟢 | Excellent — meets or exceeds standards |
-| B | 🟢 | Good — minor improvements possible |
-| C | 🟡 | Adequate — notable gaps to address |
-| D | 🔴 | Poor — significant issues |
-| F | 🔴 | Failing — critical problems |
+**Formatting rules (non-negotiable):**
+- Use **exact emoji characters**: `🟢` `🟡` `🔴` — never GitHub shortcodes (`:green_circle:`), never Unicode geometric shapes (`●`, `◐`, `○`). Shortcodes don't render outside GitHub; geometric shapes are grey in terminals.
+- Use **whole letter grades only**: A, B, C, D, F — no `+` or `-` modifiers. Nuance belongs in the Notes column, not the grade.
+- Format as `🟢 A` (emoji + space + letter) — no backticks around the grade in the README output.
+
+| Grade | Indicator | Meaning |
+|-------|-----------|---------|
+| A | 🟢 A | Excellent — meets or exceeds standards |
+| B | 🟢 B | Good — minor improvements possible |
+| C | 🟡 C | Adequate — notable gaps to address |
+| D | 🔴 D | Poor — significant issues |
+| F | 🔴 F | Failing — critical problems |
 
 ### Step 4: Insert into README
 
