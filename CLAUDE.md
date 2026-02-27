@@ -2,6 +2,20 @@
 
 IMA's Claude Code Skills for functional programming, architecture, and team standards.
 
+## Critical: Source of Truth
+
+**This repo is the source. `~/.claude/` is the deployment target. NEVER edit `~/.claude/` directly.**
+
+```
+Repo Source                    → Deployed To
+skills/                        → ~/.claude/skills/
+hooks/                         → ~/.claude/hooks/
+IMA_CLAUDE_INIT.md             → ~/.claude/IMA_CLAUDE_INIT.md
+.claude/rules/                 → ~/.claude/rules/
+```
+
+All changes go in the repo first, then `bun run scripts/install.ts` deploys them. Editing `~/.claude/` directly means the next install overwrites your work.
+
 ## Available Skills
 
 ### Quick Reference
