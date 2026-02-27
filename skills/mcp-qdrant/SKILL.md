@@ -1,21 +1,21 @@
 ---
 name: mcp-qdrant
-description: "Qdrant MCP for persistent knowledge base with semantic search. Use as a local RAG system for PRDs, architecture docs, integration plans, and domain knowledge that persists across sessions. Triggers on: 'store this in knowledge base', 'what do we know about', 'search knowledge', 'add to RAG', 'find in docs', or when Claude needs context that might already be stored. Also triggers proactively when PRDs, architecture decisions, or integration plans are created — store them automatically. Complements Vestige (preferences/decisions) with document-scale knowledge retrieval."
+description: "Qdrant MCP — the permanent library. Unlike Vestige (neural memory that fades), nothing stored here is ever forgotten. Use for all reference material: wiki articles, coding standards, architecture docs, code samples, PRDs, plans, meeting notes, research findings. Triggers on: 'store this', 'what do we know about', 'search knowledge', 'add to library', 'find in docs'. Triggers proactively when reference material is created, discussed, or finalized — feed the library without being asked. Search the library before starting any new work."
 ---
 
-# Qdrant MCP - Persistent Knowledge Base
+# Qdrant MCP - The Permanent Library
 
-Local RAG system for document-scale knowledge. Stores and retrieves PRDs, architecture docs, plans, and domain knowledge via semantic search.
+Our permanent reference library. Unlike Vestige (neural memory that fades if unused), nothing stored here is ever forgotten. This is where we feed our entire universe — wiki articles, coding standards, architecture docs, code samples, PRDs, plans, and research findings.
 
 ## Architecture: How This Fits
 
-| System | Scope | Example |
-|--------|-------|---------|
-| **Qdrant** | Document knowledge (PRDs, plans, guides) | "Our payment system uses Accept.js with ARB" |
-| **Vestige** | Atomic decisions, preferences, patterns | "We chose JWT over sessions because..." |
-| **Serena Memory** | Session state checkpoints (ephemeral) | "Currently on task 3/5" |
+| System | Role | Lifecycle | Example |
+|--------|------|-----------|---------|
+| **Qdrant** | Permanent library — reference material, standards, PRDs, architecture docs, code samples | Persistent forever | "Our payment system uses Accept.js with ARB" |
+| **Vestige** | Neural memory — decisions, preferences, patterns, bugs, learnings | Fades if unused (FSRS-6 decay) | "We chose JWT over sessions because..." |
+| **Serena Memory** | Project workbench — session state, task progress | Project-scoped, survives git ops | "Currently on task 3/5" |
 
-**Rule of thumb**: Document or large knowledge chunk → Qdrant. Single decision or preference → Vestige.
+**Will it fade if we stop referencing it?** If no → Qdrant (permanent). If yes → Vestige (neural decay).
 
 ## MCP Tools
 
@@ -37,13 +37,17 @@ mcp__qdrant-memory__qdrant-store
 
 ### What to Store
 
+Anything that should never be forgotten — reference material for our permanent library.
+
 | Content Type | Metadata `type` |
 |---|---|
 | PRDs / Feature Specs | `prd` |
-| Architecture decisions | `architecture` |
+| Architecture decisions & diagrams | `architecture` |
 | Integration guides | `integration` |
 | Domain knowledge | `domain` |
 | Requirements / meeting notes | `requirements` |
+| Coding standards & conventions | `standard` |
+| Useful code samples | `sample` |
 
 ### Chunking Large Documents
 
@@ -72,20 +76,25 @@ mcp__qdrant-memory__qdrant-find
 
 ## Proactive Behavior
 
-### Store Automatically When:
+### Feed the Library When:
 
-- PRD or feature spec is created/discussed
-- Architecture plan is finalized
-- Integration is documented
-- Complex research is completed
-- User says "add this to knowledge base"
+- A wiki article, PRD, or spec is created or discussed → store it
+- Architecture is documented or diagrammed → store it
+- A coding standard or convention is established → store it
+- A useful code sample is written → store it
+- Research is completed on a topic → store the findings
+- A Compound Engineering solution is finalized → store it
+- Integration is documented → store it
+- Meeting notes capture decisions or context → store them
+- User says "add this to knowledge base" or "store this"
 
-### Search Automatically When:
+### Search the Library When:
 
-- Starting implementation of a feature
-- Debugging an integration
-- User asks "how does X work"
-- Planning new work that may have prior context
+- Starting implementation of any feature → check if prior art exists
+- Debugging an integration → search for architecture context
+- User asks "how does X work" → check library before guessing
+- Planning new work → search for related PRDs or standards
+- Before making architectural decisions → search for existing conventions
 
 ## Ingestion: Claude Web → Qdrant
 
@@ -98,20 +107,25 @@ When user shares content from Claude Web Projects:
 
 ## Decision Logic
 
-```
-IF document-scale knowledge (PRD, plan, guide, spec):
-    → Qdrant
-ELSE IF atomic preference/decision/pattern:
-    → Vestige
-ELSE IF session progress:
-    → Serena memory
+**Will it fade if we stop referencing it?** If no → store here. Qdrant is the permanent library.
 
-IF need context before starting work:
-    → Search Qdrant first, then Vestige
-ELSE IF need user preference:
-    → Search Vestige
-ELSE IF need related documents:
-    → Search Qdrant
+```
+IF reference material that should never be forgotten
+   (wiki, standards, PRDs, architecture docs, code samples, plans):
+    → Qdrant qdrant-store (permanent library)
+ELSE IF knowledge that should strengthen with use, fade if unused
+   (preferences, decisions, patterns, bugs):
+    → Vestige smart_ingest (neural memory)
+ELSE IF session state or project progress:
+    → Serena write_memory (project workbench)
+
+Searching:
+IF need reference docs, architecture context, prior art:
+    → Qdrant qdrant-find
+IF need user preferences or past decisions:
+    → Vestige search
+IF starting any new work:
+    → Search BOTH Qdrant and Vestige
 ```
 
 ## Metadata Conventions
@@ -119,7 +133,7 @@ ELSE IF need related documents:
 | Key | Values | Purpose |
 |-----|--------|---------|
 | `source` | Document name (kebab-case) | Group chunks from same doc |
-| `type` | `prd`, `architecture`, `integration`, `domain`, `requirements` | Categorize |
+| `type` | `prd`, `architecture`, `integration`, `domain`, `requirements`, `standard`, `sample` | Categorize |
 | `date` | `YYYY-MM-DD` | When stored |
 
 ## Error Recovery
@@ -133,8 +147,8 @@ ELSE IF need related documents:
 
 ## When NOT to Use
 
-- Single preferences or decisions → Vestige
-- Session state → Serena memory
+- Knowledge that should fade if unused (preferences, decisions, patterns) → Vestige (neural memory)
+- Session state or task progress → Serena memory (project workbench)
 - Code symbol search → Serena or Grep
 - Current web info → Tavily
 - Library API docs → Context7

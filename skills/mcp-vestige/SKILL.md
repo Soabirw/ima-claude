@@ -19,11 +19,11 @@ triggers:
 
 ## Architecture (3-Tier Memory)
 
-| System | Responsibility | Example |
-|--------|---------------|---------|
-| **Vestige** | All persistent knowledge: preferences, decisions, patterns, bugs, codebase context, intentions | "We chose JWT over sessions because..." |
-| **Serena Memory** | Session state checkpoints only (ephemeral, overwritten) | "Currently on task 3/5, next: write tests" |
-| **Claude auto-memory** | Claude's own MEMORY.md (internal learning notes) | Left as-is |
+| System | Role | Lifecycle | Example |
+|--------|------|-----------|---------|
+| **Vestige** | Neural memory — decisions, preferences, patterns, bugs, learnings | Fades if unused (FSRS-6 decay) | "We chose JWT over sessions because..." |
+| **Qdrant** | Permanent library — reference material, standards, PRDs, architecture docs | Persistent forever | "Our payment system uses Accept.js with ARB" |
+| **Serena Memory** | Project workbench — session state, task progress | Project-scoped, survives git ops | "Currently on task 3/5, next: write tests" |
 
 ## Session Start Protocol (REQUIRED)
 
@@ -208,17 +208,23 @@ Memories that are searched for get reinforced. Unused memories naturally decay. 
 
 ## Decision Logic
 
+**Will it fade if we stop referencing it? That determines where it goes.**
+
 ```
-IF need to store persistent knowledge (preferences, decisions, patterns, bugs):
-    → Use Vestige smart_ingest
-ELSE IF need to save session checkpoint (ephemeral, project-specific):
-    → Use Serena write_memory
-ELSE IF need to set a future reminder:
-    → Use Vestige intention
-ELSE IF need to record codebase architecture:
-    → Use Vestige codebase
+IF knowledge that should strengthen with use, fade if unused
+   (preferences, decisions, patterns, bugs, learnings):
+    → Vestige smart_ingest (neural memory — decays naturally)
+ELSE IF reference material that should never be forgotten
+   (wiki, standards, PRDs, architecture docs, code samples):
+    → Qdrant qdrant-store (permanent library)
+ELSE IF session state or project progress:
+    → Serena write_memory (project workbench)
+ELSE IF future reminder or intention:
+    → Vestige intention
+ELSE IF codebase architecture pattern:
+    → Vestige codebase
 ELSE IF searching for prior context:
-    → Use Vestige search (semantic + keyword)
+    → Vestige search (semantic + keyword)
 ```
 
 ## What NOT to Store

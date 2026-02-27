@@ -5,6 +5,25 @@ All notable changes to ima-claude will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.19.0] - 2026-02-26
+
+### Added
+
+- **Memory architecture overhaul** — unified 3-tier decision tree (decay/permanent/project) across INIT and skill files
+  - `IMA_CLAUDE_INIT.md` — new "Memory: What Goes Where" section replaces scattered memory logic
+  - `mcp-vestige` Skill — Architecture table and Decision Logic updated with decay/permanent/project framing
+  - `mcp-qdrant` Skill — reframed as "The Permanent Library" with expanded proactive triggers and new metadata types (`standard`, `sample`)
+- **`.claude/rules/memory-after-work.md`** — first rules file (procedural brain); auto-injects memory storage reminders after task completion
+- **Rules installer support** — `RULES_DIR`, `RULES_TO_INSTALL` in utils.ts; rules deployment step in install.ts
+- **12 new hooks** (21 total) for automatic behavioral enforcement:
+  - **Memory hooks**: `memory_bootstrap.py` (session-start Vestige/Qdrant reminder), `memory_store_reminder.py` (nudge after 5 edits), `vestige_before_external.py` (check Vestige before Context7/Tavily)
+  - **Workflow hooks**: `task_master_after_plan.py` (delegate after ExitPlanMode), `task_master_before_impl.py` (catch non-trivial impl without task breakdown), `jira_issue_fetch.py` (auto-fetch Jira issue keys in prompts)
+  - **Security hooks**: `wp_security_check.py` (WordPress AJAX nonce/capability/sanitize/prepare + strict_types + function_exists), `sql_injection_check.py` (SQL string interpolation in JS/TS)
+  - **Atlassian hooks**: `atlassian_prereqs.py` (cloudId bootstrap, getTransitions before transition, ADF body serialization)
+  - **Code quality hooks**: `fp_utility_check.py` (custom pipe/compose/curry detection), `jquery_in_wordpress.py` (vanilla DOM in WP context), `bootstrap_utility_check.py` (hardcoded CSS vs Bootstrap utilities), `composer_autoload_check.py` (autoload files PHPUnit bug), `docs_organization.py` (markdown scattered in project root)
+- **PostToolUse hook support** in `mergeHooksIntoSettings()` — handles Edit, Write, ExitPlanMode matchers
+- **Hooks config** now covers 25 PreToolUse matchers, 3 PostToolUse matchers, and 3 UserPromptSubmit hooks
+
 ## [1.18.0] - 2026-02-26
 
 ### Changed

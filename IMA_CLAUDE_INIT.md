@@ -52,34 +52,45 @@ mcp__serena__list_memories
 
 ---
 
-## MCP Tool Selection (Automatic)
+## Memory: What Goes Where
 
-**Decision tree for every task:**
+**Will it fade if we stop referencing it? That's the question.**
 
-```
-Need current info (post-Jan 2025, "latest", "what's new")?
-  → Tavily
+| What you're storing | Where | Why |
+|---|---|---|
+| Decisions, preferences, patterns, bugs, learnings | **Vestige** `smart_ingest` | Neural memory — strengthens with use, fades naturally |
+| Reference material (wiki, standards, architecture docs, code samples, PRDs, plans) | **Qdrant** `qdrant-store` | Permanent library — never forgotten, always searchable |
+| Session state, project plans, task progress | **Serena** `write_memory` | Project workbench — survives git chaos, project-scoped |
+| Future reminders | **Vestige** `intention` | Surfaces at next session start |
 
-Need library/framework API docs?
-  → Context7
+**Searching?**
 
-Need code symbols (find refs, rename, refactor)?
-  → Serena
+| Looking for... | Where |
+|---|---|
+| "What did we decide about X?" | Vestige `search` |
+| "What does our architecture doc say about X?" | Qdrant `qdrant-find` |
+| "Where was I last session?" | Serena `read_memory` |
+| Code symbols, references, refactoring | Serena symbol tools |
 
-Need complex reasoning (debug, architecture, trade-offs)?
-  → Sequential Thinking
+**Store automatically (don't wait to be asked):**
 
-Need cross-session persistence (preferences, decisions, patterns)?
-  → Vestige
+| When you hear... | Action |
+|---|---|
+| "I prefer..." / "I like..." / "I always..." | Vestige `smart_ingest` node_type: "preference" |
+| "Let's go with X because..." | Vestige `smart_ingest` node_type: "decision" |
+| "The reason this failed was..." | Vestige `smart_ingest` node_type: "bug" |
+| "From now on..." / "Going forward..." | Vestige `smart_ingest` node_type: "preference" |
+| User corrects your approach | Vestige `smart_ingest` node_type: "preference" |
+| "Remind me..." / "Next session..." | Vestige `intention` action: "set" |
+| Wiki, PRD, spec, standard created/discussed | Qdrant `qdrant-store` with appropriate metadata type |
+| Architecture documented or diagrammed | Qdrant `qdrant-store` type: "architecture" |
+| Useful code sample written | Qdrant `qdrant-store` type: "sample" |
 
-Need document-scale knowledge (PRDs, plans, guides, solutions)?
-  → Qdrant
+**Don't store**: Temporary debug info, one-off fixes, info in project docs.
 
-Need future reminders or intentions?
-  → Vestige
-```
+---
 
-### Quick Reference
+## MCP Tool Selection (Non-Memory)
 
 | Signal | Tool | NOT For |
 |--------|------|---------|
@@ -87,32 +98,12 @@ Need future reminders or intentions?
 | Library name + API question | Context7 | Current events (Tavily) |
 | "where is X used", "rename", "refactor" | Serena | Simple text search (Grep) |
 | "think through", "debug", "trade-offs" | Sequential | Simple questions |
-| Preference stated, decision made | Vestige | Temporary debug info |
-| PRD, plan, guide, large doc | Qdrant | Atomic decisions (Vestige) |
-| "remind me", "next session", "intention" | Vestige | Session state (Serena) |
 
 ### Before Using Web Tools
 
 1. Check if it's in Claude's knowledge (pre-cutoff)
 2. Check if Context7 has library docs
 3. Only then use Tavily/WebFetch
-
----
-
-## Proactive Memory Storage
-
-**Store automatically via Vestige (don't wait to be asked):**
-
-| When you hear... | Action |
-|------------------|--------|
-| "I prefer..." / "I like..." / "I always..." | `smart_ingest` node_type: "preference" |
-| "Let's go with X because..." | `smart_ingest` node_type: "decision" |
-| "The reason this failed was..." | `smart_ingest` node_type: "bug" |
-| "From now on..." / "Going forward..." | `smart_ingest` node_type: "preference" |
-| User corrects your approach | `smart_ingest` node_type: "preference" |
-| "Remind me..." / "Next session..." | `intention` action: "set" |
-
-**Don't store**: Temporary debug info, one-off fixes, info in project docs.
 
 ---
 

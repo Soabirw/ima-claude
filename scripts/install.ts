@@ -7,6 +7,7 @@ import {
   SKILLS_DIR,
   HOOKS_DIR,
   COMMANDS_DIR,
+  RULES_DIR,
   VERSION,
   log,
   colors,
@@ -20,6 +21,7 @@ import {
   PERSONALITIES_TO_INSTALL,
   HOOKS_TO_INSTALL,
   COMMANDS_TO_INSTALL,
+  RULES_TO_INSTALL,
 } from "./utils";
 
 const args = process.argv.slice(2);
@@ -188,6 +190,31 @@ async function main() {
     }
   }
 
+  // Step 10b: Install rules
+  const rulesSource = join(scriptDir, ".claude", "rules");
+  if (existsSync(rulesSource)) {
+    ensureDir(RULES_DIR);
+
+    log.step(`${skillVerb} rules...`);
+    let rulesInstalled = 0;
+
+    for (const rule of RULES_TO_INSTALL) {
+      const src = join(rulesSource, rule);
+      const dest = join(RULES_DIR, rule);
+
+      if (existsSync(src)) {
+        if (existsSync(dest)) {
+          try { chmodSync(dest, 0o644); } catch {}
+        }
+        copyFileSync(src, dest);
+        console.log(`   ${colors.green}${skillSymbol}${colors.reset} ${rule}`);
+        rulesInstalled++;
+      }
+    }
+
+    log.success(`${isUpgrade ? "Upgraded" : "Installed"} ${rulesInstalled} rules`);
+  }
+
   // Step 11: Install commands
   const commandsSource = join(scriptDir, "commands");
   if (existsSync(commandsSource)) {
@@ -261,6 +288,7 @@ my-project-skill/
   console.log(`   Skills:        ${SKILLS_DIR}/`);
   console.log(`   Personalities: ${CLAUDE_DIR}/personalities/`);
   console.log(`   Hooks:         ${HOOKS_DIR}/`);
+  console.log(`   Rules:         ${RULES_DIR}/`);
   console.log(`   Commands:      ${COMMANDS_DIR}/`);
   console.log("");
 

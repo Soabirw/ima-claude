@@ -6,8 +6,9 @@ export const CLAUDE_DIR = join(homedir(), ".claude");
 export const SKILLS_DIR = join(CLAUDE_DIR, "skills");
 export const HOOKS_DIR = join(CLAUDE_DIR, "hooks");
 export const COMMANDS_DIR = join(CLAUDE_DIR, "commands");
+export const RULES_DIR = join(CLAUDE_DIR, "rules");
 export const SETTINGS_FILE = join(CLAUDE_DIR, "settings.json");
-export const VERSION = "1.18.0";
+export const VERSION = "1.19.0";
 
 export const colors = {
   reset: "\x1b[0m",
@@ -175,19 +176,60 @@ export const PERSONALITIES_TO_INSTALL = [
 ];
 
 export const HOOKS_TO_INSTALL = [
+  // Tool redirection hooks
   "enforce_rg_over_grep.py",
   "tavily_extract_advanced.py",
   "webfetch_to_tavily.py",
   "websearch_to_tavily.py",
+  // Prompt coaching
   "prompt_coach.py",
   "prompt_coach_system.md",
   "prompt_coach_digest.md",
+  // Memory system hooks
+  "memory_bootstrap.py",
+  "memory_store_reminder.py",
+  "vestige_before_external.py",
+  // Workflow hooks
+  "task_master_after_plan.py",
+  "task_master_before_impl.py",
+  "jira_issue_fetch.py",
+  // Security hooks
+  "wp_security_check.py",
+  "sql_injection_check.py",
+  // Atlassian prerequisite hooks
+  "atlassian_prereqs.py",
+  // Code quality hooks
+  "fp_utility_check.py",
+  "jquery_in_wordpress.py",
+  "bootstrap_utility_check.py",
+  "composer_autoload_check.py",
+  "docs_organization.py",
 ];
 
 export const COMMANDS_TO_INSTALL = [
   // Commands moved to skills in v1.6.0
   // - save-session (now a skill using Serena MCP)
   // - resume-session (now a skill using Serena MCP)
+];
+
+export const RULES_TO_INSTALL = [
+  "memory-after-work.md",
+];
+
+// Atlassian tools that need prereq checks (H3/H4/M5)
+const ATLASSIAN_TOOLS_WITH_PREREQS = [
+  "mcp__claude_ai_Atlassian__getJiraIssue",
+  "mcp__claude_ai_Atlassian__editJiraIssue",
+  "mcp__claude_ai_Atlassian__createJiraIssue",
+  "mcp__claude_ai_Atlassian__searchJiraIssuesUsingJql",
+  "mcp__claude_ai_Atlassian__transitionJiraIssue",
+  "mcp__claude_ai_Atlassian__addCommentToJiraIssue",
+  "mcp__claude_ai_Atlassian__getConfluencePage",
+  "mcp__claude_ai_Atlassian__createConfluencePage",
+  "mcp__claude_ai_Atlassian__updateConfluencePage",
+  "mcp__claude_ai_Atlassian__searchConfluenceUsingCql",
+  "mcp__claude_ai_Atlassian__getAccessibleAtlassianResources",
+  "mcp__claude_ai_Atlassian__getTransitionsForJiraIssue",
 ];
 
 // Hook configuration to merge into settings.json
@@ -197,13 +239,69 @@ export const HOOKS_CONFIG = {
       {
         matcher: "Bash",
         hooks: [
-          { type: "command", command: `python3 ${HOOKS_DIR}/enforce_rg_over_grep.py` }
+          { type: "command", command: `python3 ${HOOKS_DIR}/enforce_rg_over_grep.py` },
+          { type: "command", command: `python3 ${HOOKS_DIR}/memory_bootstrap.py` }
+        ]
+      },
+      {
+        matcher: "Read",
+        hooks: [
+          { type: "command", command: `python3 ${HOOKS_DIR}/memory_bootstrap.py` }
+        ]
+      },
+      {
+        matcher: "Edit",
+        hooks: [
+          { type: "command", command: `python3 ${HOOKS_DIR}/memory_bootstrap.py` }
+        ]
+      },
+      {
+        matcher: "Write",
+        hooks: [
+          { type: "command", command: `python3 ${HOOKS_DIR}/memory_bootstrap.py` }
+        ]
+      },
+      {
+        matcher: "Glob",
+        hooks: [
+          { type: "command", command: `python3 ${HOOKS_DIR}/memory_bootstrap.py` }
+        ]
+      },
+      {
+        matcher: "Grep",
+        hooks: [
+          { type: "command", command: `python3 ${HOOKS_DIR}/memory_bootstrap.py` }
         ]
       },
       {
         matcher: "mcp__tavily__tavily-extract",
         hooks: [
-          { type: "command", command: `python3 ${HOOKS_DIR}/tavily_extract_advanced.py` }
+          { type: "command", command: `python3 ${HOOKS_DIR}/tavily_extract_advanced.py` },
+          { type: "command", command: `python3 ${HOOKS_DIR}/vestige_before_external.py` }
+        ]
+      },
+      {
+        matcher: "mcp__tavily__tavily_search",
+        hooks: [
+          { type: "command", command: `python3 ${HOOKS_DIR}/vestige_before_external.py` }
+        ]
+      },
+      {
+        matcher: "mcp__tavily__tavily_research",
+        hooks: [
+          { type: "command", command: `python3 ${HOOKS_DIR}/vestige_before_external.py` }
+        ]
+      },
+      {
+        matcher: "mcp__context7__resolve-library-id",
+        hooks: [
+          { type: "command", command: `python3 ${HOOKS_DIR}/vestige_before_external.py` }
+        ]
+      },
+      {
+        matcher: "mcp__context7__query-docs",
+        hooks: [
+          { type: "command", command: `python3 ${HOOKS_DIR}/vestige_before_external.py` }
         ]
       },
       {
@@ -217,12 +315,54 @@ export const HOOKS_CONFIG = {
         hooks: [
           { type: "command", command: `python3 ${HOOKS_DIR}/websearch_to_tavily.py` }
         ]
+      },
+      // Atlassian prerequisite checks
+      ...ATLASSIAN_TOOLS_WITH_PREREQS.map(tool => ({
+        matcher: tool,
+        hooks: [
+          { type: "command", command: `python3 ${HOOKS_DIR}/atlassian_prereqs.py` }
+        ]
+      }))
+    ],
+    PostToolUse: [
+      {
+        matcher: "Edit",
+        hooks: [
+          { type: "command", command: `python3 ${HOOKS_DIR}/memory_store_reminder.py` },
+          { type: "command", command: `python3 ${HOOKS_DIR}/wp_security_check.py` },
+          { type: "command", command: `python3 ${HOOKS_DIR}/sql_injection_check.py` },
+          { type: "command", command: `python3 ${HOOKS_DIR}/fp_utility_check.py` },
+          { type: "command", command: `python3 ${HOOKS_DIR}/jquery_in_wordpress.py` },
+          { type: "command", command: `python3 ${HOOKS_DIR}/bootstrap_utility_check.py` },
+          { type: "command", command: `python3 ${HOOKS_DIR}/composer_autoload_check.py` }
+        ]
+      },
+      {
+        matcher: "Write",
+        hooks: [
+          { type: "command", command: `python3 ${HOOKS_DIR}/memory_store_reminder.py` },
+          { type: "command", command: `python3 ${HOOKS_DIR}/wp_security_check.py` },
+          { type: "command", command: `python3 ${HOOKS_DIR}/sql_injection_check.py` },
+          { type: "command", command: `python3 ${HOOKS_DIR}/fp_utility_check.py` },
+          { type: "command", command: `python3 ${HOOKS_DIR}/jquery_in_wordpress.py` },
+          { type: "command", command: `python3 ${HOOKS_DIR}/bootstrap_utility_check.py` },
+          { type: "command", command: `python3 ${HOOKS_DIR}/composer_autoload_check.py` },
+          { type: "command", command: `python3 ${HOOKS_DIR}/docs_organization.py` }
+        ]
+      },
+      {
+        matcher: "ExitPlanMode",
+        hooks: [
+          { type: "command", command: `python3 ${HOOKS_DIR}/task_master_after_plan.py` }
+        ]
       }
     ],
     UserPromptSubmit: [
       {
         hooks: [
-          { type: "command", command: `python3 ${HOOKS_DIR}/prompt_coach.py` }
+          { type: "command", command: `python3 ${HOOKS_DIR}/prompt_coach.py` },
+          { type: "command", command: `python3 ${HOOKS_DIR}/jira_issue_fetch.py` },
+          { type: "command", command: `python3 ${HOOKS_DIR}/task_master_before_impl.py` }
         ]
       }
     ]
@@ -271,6 +411,23 @@ export function mergeHooksIntoSettings(): { merged: boolean; created: boolean } 
     }
   } else {
     settingsHooks.PreToolUse = HOOKS_CONFIG.hooks.PreToolUse;
+  }
+
+  // Merge PostToolUse hooks (match by matcher field)
+  if (settingsHooks.PostToolUse) {
+    const existingHooks = settingsHooks.PostToolUse as Array<{ matcher: string }>;
+    const newHooks = HOOKS_CONFIG.hooks.PostToolUse;
+
+    for (const newHook of newHooks) {
+      const existingIndex = existingHooks.findIndex(h => h.matcher === newHook.matcher);
+      if (existingIndex >= 0) {
+        existingHooks[existingIndex] = newHook;
+      } else {
+        existingHooks.push(newHook);
+      }
+    }
+  } else {
+    settingsHooks.PostToolUse = HOOKS_CONFIG.hooks.PostToolUse;
   }
 
   // Merge UserPromptSubmit hooks (replace entire array since no matcher field)

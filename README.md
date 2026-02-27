@@ -7,8 +7,9 @@ IMA's Claude Code Skills - FP patterns, architecture guidance, and team standard
 ## What's Included
 
 - **30+ Skills**: Foundational + FP implementation + domain expert + integration + meta-skills
+- **21 Hooks**: Automatic behavioral enforcement (security, memory, workflow, code quality)
 - **Default Persona**: "The Practitioner" - 25-year veteran mindset, collaborative, plan-first
-- **MCP Integration**: Skills for Serena, Vestige, Qdrant, Tavily, Context7, Sequential Thinking
+- **3-Tier Memory**: Vestige (neural decay) + Qdrant (permanent library) + Serena (project workbench)
 - **IMA Workflow**: Brainstorm → Plan → Implement → Test → Review → Document (habit-driven, not tool-enforced)
 - **Session Management**: MCP-based save/resume via Serena (no file path confusion)
 - **Meta-skills**: Create and analyze skills
@@ -29,7 +30,7 @@ ima-claude includes helper skills for these MCP servers. Install any that fit yo
 |------------|---------|-------|
 | **Serena** | Code symbol operations, refactoring, session memory | JetBrains IDE + Serena plugin |
 | **Vestige** | Cognitive memory engine (preferences, decisions, patterns) | Cargo or binary install |
-| **Qdrant** | Document-scale RAG (PRDs, plans, solutions) | Docker |
+| **Qdrant** | Permanent library (standards, PRDs, architecture, code samples) | Docker |
 | **Tavily** | Web research and current information | API key ([tavily.com](https://tavily.com)) |
 | **Context7** | Official library documentation lookup | npx |
 | **Sequential Thinking** | Structured reasoning for complex problems | npx |
@@ -98,7 +99,7 @@ ima-claude includes skills that teach Claude how to use each MCP server effectiv
 | Skill | Purpose |
 |-------|---------|
 | **mcp-vestige** | Cognitive memory: semantic search, spaced repetition, proactive storage |
-| **mcp-qdrant** | Document-scale RAG: PRDs, architecture docs, solutions |
+| **mcp-qdrant** | Permanent library: standards, PRDs, architecture, code samples |
 | **mcp-serena** | Code symbol operations, refactoring, semantic analysis |
 | **mcp-tavily** | Web research patterns and query optimization |
 | **mcp-context7** | Library documentation lookup strategies |
@@ -206,7 +207,7 @@ Our development workflow is habit-driven, not tool-enforced. No plugins required
 |-------|-------------|
 | `compound-bridge` | Compound Engineering integration (memory bridge, role separation) |
 | `mcp-vestige` | Cognitive memory: preferences, decisions, patterns |
-| `mcp-qdrant` | Document-scale RAG: PRDs, plans, solutions |
+| `mcp-qdrant` | Permanent library: standards, PRDs, architecture, code samples |
 | `mcp-serena` | Code symbol operations, refactoring, semantic analysis |
 | `mcp-atlassian` | Jira & Confluence operations |
 | `mcp-tavily` | Web research and query optimization |
@@ -242,18 +243,21 @@ Or explicitly request a skill:
 "Use the js-fp skill to review this code"
 ```
 
-## Hooks (Optional Enhancements)
+## Hooks (21 Behavioral Hooks)
 
-Pre-tool-use hooks that enhance Claude Code's behavior:
+Hooks enforce skill behaviors automatically — Claude can't skip them. All hooks are soft warnings (exit 0) that guide without blocking.
 
-| Hook | Purpose |
-|------|---------|
-| `enforce_rg_over_grep.py` | Enforces ripgrep over grep/find |
-| `tavily_extract_advanced.py` | Auto-upgrades Tavily to advanced mode |
-| `webfetch_to_tavily.py` | Redirects WebFetch to Tavily |
-| `websearch_to_tavily.py` | Redirects WebSearch to Tavily |
+| Category | Hooks | What They Enforce |
+|----------|-------|-------------------|
+| **Tool Redirection** | `enforce_rg_over_grep`, `webfetch_to_tavily`, `websearch_to_tavily`, `tavily_extract_advanced` | Use preferred tools (rg over grep, Tavily over WebFetch/WebSearch) |
+| **Memory System** | `memory_bootstrap`, `memory_store_reminder`, `vestige_before_external` | Search Vestige/Qdrant at session start; store after edits; check memory before external lookups |
+| **Workflow** | `task_master_after_plan`, `task_master_before_impl`, `jira_issue_fetch` | Delegate after planning; task-master before implementation; auto-fetch Jira issues |
+| **Security** | `wp_security_check`, `sql_injection_check` | WordPress AJAX security 5-pack + strict_types; SQL injection detection in JS/TS |
+| **Atlassian** | `atlassian_prereqs` | cloudId bootstrap, getTransitions before transition, ADF body serialization |
+| **Code Quality** | `fp_utility_check`, `jquery_in_wordpress`, `bootstrap_utility_check`, `composer_autoload_check`, `docs_organization` | No custom FP utilities; jQuery in WP; Bootstrap utilities over inline CSS; composer autoload bug; docs organization |
+| **Prompt Coaching** | `prompt_coach` | Haiku-powered prompt feedback (experimental) |
 
-See [hooks/README.md](hooks/README.md) for installation and configuration.
+See [hooks/README.md](hooks/README.md) for details.
 
 ## Prompt Coach (Experimental)
 
