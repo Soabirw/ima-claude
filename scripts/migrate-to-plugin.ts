@@ -206,7 +206,7 @@ async function main() {
 
   console.log(`${colors.bright}Next steps:${colors.reset}`);
   console.log(`   1. Add the marketplace:`);
-  console.log(`      ${colors.cyan}/plugin marketplace add your-org/ima-claude${colors.reset}`);
+  console.log(`      ${colors.cyan}/plugin marketplace add gitea.theflccc.org/IMA/ima-claude${colors.reset}`);
   console.log(`   2. Install the plugin:`);
   console.log(`      ${colors.cyan}/plugin install ima-claude${colors.reset}`);
   console.log(`   3. Verify skills load:`);
