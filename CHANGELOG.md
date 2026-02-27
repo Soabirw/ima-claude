@@ -5,6 +5,28 @@ All notable changes to ima-claude will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] - 2026-02-27
+
+### Breaking Changes
+
+- **Plugin system replaces file-based install** — ima-claude is now a Claude Code native plugin. Skills are namespaced (`/ima-claude:skill-name`). Install via `/plugin install https://github.com/your-org/ima-claude`. See [MIGRATION_GUIDE.md](MIGRATION_GUIDE.md).
+- **Legacy install deprecated** — `bun run scripts/install.ts` still works but receives no further updates. Last legacy release tagged `v1.21.0-legacy`.
+
+### Added
+
+- **Claude Code plugin system** — `plugins/ima-claude/` with `plugin.json`, `hooks.json`, `bootstrap.sh`. Hooks declared in JSON, no manual `settings.json` merging required.
+- **Hook test suite** — 191 tests across 5 files covering all 22 hook scripts. Run with `pytest tests/hooks/`. Tests fire/no-fire/edge-case scenarios for every hook using subprocess-based integration (same code path Claude Code uses).
+- **`tests/hooks/PLAYBOOK.md`** — human verification guide with install checks, per-hook trigger prompts, and activity log setup.
+- **`plugins/ima-claude/hooks/hook_logger.py`** — optional debug utility. Set `CLAUDE_HOOK_DEBUG=1` and `tail -f ~/.claude/hook-activity.log` to see hooks firing in real time.
+- **`scripts/migrate-to-plugin.ts`** — automated migration script. Removes legacy artifacts from `~/.claude/`, cleans `settings.json`, prints plugin install instructions. Supports `--dry-run`.
+- **`MIGRATION_GUIDE.md`** — full migration documentation: automated path, legacy tag path, what changes, troubleshooting.
+- **New hooks** — `serena_over_read.py` (token savings reminder before reading large code files), `sequential_thinking_check.py` (structured reasoning reminder for debug/analysis prompts).
+
+### Changed
+
+- All skills, hooks, and personalities moved to `plugins/ima-claude/` directory structure.
+- README install section updated: plugin (git URL) is primary, legacy is deprecated footnote.
+
 ## [1.20.0] - 2026-02-26
 
 ### Changed

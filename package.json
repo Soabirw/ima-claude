@@ -1,12 +1,13 @@
 {
   "name": "ima-claude",
-  "version": "1.20.0",
+  "version": "1.21.0",
   "description": "IMA's Claude Code Skills - FP patterns, architecture guidance, and team standards",
   "type": "module",
   "scripts": {
     "install": "bun run scripts/install.ts",
     "upgrade": "bun run scripts/upgrade.ts",
-    "backup": "bun run scripts/backup.ts"
+    "backup": "bun run scripts/backup.ts",
+    "migrate": "bun run scripts/migrate-to-plugin.ts"
   },
   "bin": {
     "ima-claude": "./scripts/cli.ts"

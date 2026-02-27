@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 
-import { existsSync, copyFileSync, readdirSync, chmodSync, writeFileSync } from "fs";
+import { existsSync, copyFileSync, readdirSync, chmodSync, writeFileSync, readFileSync } from "fs";
 import { join, dirname } from "path";
 import {
   CLAUDE_DIR,
@@ -27,7 +27,32 @@ import {
 const args = process.argv.slice(2);
 const reinstall = args.includes("--reinstall");
 
+function isPluginInstalled(): boolean {
+  // Check settings files for enabledPlugins containing ima-claude
+  const settingsFiles = [
+    join(CLAUDE_DIR, "settings.json"),
+    join(CLAUDE_DIR, "settings.local.json"),
+  ];
+  for (const file of settingsFiles) {
+    if (!existsSync(file)) continue;
+    try {
+      const content = readFileSync(file, "utf8");
+      if (content.includes("ima-claude") && content.includes("enabledPlugins")) return true;
+    } catch { /* ignore */ }
+  }
+  return false;
+}
+
 async function main() {
+  // Plugin detection: if ima-claude is installed as a plugin, warn and exit
+  if (isPluginInstalled()) {
+    console.log(`\n${colors.bright}ima-claude is installed as a Claude Code plugin${colors.reset}\n`);
+    console.log(`   The legacy install path is not needed when using the plugin system.`);
+    console.log(`   To update: ${colors.cyan}/plugin marketplace update${colors.reset}`);
+    console.log(`   To migrate back to legacy: remove the plugin first, then re-run install.\n`);
+    process.exit(0);
+  }
+
   const isUpgrade = isImaClaudeInstalled() && !reinstall;
   const action = isUpgrade ? "Upgrading" : "Installing";
   const emoji = isUpgrade ? "🔄" : "🚀";
@@ -44,8 +69,14 @@ async function main() {
 
   // Step 2: Get script directory (where ima-claude source is)
   const scriptDir = dirname(import.meta.dir);
-  const skillsSource = join(scriptDir, "skills");
-  const personalitiesSource = join(scriptDir, "personalities");
+  // Plugin structure: skills/hooks/personalities live under plugins/ima-claude/
+  const pluginDir = join(scriptDir, "plugins", "ima-claude");
+  const skillsSource = existsSync(join(pluginDir, "skills"))
+    ? join(pluginDir, "skills")
+    : join(scriptDir, "skills"); // fallback for pre-plugin layout
+  const personalitiesSource = existsSync(join(pluginDir, "personalities"))
+    ? join(pluginDir, "personalities")
+    : join(scriptDir, "personalities");
 
   if (!existsSync(skillsSource)) {
     log.error(`Skills source not found at: ${skillsSource}`);
@@ -145,7 +176,9 @@ async function main() {
   }
 
   // Step 9: Install hooks
-  const hooksSource = join(scriptDir, "hooks");
+  const hooksSource = existsSync(join(pluginDir, "hooks"))
+    ? join(pluginDir, "hooks")
+    : join(scriptDir, "hooks");
   if (existsSync(hooksSource)) {
     ensureDir(HOOKS_DIR);
 
