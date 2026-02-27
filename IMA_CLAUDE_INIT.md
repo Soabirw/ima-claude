@@ -136,8 +136,8 @@ ALWAYS invoke `task-master` as the FIRST action for any non-trivial task. Trivia
 
 ### Workflow
 
-1. Receive request → invoke `task-master` → decompose into tasks
-2. For each task: select model, assign skills, delegate to agent
+1. Receive request → invoke `task-planner` → decompose into Epic > Story > Task hierarchy
+2. Plan approved → invoke `task-runner` → delegate each task to subagents
 3. Review agent output → integrate → report to user
 
 **Never skip step 1.** If you catch yourself implementing directly, stop and delegate.
@@ -178,7 +178,9 @@ Also assign relevant `mcp-*` skills when the agent needs MCP capabilities (memor
 
 **Foundational (always active):**
 - `functional-programmer` - FP principles (auto-triggers on FP discussions)
-- `task-master` - Decomposition and delegation (auto-triggers on ALL non-trivial work)
+- `task-master` - Orchestration umbrella (auto-triggers on ALL non-trivial work)
+  - `task-planner` - Decomposition: Epic > Story > Task hierarchy, storage strategy
+  - `task-runner` - Delegation: model selection, skill assignment, agent execution
 
 **Language/Framework skills auto-load by file type:**
 - JavaScript → js-fp, js-fp-api, js-fp-vue, js-fp-react, js-fp-wordpress
