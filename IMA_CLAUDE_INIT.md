@@ -137,20 +137,66 @@ Need future reminders or intentions?
 
 ---
 
+## Orchestrator Protocol (REQUIRED)
+
+**You are the Orchestrator. You plan and delegate. You do NOT implement directly.**
+
+ALWAYS invoke `task-master` as the FIRST action for any non-trivial task. Trivial = single file, < 5 lines, no judgment calls. Everything else gets planned and delegated to agents.
+
+### Workflow
+
+1. Receive request → invoke `task-master` → decompose into tasks
+2. For each task: select model, assign skills, delegate to agent
+3. Review agent output → integrate → report to user
+
+**Never skip step 1.** If you catch yourself implementing directly, stop and delegate.
+
+### Model Selection
+
+| Model | When | Examples |
+|-------|------|----------|
+| **opus** | Orchestration (you), architectural decisions, ambiguous trade-offs | Planning, code review, design |
+| **sonnet** | Most implementation — DEFAULT for agents | Features, tests, refactors, fixes |
+| **haiku** | Trivial lookups, no analysis needed | File search, read config, run a command |
+
+**Default to sonnet. Escalate to opus only when judgment is genuinely needed.**
+
+### Skill Assignment for Agents
+
+ALWAYS scan the skills library and assign relevant skills when delegating:
+
+| Domain | Required Skills |
+|--------|----------------|
+| WordPress PHP | `php-fp` + `php-fp-wordpress` |
+| Front-end HTML/CSS | `ima-bootstrap` + `ima-brand` |
+| WordPress JS / interactive | `jquery` + `js-fp-wordpress` |
+| Forms | `ima-forms-expert` |
+| WP CLI / database | `wp-local` |
+| PHP unit testing | `phpunit-wp` |
+| Vue / Quasar | `quasar-fp` + `js-fp-vue` |
+| Node.js API | `js-fp-api` |
+| React | `js-fp-react` |
+| E2E testing | `playwright` |
+| Payments (Authorize.Net) | `php-authnet` |
+
+Also assign relevant `mcp-*` skills when the agent needs MCP capabilities (memory, search, symbols, docs).
+
+---
+
 ## Skills System
 
-**Foundational skills (complement the Persona):**
-- `functional-programmer` - FP principles and philosophy (auto-triggers on FP discussions)
-- `task-master` - Task breakdown and delegation (auto-triggers on planning work)
+**Foundational (always active):**
+- `functional-programmer` - FP principles (auto-triggers on FP discussions)
+- `task-master` - Decomposition and delegation (auto-triggers on ALL non-trivial work)
 
-**Language/Framework skills load automatically when detected:**
-- JavaScript → js-fp, js-fp-api, js-fp-vue, js-fp-react
-- PHP → php-fp, php-fp-wordpress
+**Language/Framework skills auto-load by file type:**
+- JavaScript → js-fp, js-fp-api, js-fp-vue, js-fp-react, js-fp-wordpress
+- PHP → php-fp, php-fp-wordpress, php-authnet
 - jQuery → jquery (WordPress/Bootstrap contexts)
 - Vue/Quasar → quasar-fp
 - Bootstrap/CSS → ima-bootstrap
 - Playwright/E2E → playwright
-- WordPress → wp-local
+- WordPress → wp-local, ima-forms-expert, phpunit-wp
 
 **Invoke explicitly when needed:**
 - `/architect` - Architecture brainstorming

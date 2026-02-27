@@ -1,6 +1,6 @@
 ---
 name: "task-master"
-description: "Effective task breakdown and delegation for Claude Code workflows. Hierarchical decomposition (Epic > Story > Task), optimal storage strategy (Serena/TaskList/Markdown), and agent delegation patterns. Trigger when: planning work, breaking down tasks, organizing projects, delegating to subagents, managing epics/stories, or when complexity requires structured approach. Keywords: decompose, task list, project planning, phases, milestones, step by step."
+description: "Default orchestration skill for ALL non-trivial tasks. Decomposes work, selects models (opus/sonnet/haiku), assigns skills, and delegates to agents. Invoke FIRST before implementing. Trivial = single file, < 5 lines, no judgment. Everything else gets task-master. Covers: hierarchical decomposition (Epic > Story > Task), storage strategy (Serena/TaskList/Markdown), agent delegation patterns, and model optimization."
 ---
 
 # Task Master - Structured Work Breakdown

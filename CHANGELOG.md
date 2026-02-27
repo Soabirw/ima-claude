@@ -5,6 +5,22 @@ All notable changes to ima-claude will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.17.0] - 2026-02-26
+
+### Added
+
+- **Orchestrator Protocol** in `IMA_CLAUDE_INIT.md` — assertive mandate for Opus to plan and delegate via `task-master` instead of implementing directly
+  - 3-step workflow: receive → decompose → delegate → review
+  - Model selection table (opus for orchestration, sonnet default for agents, haiku for trivial)
+  - Domain-to-skills mapping table for automatic agent skill assignment
+  - Self-correction trigger: "If you catch yourself implementing, stop and delegate"
+
+### Changed
+
+- **task-master Skill** — updated frontmatter to trigger on ALL non-trivial tasks (was: planning keywords only)
+- **Skills System** in `IMA_CLAUDE_INIT.md` — expanded auto-load lists: added `js-fp-wordpress`, `php-authnet`, `ima-forms-expert`, `phpunit-wp`
+- **scripts/utils.ts** — bumped VERSION to 1.17.0
+
 ## [1.16.0] - 2026-02-26
 
 ### Added
