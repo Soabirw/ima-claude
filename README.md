@@ -131,6 +131,12 @@ Inside Claude Code, run:
 /plugin install ima-claude
 ```
 
+Then **restart Claude Code** to load the plugin. Verify with:
+
+```
+/quickstart
+```
+
 Skills are namespaced (`/ima-claude:task-master`, `/ima-claude:quickstart`, etc.) and isolated from other plugins.
 
 ### Upgrade
