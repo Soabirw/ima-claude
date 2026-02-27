@@ -51,6 +51,9 @@ FP skills auto-activate by file type — just start coding.
 | WordPress JS | `js-fp-wordpress`, `jquery` |
 | PHP | `php-fp` |
 | WordPress PHP | `php-fp-wordpress` |
+| Ruby | `ruby-fp` |
+| Ruby on Rails | `rails` |
+| Discourse plugins | `discourse` |
 | Bootstrap/CSS | `ima-bootstrap` |
 | E2E tests | `playwright` |
 
