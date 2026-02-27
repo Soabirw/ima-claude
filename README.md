@@ -118,13 +118,33 @@ ima-claude includes skills that teach Claude how to use each MCP server effectiv
 
 These skills auto-activate based on context.
 
-## Quick Install
+## Install
 
-```bash
-bunx ima-claude install
+### Plugin System (Recommended)
+
+Inside Claude Code, run:
+
+```
+/plugin install https://github.com/your-org/ima-claude
 ```
 
-Or clone and install manually:
+Skills are namespaced (`/ima-claude:task-master`, `/ima-claude:quickstart`, etc.) and isolated from other plugins.
+
+### Upgrade
+
+```
+/plugin marketplace update
+```
+
+---
+
+> **Migrating from a legacy install?** See [MIGRATION_GUIDE.md](MIGRATION_GUIDE.md) for step-by-step instructions and the legacy tag reference.
+
+---
+
+### Legacy Install (Deprecated)
+
+The file-based install is no longer maintained as of v2.0.0. It still works but receives no further updates.
 
 ```bash
 git clone https://github.com/your-org/ima-claude.git
@@ -132,10 +152,11 @@ cd ima-claude
 bun run scripts/install.ts
 ```
 
-## Upgrade
+To stay on the last legacy release:
 
 ```bash
-bunx ima-claude upgrade
+git checkout v1.21.0-legacy
+bun run scripts/install.ts
 ```
 
 ## Tips
@@ -352,7 +373,8 @@ Copy `templates/CLAUDE.md.example` to `~/.claude/CLAUDE.md` and customize:
 
 ## Migration
 
-If you were using the old `/fp:*` command system, see [docs/MIGRATING-FROM-COMMANDS.md](docs/MIGRATING-FROM-COMMANDS.md).
+- **Legacy → Plugin**: See [MIGRATION_GUIDE.md](MIGRATION_GUIDE.md)
+- **Old `/fp:*` commands**: See [docs/MIGRATING-FROM-COMMANDS.md](docs/MIGRATING-FROM-COMMANDS.md)
 
 ## Contributing
 

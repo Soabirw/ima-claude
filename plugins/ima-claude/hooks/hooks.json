@@ -1,0 +1,238 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume|clear|compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/bootstrap.sh"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          { "type": "command", "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/enforce_rg_over_grep.py" },
+          { "type": "command", "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/memory_bootstrap.py" }
+        ]
+      },
+      {
+        "matcher": "Read",
+        "hooks": [
+          { "type": "command", "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/memory_bootstrap.py" },
+          { "type": "command", "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/serena_over_read.py" }
+        ]
+      },
+      {
+        "matcher": "Edit",
+        "hooks": [
+          { "type": "command", "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/memory_bootstrap.py" }
+        ]
+      },
+      {
+        "matcher": "Write",
+        "hooks": [
+          { "type": "command", "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/memory_bootstrap.py" }
+        ]
+      },
+      {
+        "matcher": "Glob",
+        "hooks": [
+          { "type": "command", "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/memory_bootstrap.py" }
+        ]
+      },
+      {
+        "matcher": "Grep",
+        "hooks": [
+          { "type": "command", "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/memory_bootstrap.py" },
+          { "type": "command", "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/serena_over_grep.py" }
+        ]
+      },
+      {
+        "matcher": "mcp__tavily__tavily-extract",
+        "hooks": [
+          { "type": "command", "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/tavily_extract_advanced.py" },
+          { "type": "command", "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/vestige_before_external.py" }
+        ]
+      },
+      {
+        "matcher": "mcp__tavily__tavily_search",
+        "hooks": [
+          { "type": "command", "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/vestige_before_external.py" }
+        ]
+      },
+      {
+        "matcher": "mcp__tavily__tavily_research",
+        "hooks": [
+          { "type": "command", "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/vestige_before_external.py" }
+        ]
+      },
+      {
+        "matcher": "mcp__context7__resolve-library-id",
+        "hooks": [
+          { "type": "command", "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/vestige_before_external.py" }
+        ]
+      },
+      {
+        "matcher": "mcp__context7__query-docs",
+        "hooks": [
+          { "type": "command", "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/vestige_before_external.py" }
+        ]
+      },
+      {
+        "matcher": "WebFetch",
+        "hooks": [
+          { "type": "command", "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/webfetch_to_tavily.py" }
+        ]
+      },
+      {
+        "matcher": "WebSearch",
+        "hooks": [
+          { "type": "command", "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/websearch_to_tavily.py" }
+        ]
+      },
+      {
+        "matcher": "mcp__serena__jet_brains_find_symbol",
+        "hooks": [
+          { "type": "command", "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/serena_project_check.py" }
+        ]
+      },
+      {
+        "matcher": "mcp__serena__jet_brains_find_referencing_symbols",
+        "hooks": [
+          { "type": "command", "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/serena_project_check.py" }
+        ]
+      },
+      {
+        "matcher": "mcp__serena__jet_brains_get_symbols_overview",
+        "hooks": [
+          { "type": "command", "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/serena_project_check.py" }
+        ]
+      },
+      {
+        "matcher": "mcp__serena__jet_brains_type_hierarchy",
+        "hooks": [
+          { "type": "command", "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/serena_project_check.py" }
+        ]
+      },
+      {
+        "matcher": "mcp__claude_ai_Atlassian__getJiraIssue",
+        "hooks": [
+          { "type": "command", "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/atlassian_prereqs.py" }
+        ]
+      },
+      {
+        "matcher": "mcp__claude_ai_Atlassian__editJiraIssue",
+        "hooks": [
+          { "type": "command", "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/atlassian_prereqs.py" }
+        ]
+      },
+      {
+        "matcher": "mcp__claude_ai_Atlassian__createJiraIssue",
+        "hooks": [
+          { "type": "command", "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/atlassian_prereqs.py" }
+        ]
+      },
+      {
+        "matcher": "mcp__claude_ai_Atlassian__searchJiraIssuesUsingJql",
+        "hooks": [
+          { "type": "command", "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/atlassian_prereqs.py" }
+        ]
+      },
+      {
+        "matcher": "mcp__claude_ai_Atlassian__transitionJiraIssue",
+        "hooks": [
+          { "type": "command", "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/atlassian_prereqs.py" }
+        ]
+      },
+      {
+        "matcher": "mcp__claude_ai_Atlassian__addCommentToJiraIssue",
+        "hooks": [
+          { "type": "command", "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/atlassian_prereqs.py" }
+        ]
+      },
+      {
+        "matcher": "mcp__claude_ai_Atlassian__getConfluencePage",
+        "hooks": [
+          { "type": "command", "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/atlassian_prereqs.py" }
+        ]
+      },
+      {
+        "matcher": "mcp__claude_ai_Atlassian__createConfluencePage",
+        "hooks": [
+          { "type": "command", "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/atlassian_prereqs.py" }
+        ]
+      },
+      {
+        "matcher": "mcp__claude_ai_Atlassian__updateConfluencePage",
+        "hooks": [
+          { "type": "command", "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/atlassian_prereqs.py" }
+        ]
+      },
+      {
+        "matcher": "mcp__claude_ai_Atlassian__searchConfluenceUsingCql",
+        "hooks": [
+          { "type": "command", "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/atlassian_prereqs.py" }
+        ]
+      },
+      {
+        "matcher": "mcp__claude_ai_Atlassian__getAccessibleAtlassianResources",
+        "hooks": [
+          { "type": "command", "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/atlassian_prereqs.py" }
+        ]
+      },
+      {
+        "matcher": "mcp__claude_ai_Atlassian__getTransitionsForJiraIssue",
+        "hooks": [
+          { "type": "command", "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/atlassian_prereqs.py" }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit",
+        "hooks": [
+          { "type": "command", "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/memory_store_reminder.py" },
+          { "type": "command", "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/wp_security_check.py" },
+          { "type": "command", "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/sql_injection_check.py" },
+          { "type": "command", "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/fp_utility_check.py" },
+          { "type": "command", "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/jquery_in_wordpress.py" },
+          { "type": "command", "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/bootstrap_utility_check.py" },
+          { "type": "command", "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/composer_autoload_check.py" }
+        ]
+      },
+      {
+        "matcher": "Write",
+        "hooks": [
+          { "type": "command", "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/memory_store_reminder.py" },
+          { "type": "command", "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/wp_security_check.py" },
+          { "type": "command", "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/sql_injection_check.py" },
+          { "type": "command", "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/fp_utility_check.py" },
+          { "type": "command", "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/jquery_in_wordpress.py" },
+          { "type": "command", "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/bootstrap_utility_check.py" },
+          { "type": "command", "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/composer_autoload_check.py" },
+          { "type": "command", "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/docs_organization.py" }
+        ]
+      },
+      {
+        "matcher": "ExitPlanMode",
+        "hooks": [
+          { "type": "command", "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/task_master_after_plan.py" }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          { "type": "command", "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/prompt_coach.py" },
+          { "type": "command", "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/jira_issue_fetch.py" },
+          { "type": "command", "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/task_master_before_impl.py" },
+          { "type": "command", "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/sequential_thinking_check.py" }
+        ]
+      }
+    ]
+  }
+}

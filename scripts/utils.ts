@@ -8,7 +8,7 @@ export const HOOKS_DIR = join(CLAUDE_DIR, "hooks");
 export const COMMANDS_DIR = join(CLAUDE_DIR, "commands");
 export const RULES_DIR = join(CLAUDE_DIR, "rules");
 export const SETTINGS_FILE = join(CLAUDE_DIR, "settings.json");
-export const VERSION = "1.20.0";
+export const VERSION = "2.0.0";
 
 export const colors = {
   reset: "\x1b[0m",
@@ -203,6 +203,9 @@ export const HOOKS_TO_INSTALL = [
   // Serena hooks
   "serena_project_check.py",
   "serena_over_grep.py",
+  "serena_over_read.py",
+  // Sequential Thinking hooks
+  "sequential_thinking_check.py",
   // Code quality hooks
   "fp_utility_check.py",
   "jquery_in_wordpress.py",
@@ -259,7 +262,8 @@ export const HOOKS_CONFIG = {
       {
         matcher: "Read",
         hooks: [
-          { type: "command", command: `python3 ${HOOKS_DIR}/memory_bootstrap.py` }
+          { type: "command", command: `python3 ${HOOKS_DIR}/memory_bootstrap.py` },
+          { type: "command", command: `python3 ${HOOKS_DIR}/serena_over_read.py` }
         ]
       },
       {
@@ -383,7 +387,8 @@ export const HOOKS_CONFIG = {
         hooks: [
           { type: "command", command: `python3 ${HOOKS_DIR}/prompt_coach.py` },
           { type: "command", command: `python3 ${HOOKS_DIR}/jira_issue_fetch.py` },
-          { type: "command", command: `python3 ${HOOKS_DIR}/task_master_before_impl.py` }
+          { type: "command", command: `python3 ${HOOKS_DIR}/task_master_before_impl.py` },
+          { type: "command", command: `python3 ${HOOKS_DIR}/sequential_thinking_check.py` }
         ]
       }
     ]

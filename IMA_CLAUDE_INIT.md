@@ -1,3 +1,5 @@
+> **DEPRECATED (v1.21.0):** This file is superseded by the plugin's `bootstrap.sh` SessionStart hook. It remains for backward compatibility with the legacy `bunx ima-claude install` path. New installs should use the plugin system.
+
 # IMA Claude Bootstrap
 
 Shared patterns for effective Claude Code usage with IMA Skills.
