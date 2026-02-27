@@ -127,7 +127,8 @@ These skills auto-activate based on context.
 Inside Claude Code, run:
 
 ```
-/plugin install https://gitea.theflccc.org/IMA/ima-claude
+/plugin marketplace add https://github.com/Soabirw/ima-claude
+/plugin install ima-claude
 ```
 
 Skills are namespaced (`/ima-claude:task-master`, `/ima-claude:quickstart`, etc.) and isolated from other plugins.
@@ -136,6 +137,7 @@ Skills are namespaced (`/ima-claude:task-master`, `/ima-claude:quickstart`, etc.
 
 ```
 /plugin marketplace update
+/plugin install ima-claude
 ```
 
 ---
