@@ -14,11 +14,6 @@ Welcome to ima-claude! This guide helps new team members get started with our Cl
    curl -fsSL https://bun.sh/install | bash
    ```
 
-3. **Optional: SuperClaude** - Enhanced features
-   ```bash
-   # https://github.com/SuperClaude-Org/SuperClaude_Framework
-   ```
-
 ## Installation
 
 ```bash
@@ -63,9 +58,18 @@ All our skills enforce:
 1. **Simple > Complex** - Start with the simplest solution that works
 2. **Evidence > Assumptions** - Add complexity only when you have evidence you need it
 
-### 4. Example Workflow
+### 4. IMA Workflow
 
-#### Starting a New Feature
+Our development cycle is habit-driven — no plugins required, just good practice:
+
+1. **Brainstorm** in a Claude Web Project space (richer context, no Code session clutter)
+2. **Plan** in Claude Code's Plan Mode (knows the codebase, finalizes the plan)
+3. **Implement** via `task-master` (breaks work into agent assignments with skills)
+4. **Test** — unit tests + human testing
+5. **Review** in a fresh terminal: `/scorecard` + targeted reviews. Findings cycle back as needed.
+6. **Document** — Confluence, Jira, Qdrant, Serena, Vestige, Markdowns
+
+#### Example: Starting a New Feature
 
 ```
 "I need to implement user authentication for our React app"
@@ -150,14 +154,13 @@ This preserves your local modifications while updating our skills.
 
 ## Common Questions
 
-### Q: Do I need SuperClaude?
+### Q: Do I need SuperClaude or Compound Engineering?
 
-No, but it's recommended. SuperClaude adds:
-- Persona auto-activation
-- MCP server coordination
-- Advanced flags and modes
+No. ima-claude is fully standalone.
 
-Skills work fully standalone without SuperClaude.
+[SuperClaude](https://github.com/SuperClaude-Org/SuperClaude_Framework) and [Compound Engineering](https://every.to/guides/compound-engineering) are both excellent systems and directly inspired how ima-claude is structured. If your team doesn't have established workflows, either is a great starting point.
+
+ima-claude takes the same principles and specializes them for IMA's context — without requiring additional plugins or enforcing tool-driven workflows. Good habits beat enforced process.
 
 ### Q: What if skills conflict with project patterns?
 

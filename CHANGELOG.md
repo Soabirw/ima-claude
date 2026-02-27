@@ -5,6 +5,15 @@ All notable changes to ima-claude will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.18.0] - 2026-02-26
+
+### Changed
+
+- **README.md** — replaced Compound Engineering "Recommended" with IMA Workflow in What's Included; demoted Marketplace Plugin from Recommended to Optional; added honorable mention for Compound Engineering and SuperClaude
+- **README.md** — added IMA Workflow section documenting the 6-step habit-driven cycle (Brainstorm → Plan → Implement → Test → Review → Document)
+- **quickstart Skill** — replaced Compound Engineering pipeline with IMA Workflow table; updated Reviewing and Documenting sections to lead with native tools
+- **docs/ONBOARDING.md** — removed SuperClaude from prerequisites; added IMA Workflow to Quick Start; updated Q&A to give honorable mention to both SuperClaude and Compound Engineering
+
 ## [1.17.0] - 2026-02-26
 
 ### Added

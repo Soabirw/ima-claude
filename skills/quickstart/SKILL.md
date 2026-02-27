@@ -30,16 +30,20 @@ Memory bootstrap runs automatically at session start (Vestige search + intention
 
 ---
 
-## Planning Work
+## IMA Workflow
 
-| What | Command |
-|------|---------|
-| Brainstorm requirements | `/workflows:brainstorm` |
-| Create implementation plan | `/workflows:plan` |
-| Execute a plan | `/workflows:work` |
-| Ad-hoc task breakdown | "Break this into tasks" (triggers `task-master`) |
+Habit-driven, not tool-enforced. Six steps:
 
-Pipeline: **brainstorm → plan → work → review → compound**
+| Step | Where | Command / Action |
+|------|-------|-----------------|
+| **1. Brainstorm** | Claude Web Project | Ideate, flush out concept into a plan |
+| **2. Plan** | Claude Code — Plan Mode | `/plan` or ask Claude to enter Plan Mode |
+| **3. Implement** | Claude Code | "Break this into tasks" (triggers `task-master`) |
+| **4. Test** | Claude Code + manual | Unit tests + human testing |
+| **5. Review** | Fresh Claude Code terminal | `/scorecard` + targeted reviews |
+| **6. Document** | Confluence / Jira / MCP memory | Update Qdrant, Serena, Vestige, Markdowns |
+
+Review findings may cycle back to any earlier step.
 
 ---
 
@@ -66,8 +70,9 @@ Core rule: **Simple > Complex. No custom FP utilities. Native patterns.**
 
 | What | Command |
 |------|---------|
-| Full multi-agent review | `/workflows:review` |
-| New project setup | Create `compound-engineering.local.md` (see `compound-bridge` skill) |
+| Project quality scorecard | `/scorecard` |
+| Full multi-agent review (Compound Engineering) | `/workflows:review` |
+| Organize docs | `docs-organize` skill (Active/Archive/Transient tiers) |
 
 ---
 
@@ -75,7 +80,9 @@ Core rule: **Simple > Complex. No custom FP utilities. Native patterns.**
 
 | What | Command |
 |------|---------|
-| Document a solved problem | `/workflows:compound` |
+| Update cross-session knowledge | Vestige (`smart_ingest`) |
+| Store large docs / plans | Qdrant (`mcp-qdrant`) |
+| Document a solved problem (Compound Engineering) | `/workflows:compound` |
 | Organize docs | `docs-organize` skill (Active/Archive/Transient tiers) |
 
 ---

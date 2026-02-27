@@ -9,7 +9,7 @@ IMA's Claude Code Skills - FP patterns, architecture guidance, and team standard
 - **30+ Skills**: Foundational + FP implementation + domain expert + integration + meta-skills
 - **Default Persona**: "The Practitioner" - 25-year veteran mindset, collaborative, plan-first
 - **MCP Integration**: Skills for Serena, Vestige, Qdrant, Tavily, Context7, Sequential Thinking
-- **Compound Engineering**: Bridge skill for Every.to's structured workflows (brainstorm → plan → work → review → compound)
+- **IMA Workflow**: Brainstorm → Plan → Implement → Test → Review → Document (habit-driven, not tool-enforced)
 - **Session Management**: MCP-based save/resume via Serena (no file path confusion)
 - **Meta-skills**: Create and analyze skills
 - **Personalities**: Fun themed response styles (40K, Templars)
@@ -43,13 +43,15 @@ ima-claude includes helper skills for these MCP servers. Install any that fit yo
 
 > **Recommended minimum**: Serena + Vestige + Context7 + Tavily. These four cover code ops, memory, docs, and web research.
 
-### Marketplace Plugin (Recommended)
+### Marketplace Plugin (Optional)
 
 | Plugin | Purpose | Install |
 |--------|---------|---------|
-| **[Compound Engineering](https://every.to/guides/compound-engineering)** | Structured workflows: brainstorm → plan → work → review → compound. 15 specialized review agents, research agents, brainstorm workflows. | Claude Code marketplace |
+| **[Compound Engineering](https://every.to/guides/compound-engineering)** | Structured workflows with 15 specialized review agents, brainstorm workflows, and research agents. | Claude Code marketplace |
 
-The `compound-bridge` skill connects Compound workflows with ima-claude's memory (Vestige/Qdrant) and coding standards.
+> **Honorable mention**: Compound Engineering and [SuperClaude](https://github.com/SuperClaude-Org/SuperClaude_Framework) both inspired ima-claude's workflow thinking. They're excellent starting points if you don't have established workflows yet. ima-claude takes the same principles and specializes them for IMA's team context — habit-driven rather than tool-enforced.
+
+The `compound-bridge` skill provides optional integration with Compound Engineering for teams that use both.
 
 ### Installation Commands
 
@@ -137,13 +139,28 @@ bunx ima-claude upgrade
 
 ## Tips
 
-> **Tip:** When using `task-master` or Compound Engineering workflows that spawn multiple agents, sub-agents may get stuck waiting for permission prompts. Use `--dangerously-skip-permissions` to let agents run autonomously:
+> **Tip:** When using `task-master` to spawn multiple agents, sub-agents may get stuck waiting for permission prompts. Use `--dangerously-skip-permissions` to let agents run autonomously:
 >
 > ```bash
 > claude --dangerously-skip-permissions
 > ```
 >
 > **Use with care** — this skips all permission checks. Best for local development on trusted codebases.
+
+## IMA Workflow
+
+Our development workflow is habit-driven, not tool-enforced. No plugins required — just good practice.
+
+| Step | Where | What |
+|------|-------|------|
+| **1. Brainstorm** | Claude Web Project spaces | Initial ideation, flush out early concepts into viable plans. Project spaces give Claude rich context without cluttering Code sessions. |
+| **2. Plan** | Claude Code — Plan Mode | Enter Plan Mode with the finalized concept. Claude Code knows the specific project and codebase. Produce a concrete implementation plan. |
+| **3. Implement** | Claude Code — `task-master` | Break the plan into proper agent assignments. Each agent gets relevant skills and the right model. Peak efficiency. |
+| **4. Test** | Claude Code + browser/manual | Unit tests for logic. Human testing for UX and edge cases. |
+| **5. Review** | Fresh Claude Code terminal | Run `/scorecard` and targeted reviews. Findings may cycle back to step 3, 4, or even step 2 if significant. |
+| **6. Document** | Confluence, Jira, Qdrant, Serena, Vestige | Update everything. This is what makes the system smarter over time. |
+
+> **Why habit over tools?** Enforced workflows create overhead. When the habits are genuinely useful, they stick naturally. When they don't fit the task, skip a step — no tool will argue.
 
 ## Available Skills
 
