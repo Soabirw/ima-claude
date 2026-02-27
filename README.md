@@ -18,7 +18,7 @@ IMA's Claude Code Skills - FP patterns, architecture guidance, and team standard
 ## Prerequisites
 
 - [Claude Code](https://claude.ai/code) installed
-- [bun](https://bun.sh) - For installation
+- [bun](https://bun.sh) - Only needed for the legacy install path (deprecated). Not required for the plugin system.
 
 ## MCP Servers (Highly Recommended)
 
@@ -52,9 +52,11 @@ ima-claude includes helper skills for these MCP servers. Install any that fit yo
 
 > **Honorable mention**: Compound Engineering and [SuperClaude](https://github.com/SuperClaude-Org/SuperClaude_Framework) both inspired ima-claude's workflow thinking. They're excellent starting points if you don't have established workflows yet. ima-claude takes the same principles and specializes them for IMA's team context — habit-driven rather than tool-enforced.
 
-The `compound-bridge` skill provides optional integration with Compound Engineering for teams that use both.
+The `compound-bridge` skill provides optional integration with Compound Engineering for teams that use both. **Only install Compound Engineering if your team actively uses it** — `compound-bridge` is a no-op without it.
 
 ### Installation Commands
+
+> **Tip**: Many of these are available directly in the Claude Code marketplace (`/marketplace` or Settings → Marketplace). The commands below are for manual/CLI installs.
 
 ```bash
 # Serena (requires JetBrains IDE running with Serena plugin)
@@ -105,7 +107,7 @@ ima-claude includes skills that teach Claude how to use each MCP server effectiv
 | **mcp-context7** | Library documentation lookup strategies |
 | **mcp-sequential** | Structured reasoning workflows |
 | **mcp-atlassian** | Jira & Confluence operations (Claude's bundled integration) |
-| **compound-bridge** | Compound Engineering integration (memory bridge, role separation) |
+| ~~**compound-bridge**~~ | Compound Engineering integration — **deprecated**, only useful if your team actively uses Compound Engineering |
 
 ### Session Management Skills
 
@@ -125,7 +127,7 @@ These skills auto-activate based on context.
 Inside Claude Code, run:
 
 ```
-/plugin install https://github.com/your-org/ima-claude
+/plugin install https://gitea.theflccc.org/IMA/ima-claude
 ```
 
 Skills are namespaced (`/ima-claude:task-master`, `/ima-claude:quickstart`, etc.) and isolated from other plugins.
@@ -144,17 +146,11 @@ Skills are namespaced (`/ima-claude:task-master`, `/ima-claude:quickstart`, etc.
 
 ### Legacy Install (Deprecated)
 
-The file-based install is no longer maintained as of v2.0.0. It still works but receives no further updates.
+The file-based install is no longer maintained as of v2.0.0. **The `main` branch will not work with this method** — use the tagged legacy release.
 
 ```bash
-git clone https://github.com/your-org/ima-claude.git
+git clone https://gitea.theflccc.org/IMA/ima-claude.git
 cd ima-claude
-bun run scripts/install.ts
-```
-
-To stay on the last legacy release:
-
-```bash
 git checkout v1.21.0-legacy
 bun run scripts/install.ts
 ```

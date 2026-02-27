@@ -19,7 +19,7 @@ Starting with v2.0.0, ima-claude is a **Claude Code native plugin**. Nothing is 
 ### Step 1: Preview what will be removed
 
 ```bash
-git clone https://github.com/your-org/ima-claude.git
+git clone https://gitea.theflccc.org/IMA/ima-claude.git
 cd ima-claude
 bun run scripts/migrate-to-plugin.ts --dry-run
 ```
@@ -47,7 +47,7 @@ Your own custom skills, other plugins' hooks, and personal settings are untouche
 Inside Claude Code:
 
 ```
-/plugin install https://github.com/your-org/ima-claude
+/plugin install https://gitea.theflccc.org/IMA/ima-claude
 ```
 
 ### Step 4: Verify
@@ -65,7 +65,7 @@ If you see the cheat sheet, everything is working.
 The last legacy release is tagged `v1.21.0-legacy`. It will not receive further updates, but it works exactly as it always did.
 
 ```bash
-git clone https://github.com/your-org/ima-claude.git
+git clone https://gitea.theflccc.org/IMA/ima-claude.git
 cd ima-claude
 git checkout v1.21.0-legacy
 bun run scripts/install.ts
