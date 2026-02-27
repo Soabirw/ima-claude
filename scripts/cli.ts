@@ -23,7 +23,7 @@ ${colors.cyan}Examples:${colors.reset}
   bunx ima-claude upgrade
 
 ${colors.cyan}More Info:${colors.reset}
-  https://github.com/your-org/ima-claude
+  https://github.com/Soabirw/ima-claude
 `);
 }
 

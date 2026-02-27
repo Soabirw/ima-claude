@@ -3,7 +3,7 @@
   "name": "ima-marketplace",
   "owner": {
     "name": "IMA",
-    "url": "https://github.com/your-org/ima-claude"
+    "url": "https://github.com/Soabirw/ima-claude"
   },
   "metadata": {
     "description": "IMA's Claude Code plugins for functional programming, architecture, and team standards",
@@ -12,8 +12,8 @@
   "plugins": [
     {
       "name": "ima-claude",
-      "description": "FP skills, architecture guidance, behavioral hooks, and team standards. 38 skills, 23 hooks, default persona, 3-tier memory system.",
-      "version": "2.0.0",
+      "description": "FP skills, architecture guidance, behavioral hooks, and team standards. 42 skills, 23 hooks, default persona, 3-tier memory system.",
+      "version": "2.1.0",
       "source": "./plugins/ima-claude",
       "tags": ["functional-programming", "architecture", "wordpress", "skills", "hooks", "memory"]
     }

@@ -19,7 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Breaking Changes
 
-- **Plugin system replaces file-based install** — ima-claude is now a Claude Code native plugin. Skills are namespaced (`/ima-claude:skill-name`). Install via `/plugin install https://github.com/your-org/ima-claude`. See [MIGRATION_GUIDE.md](MIGRATION_GUIDE.md).
+- **Plugin system replaces file-based install** — ima-claude is now a Claude Code native plugin. Skills are namespaced (`/ima-claude:skill-name`). Install via `/plugin install https://github.com/Soabirw/ima-claude`. See [MIGRATION_GUIDE.md](MIGRATION_GUIDE.md).
 - **Legacy install deprecated** — `bun run scripts/install.ts` still works but receives no further updates. Last legacy release tagged `v1.21.0-legacy`.
 
 ### Added

@@ -19,7 +19,7 @@ plugins/ima-claude/hooks/bootstrap.sh    → SessionStart hook (replaces IMA_CLA
 .claude-plugin/marketplace.json          → Plugin catalog
 ```
 
-Install: `/plugin marketplace add your-org/ima-claude` then `/plugin install ima-claude`
+Install: `/plugin marketplace add Soabirw/ima-claude` then `/plugin install ima-claude`
 
 ### Legacy Mode
 
@@ -37,7 +37,7 @@ Install: `bun run scripts/install.ts` (auto-detects plugin layout)
 
 ```bash
 # Plugin mode (recommended)
-/plugin marketplace add your-org/ima-claude
+/plugin marketplace add Soabirw/ima-claude
 /plugin install ima-claude
 
 # Legacy mode
