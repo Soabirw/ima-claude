@@ -4,6 +4,45 @@ IMA's Claude Code Skills - FP patterns, architecture guidance, and team standard
 
 **Core Philosophy: `Simple > Complex | Evidence > Assumptions`**
 
+## Install
+
+### Plugin System (Recommended)
+
+Inside Claude Code, run:
+
+```
+/plugin marketplace add https://github.com/Soabirw/ima-claude
+/plugin install ima-claude
+```
+
+Then **restart Claude Code** to load the plugin. Verify with:
+
+```
+/quickstart
+```
+
+Skills are namespaced (`/ima-claude:task-master`, `/ima-claude:quickstart`, etc.) and isolated from other plugins.
+
+### Upgrade
+
+```
+/plugin marketplace update
+/plugin install ima-claude
+```
+
+### Legacy Install (Deprecated)
+
+The file-based install is no longer maintained as of v2.0.0. **The `main` branch will not work with this method** — use the tagged legacy release.
+
+```bash
+git clone https://gitea.theflccc.org/IMA/ima-claude.git
+cd ima-claude
+git checkout v1.21.0-legacy
+bun run scripts/install.ts
+```
+
+---
+
 ## What's Included
 
 - **30+ Skills**: Foundational + FP implementation + domain expert + integration + meta-skills
@@ -119,49 +158,6 @@ ima-claude includes skills that teach Claude how to use each MCP server effectiv
 > **Requires Serena MCP** for cross-session persistence.
 
 These skills auto-activate based on context.
-
-## Install
-
-### Plugin System (Recommended)
-
-Inside Claude Code, run:
-
-```
-/plugin marketplace add https://github.com/Soabirw/ima-claude
-/plugin install ima-claude
-```
-
-Then **restart Claude Code** to load the plugin. Verify with:
-
-```
-/quickstart
-```
-
-Skills are namespaced (`/ima-claude:task-master`, `/ima-claude:quickstart`, etc.) and isolated from other plugins.
-
-### Upgrade
-
-```
-/plugin marketplace update
-/plugin install ima-claude
-```
-
----
-
-> **Migrating from a legacy install?** See [MIGRATION_GUIDE.md](MIGRATION_GUIDE.md) for step-by-step instructions and the legacy tag reference.
-
----
-
-### Legacy Install (Deprecated)
-
-The file-based install is no longer maintained as of v2.0.0. **The `main` branch will not work with this method** — use the tagged legacy release.
-
-```bash
-git clone https://gitea.theflccc.org/IMA/ima-claude.git
-cd ima-claude
-git checkout v1.21.0-legacy
-bun run scripts/install.ts
-```
 
 ## Tips
 
