@@ -33,4 +33,8 @@ stats-cache.json
 dist/
 *.exe
 *.skill
-hooks/__pycache__/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
