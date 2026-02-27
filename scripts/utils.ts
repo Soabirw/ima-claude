@@ -8,7 +8,7 @@ export const HOOKS_DIR = join(CLAUDE_DIR, "hooks");
 export const COMMANDS_DIR = join(CLAUDE_DIR, "commands");
 export const RULES_DIR = join(CLAUDE_DIR, "rules");
 export const SETTINGS_FILE = join(CLAUDE_DIR, "settings.json");
-export const VERSION = "2.1.0";
+export const VERSION = "2.1.1";
 
 export const colors = {
   reset: "\x1b[0m",

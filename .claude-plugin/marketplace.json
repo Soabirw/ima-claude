@@ -13,7 +13,7 @@
     {
       "name": "ima-claude",
       "description": "FP skills, architecture guidance, behavioral hooks, and team standards. 42 skills, 23 hooks, default persona, 3-tier memory system.",
-      "version": "2.1.0",
+      "version": "2.1.1",
       "source": "./plugins/ima-claude",
       "tags": ["functional-programming", "architecture", "wordpress", "skills", "hooks", "memory"]
     }
