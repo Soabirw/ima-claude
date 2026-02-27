@@ -7,7 +7,7 @@ IMA's Claude Code Skills - FP patterns, architecture guidance, and team standard
 ## What's Included
 
 - **30+ Skills**: Foundational + FP implementation + domain expert + integration + meta-skills
-- **21 Hooks**: Automatic behavioral enforcement (security, memory, workflow, code quality)
+- **23 Hooks**: Automatic behavioral enforcement (security, memory, workflow, Serena, code quality)
 - **Default Persona**: "The Practitioner" - 25-year veteran mindset, collaborative, plan-first
 - **3-Tier Memory**: Vestige (neural decay) + Qdrant (permanent library) + Serena (project workbench)
 - **IMA Workflow**: Brainstorm → Plan → Implement → Test → Review → Document (habit-driven, not tool-enforced)
@@ -254,6 +254,7 @@ Hooks enforce skill behaviors automatically — Claude can't skip them. All hook
 | **Workflow** | `task_master_after_plan`, `task_master_before_impl`, `jira_issue_fetch` | Delegate after planning; task-master before implementation; auto-fetch Jira issues |
 | **Security** | `wp_security_check`, `sql_injection_check` | WordPress AJAX security 5-pack + strict_types; SQL injection detection in JS/TS |
 | **Atlassian** | `atlassian_prereqs` | cloudId bootstrap, getTransitions before transition, ADF body serialization |
+| **Serena** | `serena_project_check`, `serena_over_grep` | WP plugin subdirectory project path fix; prefer Serena symbol tools over Grep for code navigation |
 | **Code Quality** | `fp_utility_check`, `jquery_in_wordpress`, `bootstrap_utility_check`, `composer_autoload_check`, `docs_organization` | No custom FP utilities; jQuery in WP; Bootstrap utilities over inline CSS; composer autoload bug; docs organization |
 | **Prompt Coaching** | `prompt_coach` | Haiku-powered prompt feedback (experimental) |
 
