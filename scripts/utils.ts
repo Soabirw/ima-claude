@@ -198,6 +198,9 @@ export const HOOKS_TO_INSTALL = [
   "sql_injection_check.py",
   // Atlassian prerequisite hooks
   "atlassian_prereqs.py",
+  // Serena hooks
+  "serena_project_check.py",
+  "serena_over_grep.py",
   // Code quality hooks
   "fp_utility_check.py",
   "jquery_in_wordpress.py",
@@ -214,6 +217,14 @@ export const COMMANDS_TO_INSTALL = [
 
 export const RULES_TO_INSTALL = [
   "memory-after-work.md",
+];
+
+// Serena JetBrains tools that need WP project path check
+const SERENA_JETBRAINS_TOOLS = [
+  "mcp__serena__jet_brains_find_symbol",
+  "mcp__serena__jet_brains_find_referencing_symbols",
+  "mcp__serena__jet_brains_get_symbols_overview",
+  "mcp__serena__jet_brains_type_hierarchy",
 ];
 
 // Atlassian tools that need prereq checks (H3/H4/M5)
@@ -270,7 +281,8 @@ export const HOOKS_CONFIG = {
       {
         matcher: "Grep",
         hooks: [
-          { type: "command", command: `python3 ${HOOKS_DIR}/memory_bootstrap.py` }
+          { type: "command", command: `python3 ${HOOKS_DIR}/memory_bootstrap.py` },
+          { type: "command", command: `python3 ${HOOKS_DIR}/serena_over_grep.py` }
         ]
       },
       {
@@ -316,6 +328,13 @@ export const HOOKS_CONFIG = {
           { type: "command", command: `python3 ${HOOKS_DIR}/websearch_to_tavily.py` }
         ]
       },
+      // Serena WP project path checks
+      ...SERENA_JETBRAINS_TOOLS.map(tool => ({
+        matcher: tool,
+        hooks: [
+          { type: "command", command: `python3 ${HOOKS_DIR}/serena_project_check.py` }
+        ]
+      })),
       // Atlassian prerequisite checks
       ...ATLASSIAN_TOOLS_WITH_PREREQS.map(tool => ({
         matcher: tool,
