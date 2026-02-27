@@ -34,9 +34,9 @@ TRIVIAL_SIGNALS = re.compile(
     re.IGNORECASE,
 )
 
-REMINDER = """Non-trivial implementation request detected — consider task-master first:
-  /task-master to decompose into tasks, select models, and delegate to agents.
-  Opus orchestrates. Sonnet implements. Don't do both."""
+REMINDER = """Non-trivial implementation request detected — consider task-planner first:
+  /task-planner to decompose into Epic > Story > Task hierarchy and select storage.
+  Then /task-runner to delegate to agents. Opus orchestrates. Sonnet implements."""
 
 
 def is_reminded() -> bool:

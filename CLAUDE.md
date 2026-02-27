@@ -10,7 +10,9 @@ IMA's Claude Code Skills for functional programming, architecture, and team stan
 
 ### Foundational Skills (Complement the Default Persona)
 - `functional-programmer` - FP principles and philosophy (triggers on FP discussions)
-- `task-master` - Task breakdown, storage strategy, agent delegation (triggers on planning)
+- `task-master` - Orchestration umbrella: dispatches to task-planner and task-runner (triggers on planning)
+  - `task-planner` - Decomposition: Epic > Story > Task hierarchy, storage strategy selection
+  - `task-runner` - Delegation: model selection, skill assignment, agent execution
 
 ### FP Implementation Skills (Auto-discovered by domain)
 - `js-fp` - JavaScript FP core (anti-over-engineering, native patterns)

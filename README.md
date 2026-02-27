@@ -140,7 +140,7 @@ bunx ima-claude upgrade
 
 ## Tips
 
-> **Tip:** When using `task-master` to spawn multiple agents, sub-agents may get stuck waiting for permission prompts. Use `--dangerously-skip-permissions` to let agents run autonomously:
+> **Tip:** When using `task-runner` to spawn multiple agents, sub-agents may get stuck waiting for permission prompts. Use `--dangerously-skip-permissions` to let agents run autonomously:
 >
 > ```bash
 > claude --dangerously-skip-permissions
@@ -156,7 +156,7 @@ Our development workflow is habit-driven, not tool-enforced. No plugins required
 |------|-------|------|
 | **1. Brainstorm** | Claude Web Project spaces | Initial ideation, flush out early concepts into viable plans. Project spaces give Claude rich context without cluttering Code sessions. |
 | **2. Plan** | Claude Code — Plan Mode | Enter Plan Mode with the finalized concept. Claude Code knows the specific project and codebase. Produce a concrete implementation plan. |
-| **3. Implement** | Claude Code — `task-master` | Break the plan into proper agent assignments. Each agent gets relevant skills and the right model. Peak efficiency. |
+| **3. Implement** | Claude Code — `task-planner` → `task-runner` | Break the plan into tasks (`task-planner`), then delegate to agents (`task-runner`). Each agent gets relevant skills and the right model. |
 | **4. Test** | Claude Code + browser/manual | Unit tests for logic. Human testing for UX and edge cases. |
 | **5. Review** | Fresh Claude Code terminal | Run `/scorecard` and targeted reviews. Findings may cycle back to step 3, 4, or even step 2 if significant. |
 | **6. Document** | Confluence, Jira, Qdrant, Serena, Vestige | Update everything. This is what makes the system smarter over time. |
@@ -170,7 +170,9 @@ Our development workflow is habit-driven, not tool-enforced. No plugins required
 | Skill | Description |
 |-------|-------------|
 | `functional-programmer` | FP principles and philosophy (no code - concepts only) |
-| `task-master` | Hierarchical task breakdown, storage strategy, agent delegation |
+| `task-master` | Orchestration umbrella — dispatches to task-planner and task-runner |
+| `task-planner` | Decomposition: Epic > Story > Task hierarchy, storage strategy |
+| `task-runner` | Delegation: model selection, skill assignment, agent execution |
 
 ### FP Implementation Skills
 

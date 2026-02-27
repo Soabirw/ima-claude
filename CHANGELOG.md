@@ -5,6 +5,21 @@ All notable changes to ima-claude will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.20.0] - 2026-02-26
+
+### Changed
+
+- **task-master split into umbrella + sub-skills** — solves the "plan but never delegate" problem
+  - `task-master` — slim umbrella that dispatches to phase-specific sub-skills
+  - `task-planner` (new) — decomposition: Epic > Story > Task hierarchy, storage strategy, breakdown checklist
+  - `task-runner` (new) — delegation: model selection (opus/sonnet/haiku), minimal context principle, parallel execution
+  - Cross-linked via `REQUIRED SUB-SKILL` pattern (planner → runner, runner → planner, umbrella → both)
+- **`task_master_after_plan.py` hook** — now directs Claude to invoke `/task-runner` instead of duplicating delegation instructions inline
+- **`task_master_before_impl.py` hook** — now references `/task-planner` for decomposition
+- **`IMA_CLAUDE_INIT.md`** — Orchestrator Protocol workflow updated: step 1 → `task-planner`, step 2 → `task-runner`
+- **`CLAUDE.md`** — skills listing shows umbrella + two sub-skills
+- **`scripts/utils.ts`** — added `task-planner` and `task-runner` to `SKILLS_TO_INSTALL`
+
 ## [1.19.0] - 2026-02-26
 
 ### Added

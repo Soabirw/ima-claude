@@ -1,26 +1,20 @@
 #!/usr/bin/env python3
 """
-PostToolUse hook: After exiting plan mode, remind Claude to delegate via task-master.
+PostToolUse hook: After exiting plan mode, direct Claude to delegate tasks to agents.
 
 Matcher: ExitPlanMode
-Fires once per plan exit. Reminds the orchestrator (Opus) to decompose work
-and delegate to agents (sonnet) via the Task tool instead of implementing directly.
+Fires once per plan exit. The plan is already done — this hook pushes Claude
+to delegate each task to subagents via the Task tool instead of implementing directly.
+Does NOT re-invoke task-master (that would restart planning).
 Exit code 0 = soft warning via stderr.
 """
 import json
 import sys
 
-REMINDER = """STOP. You are the Orchestrator. You plan and delegate. You do NOT implement directly.
+REMINDER = """STOP. The plan is approved. Do NOT implement directly — DELEGATE.
 
-Before writing any code, invoke /task-master to decompose this plan into tasks:
-  1. Break the plan into tasks (Epic > Story > Task)
-  2. For each task: select model (default: sonnet), assign skills, delegate via Task tool
-  3. Review agent output → integrate → report to user
-
-Task tool delegation pattern:
-  Task(subagent_type="general-purpose", model="sonnet", prompt="[task + skills + context]")
-
-Do NOT skip delegation. The plan is ready — now delegate the work to agents.
+Invoke /task-runner now to delegate each task to subagents.
+You are the Orchestrator. You coordinate. Agents implement. Do NOT write code yourself.
 """
 
 try:

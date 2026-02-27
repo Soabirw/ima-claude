@@ -8,7 +8,7 @@ export const HOOKS_DIR = join(CLAUDE_DIR, "hooks");
 export const COMMANDS_DIR = join(CLAUDE_DIR, "commands");
 export const RULES_DIR = join(CLAUDE_DIR, "rules");
 export const SETTINGS_FILE = join(CLAUDE_DIR, "settings.json");
-export const VERSION = "1.19.0";
+export const VERSION = "1.20.0";
 
 export const colors = {
   reset: "\x1b[0m",
@@ -125,6 +125,8 @@ export const SKILLS_TO_INSTALL = [
   // Foundational skills
   "functional-programmer",
   "task-master",
+  "task-planner",
+  "task-runner",
   // FP implementation skills
   "js-fp",
   "js-fp-api",
