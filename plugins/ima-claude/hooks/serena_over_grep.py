@@ -16,6 +16,10 @@ import re
 import sys
 import time
 
+# Only run if Serena MCP is enabled
+if os.environ.get("SERENA_ENABLED", "").lower() != "true":
+    sys.exit(0)
+
 STATE_FILE = os.path.expanduser("~/.claude/.serena_grep_count")
 STALENESS_SECONDS = 3600
 FIRE_EVERY_N = 2  # Remind on every Nth symbol-like grep

@@ -62,6 +62,52 @@ Informational hook for direct Tavily tool usage:
 - Reminds about the correct Airis gateway pattern if using old `mcp__tavily__*` tool names
 - References `/mcp-tavily` skill
 
+### `memory_bootstrap.py`
+
+**Type**: PreToolUse (Bash, Read, Edit, Write, Glob, Grep)
+
+On the first tool use of a session, reminds Claude to search Vestige and Qdrant before starting work. Silent for the rest of the session.
+
+**Requires:** `VESTIGE_ENABLED=true`
+
+### `memory_store_reminder.py`
+
+**Type**: PostToolUse (Edit, Write)
+
+After every 5 edits without a memory store, gently reminds Claude to persist decisions or patterns to Vestige or Qdrant.
+
+**Requires:** `VESTIGE_ENABLED=true`
+
+### `serena_over_read.py`
+
+**Type**: PreToolUse (Read)
+
+When Claude reads a code file >5KB, suggests using Serena's symbol overview tools instead — 40–70% fewer tokens for understanding structure.
+
+**Requires:** `SERENA_ENABLED=true`
+
+### `serena_over_grep.py`
+
+**Type**: PreToolUse (Grep)
+
+When Grep is used for symbol-like patterns (class definitions, function references), suggests Serena's precise symbol tools instead. Fires on every other match to avoid being noisy.
+
+**Requires:** `SERENA_ENABLED=true`
+
+### `jira_issue_fetch.py`
+
+**Type**: UserPromptSubmit
+
+Scans each user prompt for Jira issue key patterns (e.g., `FNR-123`). If a new key is found, reminds Claude to fetch the issue context via Atlassian MCP.
+
+**Requires:** `JIRA_ENABLED=true`
+
+### `atlassian_prereqs.py`
+
+**Type**: PreToolUse (mcp__claude_ai_Atlassian__*)
+
+Enforces correct Atlassian MCP call order: bootstraps cloudId, checks transition fetch before transition, and validates ADF body format for Confluence writes. Only fires when Atlassian tools are actually called — no config needed.
+
 ### `prompt_coach.py`
 
 **Type**: UserPromptSubmit
@@ -132,6 +178,19 @@ Hooks are configured in `~/.claude/settings.json`:
   }
 }
 ```
+
+## Environment Variables
+
+Hooks that depend on optional MCP services are gated by env vars. Set in your shell profile (`~/.bashrc`, `~/.zshrc`) or Claude Code's env config:
+
+| Variable | Hooks gated | Default |
+|---|---|---|
+| `VESTIGE_ENABLED=true` | `memory_bootstrap.py`, `memory_store_reminder.py` | off |
+| `SERENA_ENABLED=true` | `serena_over_read.py`, `serena_over_grep.py` | off |
+| `JIRA_ENABLED=true` | `jira_issue_fetch.py` | off |
+| `PROMPT_COACH_ENABLED=true` | `prompt_coach.py` | off |
+
+Hooks without a flag (`enforce_rg_over_grep.py`, `atlassian_prereqs.py`, security checks) are always active but only fire when the relevant tool is actually used.
 
 ## Requirements
 

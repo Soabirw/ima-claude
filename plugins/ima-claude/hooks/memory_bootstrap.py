@@ -11,6 +11,10 @@ import os
 import sys
 import time
 
+# Only run if Vestige/Qdrant memory system is enabled
+if os.environ.get("VESTIGE_ENABLED", "").lower() != "true":
+    sys.exit(0)
+
 STATE_FILE = os.path.expanduser("~/.claude/.memory_bootstrapped")
 STALENESS_SECONDS = 3600  # 1 hour — new session after this gap
 
