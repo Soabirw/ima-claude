@@ -54,6 +54,7 @@ FP skills auto-activate by file type — just start coding.
 | Ruby | `ruby-fp` |
 | Ruby on Rails | `rails` |
 | Discourse plugins | `discourse` |
+| Discourse frontend (Ember) | `ember-discourse` |
 | Bootstrap/CSS | `ima-bootstrap` |
 | E2E tests | `playwright` |
 
