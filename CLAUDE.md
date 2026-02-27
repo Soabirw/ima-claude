@@ -16,6 +16,68 @@ IMA_CLAUDE_INIT.md             → ~/.claude/IMA_CLAUDE_INIT.md
 
 All changes go in the repo first, then `bun run scripts/install.ts` deploys them. Editing `~/.claude/` directly means the next install overwrites your work.
 
+## Commands
+
+```bash
+bun run scripts/install.ts     # Deploy all skills/hooks/rules to ~/.claude/
+bun run scripts/upgrade.ts     # Upgrade existing installation
+bun run scripts/backup.ts      # Backup current ~/.claude/ state
+bunx ima-claude install         # One-liner install (npm)
+```
+
+## Directory Structure
+
+```
+skills/                 # Skill source files (SKILL.md + optional references/)
+hooks/                  # Python hook scripts (.py) + support files (.md)
+scripts/                # Install/upgrade/backup tooling (TypeScript)
+  utils.ts              # VERSION, SKILLS_TO_INSTALL, HOOKS_TO_INSTALL, HOOKS_CONFIG
+  install.ts            # Deployment logic (copies repo → ~/.claude/)
+personalities/          # Fun themed response overlays (.md files, not directories)
+templates/              # CLAUDE.md.example, local-skills template
+projects/               # Claude Web/Code research project templates
+docs/                   # Onboarding, migration, MCP setup, prompt coach
+.claude/rules/          # Rules files deployed to ~/.claude/rules/
+IMA_CLAUDE_INIT.md      # Bootstrap file deployed to ~/.claude/IMA_CLAUDE_INIT.md
+commands/               # Legacy (commands moved to skills in v1.6.0)
+```
+
+## Key Files
+
+- **`scripts/utils.ts`** — the central registry. Contains `VERSION`, `SKILLS_TO_INSTALL`, `HOOKS_TO_INSTALL`, `HOOKS_CONFIG`, and `RULES_TO_INSTALL`. Any new skill/hook must be registered here.
+- **`scripts/install.ts`** — deployment logic. Copies from repo dirs to `~/.claude/` and merges hooks into `~/.claude/settings.json`.
+- **`IMA_CLAUDE_INIT.md`** — bootstrap file with persona, memory patterns, orchestrator protocol. Deployed to `~/.claude/`.
+
+## Adding New Content
+
+### New Skill
+
+1. Create `skills/{name}/SKILL.md` with frontmatter (`name`, `description`)
+2. Add `"{name}"` to `SKILLS_TO_INSTALL` in `scripts/utils.ts`
+3. Add entry to the Available Skills section below
+4. Run `bun run scripts/install.ts` to deploy
+
+### New Hook
+
+1. Create `hooks/{name}.py` (exit 0 = soft warning via stderr)
+2. Add `"{name}.py"` to `HOOKS_TO_INSTALL` in `scripts/utils.ts`
+3. Add matcher entry to `HOOKS_CONFIG` in `scripts/utils.ts` (PreToolUse, PostToolUse, or UserPromptSubmit)
+4. Run `bun run scripts/install.ts` to deploy
+
+### Version Bump
+
+1. Update `VERSION` in `scripts/utils.ts`
+2. Update `version` in `package.json`
+3. Add entry to `CHANGELOG.md`
+
+## Gotchas
+
+- **Hooks need two registrations**: `HOOKS_TO_INSTALL` (file copy) AND `HOOKS_CONFIG` (settings.json matcher). Missing either = hook doesn't work.
+- **Personalities are `.md` files**, not directories like skills. They live flat in `personalities/`.
+- **package.json version** drifts from `scripts/utils.ts` VERSION — keep both in sync.
+- **`settings.json` merge** is additive. Removing a hook from `HOOKS_CONFIG` doesn't remove it from a user's existing `settings.json`. Users must manually clean stale entries.
+- **Skill frontmatter `description`** is what appears in the skills list sidebar. Keep it under ~200 chars and keyword-rich for auto-discovery.
+
 ## Available Skills
 
 ### Quick Reference
