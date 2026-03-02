@@ -15,5 +15,24 @@
   "devDependencies": {
     "@types/bun": "latest"
   },
+  "author": {
+    "name": "Eric Jensen",
+    "email": "ejensen@imahealth.org",
+    "url": "https://imahealth.org"
+  },
+  "homepage": "https://github.com/Soabirw/ima-claude#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Soabirw/ima-claude.git"
+  },
+  "bugs": "https://github.com/Soabirw/ima-claude/issues",
+  "keywords": [
+    "claude-code",
+    "claude-code-skills",
+    "functional-programming",
+    "ai-tools",
+    "developer-tools",
+    "mcp"
+  ],
   "license": "MIT"
 }

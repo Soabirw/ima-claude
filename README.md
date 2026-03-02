@@ -2,6 +2,8 @@
 
 IMA's Claude Code Skills - FP patterns, architecture guidance, and team standards.
 
+Built by [Independent Medical Alliance](https://imahealth.org) (formerly FLCCC)
+
 **Core Philosophy: `Simple > Complex | Evidence > Assumptions`**
 
 > These skills and hooks are built for IMA's team context — but most of the patterns (FP principles, architecture guidance, hooks design, MCP integration, memory system) are general enough to be useful to anyone. If you're building your own Claude Code toolkit, this repo can serve as a reference for structure, conventions, and what's possible. Fork it, strip the IMA-specific skills, and build your own.

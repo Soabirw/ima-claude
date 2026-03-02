@@ -56,6 +56,21 @@ const MCP_SERVERS = {
     requiresApiKey: false,
     recommended: false,
   },
+  "qdrant-memory": {
+    name: "Qdrant Knowledge Base",
+    description: "Permanent reference library (PRDs, architecture docs, standards)",
+    command: "uvx",
+    args: ["mcp-server-qdrant"],
+    requiresApiKey: false,
+    requiresDocker: true,
+    dockerImage: "qdrant/qdrant:latest",
+    dockerName: "qdrant",
+    env: {
+      QDRANT_URL: "http://localhost:6333",
+      COLLECTION_NAME: "ima-knowledge",
+    },
+    recommended: true,
+  },
 };
 
 interface InstalledServer {
@@ -129,6 +144,43 @@ async function promptApiKey(serverKey: string): Promise<string | null> {
   return key || null;
 }
 
+function ensureDocker(serverKey: string): { success: boolean; message: string } {
+  const server = MCP_SERVERS[serverKey];
+  if (!server.requiresDocker) return { success: true, message: "" };
+
+  // Check if container already running
+  const check = spawnSync("docker", ["ps", "--filter", `name=${server.dockerName}`, "--format", "{{.Names}}"], {
+    encoding: "utf8",
+  });
+  if (check.stdout.trim().includes(server.dockerName)) {
+    return { success: true, message: "already running" };
+  }
+
+  // Check if container exists but stopped
+  const checkAll = spawnSync("docker", ["ps", "-a", "--filter", `name=${server.dockerName}`, "--format", "{{.Names}}"], {
+    encoding: "utf8",
+  });
+  if (checkAll.stdout.trim().includes(server.dockerName)) {
+    const start = spawnSync("docker", ["start", server.dockerName], { encoding: "utf8" });
+    return start.status === 0
+      ? { success: true, message: "started existing container" }
+      : { success: false, message: start.stderr };
+  }
+
+  // Create new container
+  const run = spawnSync("docker", [
+    "run", "-d", "--name", server.dockerName,
+    "-p", "6333:6333",
+    "-v", "qdrant_storage:/qdrant/storage",
+    "--restart", "unless-stopped",
+    server.dockerImage,
+  ], { encoding: "utf8" });
+
+  return run.status === 0
+    ? { success: true, message: "created new container" }
+    : { success: false, message: run.stderr };
+}
+
 function addMcpServer(
   serverKey: string,
   apiKey?: string
@@ -136,11 +188,19 @@ function addMcpServer(
   const server = MCP_SERVERS[serverKey];
   const args = ["mcp", "add", "--scope", "user"];
 
+  // Add env vars from apiKey
   if (apiKey) {
     args.push("-e", `${server.apiKeyVar}=${apiKey}`);
-    args.push("--");
   }
 
+  // Add env vars from server config
+  if (server.env) {
+    for (const [key, value] of Object.entries(server.env)) {
+      args.push("-e", `${key}=${value}`);
+    }
+  }
+
+  args.push("--");
   args.push(serverKey);
   args.push("--");
   args.push(server.command);
@@ -274,6 +334,21 @@ async function installServers(installed: Record<string, InstalledServer>) {
   for (const key of selectedKeys) {
     const server = MCP_SERVERS[key];
     process.stdout.write(`   Installing ${server.name}... `);
+
+    // Handle Docker dependency
+    if (server.requiresDocker) {
+      process.stdout.write(`\n   Setting up Docker container (${server.dockerName})... `);
+      const dockerResult = ensureDocker(key);
+      if (!dockerResult.success) {
+        console.log(`${colors.red}✗${colors.reset}`);
+        console.log(`      Docker setup failed: ${dockerResult.message}`);
+        console.log(`      Install Docker and try again, or run manually:`);
+        console.log(`      docker run -d --name ${server.dockerName} -p 6333:6333 -v qdrant_storage:/qdrant/storage ${server.dockerImage}`);
+        continue;
+      }
+      console.log(`${colors.green}✓${colors.reset} (${dockerResult.message})`);
+      process.stdout.write(`   Installing ${server.name}... `);
+    }
 
     let apiKey: string | undefined;
     if (server.requiresApiKey) {
