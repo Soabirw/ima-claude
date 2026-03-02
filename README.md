@@ -30,9 +30,11 @@ Skills are namespaced (`/ima-claude:task-master`, `/ima-claude:quickstart`, etc.
 ### Upgrade
 
 ```
-/plugin marketplace update
-/plugin install ima-claude
+claude plugin marketplace update ima-claude
+claude plugin update ima-claude
 ```
+
+Or use `/plugin` inside Claude Code to manage updates interactively via the **Installed** tab.
 
 ### Legacy Install (Deprecated)
 
