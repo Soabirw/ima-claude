@@ -5,6 +5,14 @@ All notable changes to ima-claude will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.0] - 2026-03-02
+
+### Added
+
+- **GitHub org branding** — IMA attribution line in README, `.github/FUNDING.yml` for sponsor button linking to imahealth.org
+- **Qdrant MCP server** in `setup-mcp.ts` — Docker container management (create/start/detect), env var passthrough, recommended by default
+- **Package metadata** — `author`, `homepage`, `repository`, `bugs`, `keywords` fields in package.json for npm/GitHub discoverability
+
 ## [2.1.1] - 2026-02-27
 
 ### Fixed
