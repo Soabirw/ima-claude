@@ -53,9 +53,10 @@ bunx ima-claude install                    # One-liner (npm)
 ```
 .claude-plugin/
   marketplace.json      # Plugin marketplace catalog
-plugins/ima-claude/     # THE PLUGIN (all skills, hooks, personalities)
+plugins/ima-claude/     # THE PLUGIN (all skills, hooks, agents, personalities)
   .claude-plugin/
     plugin.json         # Plugin manifest
+  agents/               # Subagent definitions (YAML frontmatter + system prompt)
   skills/               # Skill source files (SKILL.md + optional references/)
   hooks/                # Python hook scripts (.py) + support files (.md)
     hooks.json          # Plugin hook configuration (${CLAUDE_PLUGIN_ROOT} paths)
@@ -95,6 +96,13 @@ commands/               # Legacy (commands moved to skills in v1.6.0)
 3. Add matcher entry to `HOOKS_CONFIG` in `scripts/utils.ts` (PreToolUse, PostToolUse, or UserPromptSubmit)
 4. Run `bun run scripts/install.ts` to deploy
 
+### New Agent
+
+1. Create `agents/{name}.md` with YAML frontmatter (`name`, `description`, `model`, optionally `tools`, `permissionMode`, `skills`)
+2. The plugin system auto-discovers `agents/` — no manifest changes needed
+3. Reference as `ima-claude:{name}` when delegating via the Agent tool
+4. Add entry to the Available Agents section below
+
 ### Version Bump
 
 1. Update `VERSION` in `scripts/utils.ts`
@@ -108,6 +116,17 @@ commands/               # Legacy (commands moved to skills in v1.6.0)
 - **package.json version** drifts from `scripts/utils.ts` VERSION — keep both in sync.
 - **`settings.json` merge** is additive. Removing a hook from `HOOKS_CONFIG` doesn't remove it from a user's existing `settings.json`. Users must manually clean stale entries.
 - **Skill frontmatter `description`** is what appears in the skills list sidebar. Keep it under ~200 chars and keyword-rich for auto-discovery.
+
+## Available Agents
+
+Named subagents with enforced constraints (model, tools, permissions, skills). The plugin auto-discovers `agents/` — agents appear as `ima-claude:{name}`.
+
+| Agent | Model | Mode | Skills | Purpose |
+|-------|-------|------|--------|---------|
+| `explorer` | haiku | read-only (`plan`) | — | File discovery, codebase exploration, architecture understanding |
+| `implementer` | sonnet | full access | `functional-programmer` | Feature dev, bug fixes, refactoring, test writing |
+| `reviewer` | sonnet | read-only (`plan`) | `functional-programmer` | Code review, security audit, FP compliance |
+| `wp-developer` | sonnet | full access | `php-fp`, `php-fp-wordpress`, `wp-local`, `ima-forms-expert`, `ima-bootstrap`, `jquery` | WordPress plugins, themes, WP-CLI, forms, Bootstrap |
 
 ## Available Skills
 

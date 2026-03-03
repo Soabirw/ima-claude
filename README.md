@@ -51,7 +51,8 @@ bun run scripts/install.ts
 
 ## What's Included
 
-- **30+ Skills**: Foundational + FP implementation + domain expert + integration + meta-skills
+- **40+ Skills**: Foundational + FP implementation + domain expert + integration + meta-skills
+- **4 Named Agents**: Explorer (haiku), Implementer (sonnet), Reviewer (sonnet), WP Developer (sonnet) — enforced constraints
 - **23 Hooks**: Automatic behavioral enforcement (security, memory, workflow, Serena, code quality)
 - **Default Persona**: "The Practitioner" - 25-year veteran mindset, collaborative, plan-first
 - **3-Tier Memory**: Vestige (neural decay) + Qdrant (permanent library) + Serena (project workbench)
@@ -190,6 +191,19 @@ Our development workflow is habit-driven, not tool-enforced. No plugins required
 
 > **Why habit over tools?** Enforced workflows create overhead. When the habits are genuinely useful, they stick naturally. When they don't fit the task, skip a step — no tool will argue.
 
+## Available Agents
+
+Named subagents with hard constraints — model, tools, and permissions enforced at runtime, not just by prompt. Skills are pre-loaded at startup. The orchestrator (`task-runner`) delegates to these automatically.
+
+| Agent | Model | Mode | Pre-loaded Skills | Use For |
+|-------|-------|------|-------------------|---------|
+| `ima-claude:explorer` | haiku | read-only | — | File discovery, architecture understanding, code search |
+| `ima-claude:implementer` | sonnet | full access | `functional-programmer` | Feature dev, bug fixes, refactoring, tests |
+| `ima-claude:reviewer` | sonnet | read-only | `functional-programmer` | Code review, security audit, FP compliance |
+| `ima-claude:wp-developer` | sonnet | full access | `php-fp`, `php-fp-wordpress`, `wp-local`, `ima-forms-expert`, `ima-bootstrap`, `jquery` | WordPress plugins, themes, WP-CLI, forms |
+
+Agents are auto-discovered from `plugins/ima-claude/agents/`. No manifest changes needed to add new ones.
+
 ## Available Skills
 
 ### Foundational Skills
@@ -229,6 +243,7 @@ Our development workflow is habit-driven, not tool-enforced. No plugins required
 | `phpunit-wp` | PHPUnit testing for WordPress plugins with FP principles |
 | `rg` | Ripgrep usage patterns |
 | `ima-forms-expert` | WordPress form components (IMA Forms) |
+| `discourse-admin` | Discourse admin API (site settings, config export/import, groups) |
 
 ### Integration Skills
 

@@ -5,6 +5,31 @@ All notable changes to ima-claude will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.0] - 2026-03-03
+
+### Added
+
+- **Plugin agents** — 4 named subagents in `plugins/ima-claude/agents/` with enforced model, tools, permissions, and pre-loaded skills
+  - `explorer` — haiku, read-only (`plan` mode), fast codebase exploration and file discovery
+  - `implementer` — sonnet, full access, FP-aware default implementation worker (pre-loads `functional-programmer` skill)
+  - `reviewer` — sonnet, read-only (`plan` mode), FP-aware code quality review (pre-loads `functional-programmer` skill)
+  - `wp-developer` — sonnet, full access, WordPress specialist (pre-loads `php-fp`, `php-fp-wordpress`, `wp-local`, `ima-forms-expert`, `ima-bootstrap`, `jquery`)
+- **discourse-admin Skill** — Discourse admin API for site settings, configuration export/import, categories, groups, and custom user fields
+  - Config-as-code workflow: export settings from one environment, apply to another
+  - Python helper script (`scripts/discourse-admin.py`) for bulk operations
+  - Reference files: API endpoints, gotchas, staging defaults
+  - Complements existing `discourse` skill (plugin development) — this skill covers admin/ops
+- **wp-local reference doc** — comprehensive WP-CLI command reference (`references/wp-cli-reference.md`)
+- **Available Agents table** in bootstrap.sh — every session sees the 4 agents and their capabilities
+- **Available Agents section** in DEV.md — reference table with model, mode, skills, and purpose
+- **"New Agent" guide** in DEV.md — how to add new agents (create `.md`, auto-discovered, no manifest changes)
+
+### Changed
+
+- **task-runner Skill** — "Named Agents (Preferred)" section replaces generic model selection as the primary delegation pattern; generic `general-purpose` demoted to fallback; agent selection tree maps task types to named agents; integration points updated
+- **wp-local Skill** — expanded command examples across all sections (database, plugins, users, themes, cache, options); added inline WP-CLI synopsis annotations; new sections for cron, post operations, and multisite
+- **DEV.md directory structure** — `agents/` directory added to plugin layout
+
 ## [2.2.0] - 2026-03-02
 
 ### Added

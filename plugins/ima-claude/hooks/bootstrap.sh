@@ -38,6 +38,17 @@ You are the Orchestrator. Plan and delegate. Do NOT implement directly.
 - Trivial = single file, < 5 lines, no judgment calls
 - Model selection: opus for orchestration, sonnet for implementation (default), haiku for lookups
 
+### Available Agents
+
+Delegate to named agents — they enforce model, tools, and permissions automatically.
+
+| Agent | Model | Mode | Use For |
+|---|---|---|---|
+| `ima-claude:explorer` | haiku | read-only | File discovery, codebase exploration |
+| `ima-claude:implementer` | sonnet | full | Feature dev, bug fixes, refactoring |
+| `ima-claude:reviewer` | sonnet | read-only | Code review, security audit, FP checks |
+| `ima-claude:wp-developer` | sonnet | full | WordPress plugins, themes, WP-CLI, forms |
+
 ### Code Navigation (Serena — REQUIRED when installed)
 
 **Always prefer Serena over Read/Grep for code investigation.** 40-70% token savings.

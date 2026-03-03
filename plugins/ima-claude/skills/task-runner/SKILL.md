@@ -29,33 +29,49 @@ Deeper hierarchies create:
 
 **If you think you need 3+ levels, restructure the work instead.**
 
-### Model Selection for Subagents
+### Named Agents (Preferred)
+
+**Delegate to named agents when one fits. Fall back to generic agents for edge cases.**
+
+The plugin provides purpose-built agents with enforced constraints (model, tools, permissions, skills). Use them instead of manually configuring generic agents.
+
+```
+Agent(agent_type="ima-claude:explorer", ...)       # Read-only codebase exploration (haiku)
+Agent(agent_type="ima-claude:implementer", ...)     # Standard implementation (sonnet + FP skills)
+Agent(agent_type="ima-claude:reviewer", ...)        # Code quality review (sonnet, read-only)
+Agent(agent_type="ima-claude:wp-developer", ...)    # WordPress specialist (sonnet + WP skills)
+```
+
+**Agent selection tree:**
+
+```
+What does the subtask need?
+├── Find files, understand structure, explore code?
+│   → ima-claude:explorer (haiku, read-only, cheap/fast)
+├── Implement a feature, fix a bug, write code?
+│   → ima-claude:implementer (sonnet, FP-aware)
+├── WordPress-specific work (plugin, theme, WP-CLI, forms)?
+│   → ima-claude:wp-developer (sonnet, full WP skill bundle)
+├── Review code quality, check for bugs/security?
+│   → ima-claude:reviewer (sonnet, read-only)
+├── Needs a custom tool/skill combination?
+│   → general-purpose with explicit model parameter
+└── Uncertain?
+    → ima-claude:implementer (safe default)
+```
+
+| Agent | Model | Mode | Use For |
+|-------|-------|------|---------|
+| **explorer** | haiku | read-only | File discovery, architecture understanding, code search |
+| **implementer** | sonnet | full access | Feature dev, bug fixes, refactoring, tests |
+| **reviewer** | sonnet | read-only | Code review, security audit, FP compliance |
+| **wp-developer** | sonnet | full access | WordPress plugins, themes, WP-CLI, forms, Bootstrap |
+
+### Model Selection (Generic Agents)
+
+For tasks that don't fit a named agent, fall back to generic agents with explicit model selection.
 
 **Opus orchestrates. Sonnet executes. Haiku handles the trivial.**
-
-When the orchestrator is running on Opus, most delegated tasks should use Sonnet via the
-`model` parameter on the Task tool. Opus tokens are expensive - reserve them for the
-orchestration layer and genuinely complex subtasks.
-
-```
-Task(subagent_type="general-purpose", model="sonnet", ...)  # Default for delegation
-Task(subagent_type="general-purpose", model="opus", ...)    # Only when justified
-Task(subagent_type="Explore", model="haiku", ...)           # Quick file lookups
-```
-
-**Model decision tree:**
-
-```
-Is the subtask...
-├── Simple/mechanical (search, read, write, format, list)?
-│   → sonnet (or haiku for pure exploration)
-├── Requires judgment but well-scoped (implement feature, write tests, refactor)?
-│   → sonnet
-├── Requires architectural reasoning, complex trade-offs, or multi-step analysis?
-│   → opus
-└── Uncertain?
-    → Start with sonnet. Escalate to opus only if quality is insufficient.
-```
 
 | Model | Cost | Use For |
 |-------|------|---------|
@@ -156,6 +172,7 @@ Before delegating to a subagent, ask:
 ## Integration Points
 
 This skill works with:
+- **Named agents** - `ima-claude:explorer`, `ima-claude:implementer`, `ima-claude:reviewer`, `ima-claude:wp-developer` — preferred delegation targets
 - **task-planner** - For decomposition before delegation
 - **mcp-serena** - For persistent memory across sessions
 - **mcp-vestige** - For cross-project decisions, patterns, and intentions
