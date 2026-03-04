@@ -65,9 +65,13 @@ docs/                   # Onboarding, migration, MCP setup, prompt coach
 
 ### Version Bump
 
-1. Update `VERSION` in `scripts/utils.ts`
-2. Update `version` in `package.json`
-3. Add entry to `CHANGELOG.md`
+All four must match or the plugin system thinks you're testing locally:
+
+1. `scripts/utils.ts` — `VERSION`
+2. `package.json` — `version`
+3. `plugins/ima-claude/.claude-plugin/plugin.json` — `version`
+4. `.claude-plugin/marketplace.json` — plugin `version`
+5. `CHANGELOG.md` — new entry
 
 ## Gotchas
 
