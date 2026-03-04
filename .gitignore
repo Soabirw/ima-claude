@@ -3,6 +3,7 @@
 !.claude/rules/
 !.claude/CLAUDE.md
 .serena
+.fastembed_cache/
 
 # Node/Bun
 node_modules/

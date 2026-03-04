@@ -5,6 +5,13 @@ All notable changes to ima-claude will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.5.0] - 2026-03-04
+
+### Added
+
+- **LiveCanvas skill** — visual page builder workflow with Bootstrap 5, Loops & Logic (Tangible) templating, PicoStrap theme integration. Includes 3 reference files: L&L complete syntax, LiveCanvas features/shortcodes, PicoStrap SCSS pipeline
+- **block_sed_edits hook** — hard guard blocking `sed -i` and `sed > file` patterns; enforces Read → Edit/Serena workflow
+
 ## [2.4.0] - 2026-03-03
 
 ### Added
