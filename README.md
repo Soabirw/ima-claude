@@ -36,23 +36,12 @@ claude plugin update ima-claude
 
 Or use `/plugin` inside Claude Code to manage updates interactively via the **Installed** tab.
 
-### Legacy Install (Deprecated)
-
-The file-based install is no longer maintained as of v2.0.0. **The `main` branch will not work with this method** — use the tagged legacy release.
-
-```bash
-git clone https://gitea.theflccc.org/IMA/ima-claude.git
-cd ima-claude
-git checkout v1.21.0-legacy
-bun run scripts/install.ts
-```
-
 ---
 
 ## What's Included
 
 - **40+ Skills**: Foundational + FP implementation + domain expert + integration + meta-skills
-- **4 Named Agents**: Explorer (haiku), Implementer (sonnet), Reviewer (sonnet), WP Developer (sonnet) — enforced constraints
+- **5 Named Agents**: Explorer (haiku), Implementer (sonnet), Reviewer (sonnet), WP Developer (sonnet), Memory (sonnet) — enforced constraints
 - **23 Hooks**: Automatic behavioral enforcement (security, memory, workflow, Serena, code quality)
 - **Default Persona**: "The Practitioner" - 25-year veteran mindset, collaborative, plan-first
 - **3-Tier Memory**: Vestige (neural decay) + Qdrant (permanent library) + Serena (project workbench)
@@ -64,7 +53,6 @@ bun run scripts/install.ts
 ## Prerequisites
 
 - [Claude Code](https://claude.ai/code) installed
-- [bun](https://bun.sh) - Only needed for the legacy install path (deprecated). Not required for the plugin system.
 
 ## MCP Servers (Highly Recommended)
 
@@ -74,17 +62,18 @@ ima-claude includes helper skills for these MCP servers. Install any that fit yo
 
 | MCP Server | Purpose | Setup |
 |------------|---------|-------|
-| **Serena** | Code symbol operations, refactoring, session memory | JetBrains IDE + Serena plugin |
-| **Vestige** | Cognitive memory engine (preferences, decisions, patterns) | Cargo or binary install |
-| **Qdrant** | Permanent library (standards, PRDs, architecture, code samples) | Docker |
-| **Tavily** | Web research and current information | API key ([tavily.com](https://tavily.com)) |
-| **Context7** | Official library documentation lookup | npx |
-| **Sequential Thinking** | Structured reasoning for complex problems | npx |
+| **[Serena](https://github.com/oraios/serena)** | Code symbol operations, refactoring, session memory | JetBrains IDE + Serena plugin |
+| **[Vestige](https://github.com/samvallad33/vestige)** | Cognitive memory engine (preferences, decisions, patterns) | Cargo or binary install |
+| **[Qdrant MCP](https://github.com/qdrant/mcp-server-qdrant)** | Permanent library (standards, PRDs, architecture, code samples) | [Docker](https://github.com/qdrant/qdrant) + uvx |
+| **[Tavily](https://docs.tavily.com/documentation/mcp)** | Web research and current information | API key ([tavily.com](https://tavily.com)) |
+| **[Context7](https://github.com/upstash/context7)** | Official library documentation lookup | npx |
+| **[Sequential Thinking](https://github.com/modelcontextprotocol/servers/tree/main/src/sequentialthinking)** | Structured reasoning for complex problems | npx |
 
 ### Optional MCP Servers
 
 | MCP Server | Purpose | Setup |
 |------------|---------|-------|
+| **[Memory](https://github.com/modelcontextprotocol/servers/tree/main/src/memory)** | Basic knowledge graph memory (deprecated by Vestige) | npx |
 | **Fetch** | Web page content extraction | uvx |
 | **Chrome DevTools** | Browser debugging capabilities | npx |
 
@@ -106,7 +95,9 @@ The `compound-bridge` skill provides optional integration with Compound Engineer
 
 ```bash
 # Serena (requires JetBrains IDE running with Serena plugin)
-# See: https://github.com/Serena-AI/Serena
+# See: https://github.com/oraios/serena
+claude mcp add --scope user serena -- uvx --from git+https://github.com/oraios/serena \
+  serena start-mcp-server --context=claude-code --language-backend JetBrains --project-from-cwd
 
 # Vestige (cognitive memory)
 cargo install vestige-mcp
@@ -119,14 +110,17 @@ claude mcp add --transport stdio --scope user qdrant-memory \
   --env COLLECTION_NAME="ima-knowledge" \
   -- uvx mcp-server-qdrant
 
-# Tavily (requires API key)
-claude mcp add --scope user -e TAVILY_API_KEY=your-key -- tavily npx -y tavily-mcp@latest
+# Tavily (requires API key from https://tavily.com)
+claude mcp add --scope user tavily -e TAVILY_API_KEY=your-key -- npx -y tavily-mcp@latest
 
 # Context7
 claude mcp add --scope user context7 -- npx -y @upstash/context7-mcp@latest
 
 # Sequential Thinking
 claude mcp add --scope user sequential-thinking -- npx -y @modelcontextprotocol/server-sequential-thinking@latest
+
+# Memory (basic knowledge graph — deprecated by Vestige)
+claude mcp add --scope user memory -- npx -y @modelcontextprotocol/server-memory@latest
 
 # Fetch
 claude mcp add --scope user fetch -- uvx mcp-server-fetch
@@ -201,6 +195,7 @@ Named subagents with hard constraints — model, tools, and permissions enforced
 | `ima-claude:implementer` | sonnet | full access | `functional-programmer` | Feature dev, bug fixes, refactoring, tests |
 | `ima-claude:reviewer` | sonnet | read-only | `functional-programmer` | Code review, security audit, FP compliance |
 | `ima-claude:wp-developer` | sonnet | full access | `php-fp`, `php-fp-wordpress`, `wp-local`, `ima-forms-expert`, `ima-bootstrap`, `jquery` | WordPress plugins, themes, WP-CLI, forms |
+| `ima-claude:memory` | sonnet | full access | `mcp-vestige`, `mcp-qdrant`, `mcp-serena` | Memory search, storage, consolidation across Vestige/Qdrant/Serena |
 
 Agents are auto-discovered from `plugins/ima-claude/agents/`. No manifest changes needed to add new ones.
 
@@ -402,7 +397,7 @@ Copy `templates/CLAUDE.md.example` to `~/.claude/CLAUDE.md` and customize:
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
-4. Test with `bun run scripts/install.ts`
+4. Test your changes locally
 5. Submit a pull request
 
 ## License

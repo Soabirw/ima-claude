@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # SessionStart hook: Inject ima-claude foundational context into every session.
-# Replaces the legacy IMA_CLAUDE_INIT.md @-reference pattern.
+# Injects ima-claude foundational context (persona, agents, MCP routing).
 # stdout goes into Claude's context.
 
 cat << 'BOOTSTRAP'
@@ -48,6 +48,7 @@ Delegate to named agents — they enforce model, tools, and permissions automati
 | `ima-claude:implementer` | sonnet | full | Feature dev, bug fixes, refactoring |
 | `ima-claude:reviewer` | sonnet | read-only | Code review, security audit, FP checks |
 | `ima-claude:wp-developer` | sonnet | full | WordPress plugins, themes, WP-CLI, forms |
+| `ima-claude:memory` | sonnet | full | Memory search, storage, consolidation |
 
 ### Code Navigation (Serena — REQUIRED when installed)
 

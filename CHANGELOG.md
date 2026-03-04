@@ -5,6 +5,29 @@ All notable changes to ima-claude will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.4.0] - 2026-03-03
+
+### Added
+
+- **Memory agent** — sonnet, full access, dedicated agent for Vestige/Qdrant/Serena operations (search, store, consolidate)
+- **MCP GitHub links** — all 6 core MCP servers in README now link directly to their GitHub repos
+- **Memory MCP** listed as optional MCP server (deprecated by Vestige, included for user choice)
+- **Project CLAUDE.md** — developer guide now at `.claude/CLAUDE.md` for auto-loading in Claude Code sessions
+
+### Changed
+
+- **Serena install command** — added to README (was missing); fixed URL from `Serena-AI/Serena` to `oraios/serena`
+- **Tavily install command** — fixed CLI argument order in README
+- **Qdrant MCP** — links to `qdrant/mcp-server-qdrant` (the MCP server) with separate Docker link to `qdrant/qdrant`
+
+### Removed
+
+- **`IMA_CLAUDE_INIT.md`** — fully superseded by `bootstrap.sh` SessionStart hook
+- **`DEV.md`** — content moved to `.claude/CLAUDE.md`
+- **Legacy install scripts** — deleted `scripts/install.ts`, `scripts/upgrade.ts`, `scripts/backup.ts`, `scripts/package.json`
+- **Legacy install section** in README — removed bun prerequisite and file-based install instructions
+- **`@IMA_CLAUDE_INIT.md`** reference from global `~/.claude/CLAUDE.md`
+
 ## [2.3.0] - 2026-03-03
 
 ### Added

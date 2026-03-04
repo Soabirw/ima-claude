@@ -54,6 +54,8 @@ What does the subtask need?
 │   → ima-claude:wp-developer (sonnet, full WP skill bundle)
 ├── Review code quality, check for bugs/security?
 │   → ima-claude:reviewer (sonnet, read-only)
+├── Memory operations (search, store, consolidate)?
+│   → ima-claude:memory (sonnet, Vestige/Qdrant/Serena)
 ├── Needs a custom tool/skill combination?
 │   → general-purpose with explicit model parameter
 └── Uncertain?
@@ -66,6 +68,7 @@ What does the subtask need?
 | **implementer** | sonnet | full access | Feature dev, bug fixes, refactoring, tests |
 | **reviewer** | sonnet | read-only | Code review, security audit, FP compliance |
 | **wp-developer** | sonnet | full access | WordPress plugins, themes, WP-CLI, forms, Bootstrap |
+| **memory** | sonnet | full access | Memory search, storage, consolidation (Vestige/Qdrant/Serena) |
 
 ### Model Selection (Generic Agents)
 

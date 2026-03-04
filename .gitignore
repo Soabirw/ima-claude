@@ -1,6 +1,7 @@
 # MCP/Claude
 .claude/*
 !.claude/rules/
+!.claude/CLAUDE.md
 .serena
 
 # Node/Bun

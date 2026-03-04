@@ -1,37 +1,21 @@
 # ima-claude Developer Guide
 
-> Renamed from `CLAUDE.md` in v1.21.0. Root `CLAUDE.md` is reserved for the plugin system.
-
 IMA's Claude Code Skills for functional programming, architecture, and team standards.
 
 ## Critical: Source of Truth
 
-**This repo is the source. Two deployment paths exist:**
-
-### Plugin Mode (v1.21.0+)
+**This repo is the source.** Skills, hooks, and agents are deployed via the plugin system.
 
 ```
 Repo Source                              → Deployed By
 plugins/ima-claude/skills/               → Plugin system (auto)
 plugins/ima-claude/hooks/                → Plugin system (auto)
 plugins/ima-claude/hooks/hooks.json      → Plugin system (auto)
-plugins/ima-claude/hooks/bootstrap.sh    → SessionStart hook (replaces IMA_CLAUDE_INIT.md)
+plugins/ima-claude/hooks/bootstrap.sh    → SessionStart hook
 .claude-plugin/marketplace.json          → Plugin catalog
 ```
 
 Install: `/plugin marketplace add Soabirw/ima-claude` then `/plugin install ima-claude`
-
-### Legacy Mode
-
-```
-Repo Source                    → Deployed To
-plugins/ima-claude/skills/     → ~/.claude/skills/
-plugins/ima-claude/hooks/      → ~/.claude/hooks/
-IMA_CLAUDE_INIT.md             → ~/.claude/IMA_CLAUDE_INIT.md
-.claude/rules/                 → ~/.claude/rules/
-```
-
-Install: `bun run scripts/install.ts` (auto-detects plugin layout)
 
 ## Commands
 
@@ -39,13 +23,6 @@ Install: `bun run scripts/install.ts` (auto-detects plugin layout)
 # Plugin mode (recommended)
 /plugin marketplace add Soabirw/ima-claude
 /plugin install ima-claude
-
-# Legacy mode
-bun run scripts/install.ts                # Deploy to ~/.claude/
-bun run scripts/upgrade.ts                # Upgrade existing
-bun run scripts/backup.ts                 # Backup ~/.claude/
-bun run scripts/migrate-to-plugin.ts      # Migrate legacy → plugin
-bunx ima-claude install                    # One-liner (npm)
 ```
 
 ## Directory Structure
@@ -60,45 +37,28 @@ plugins/ima-claude/     # THE PLUGIN (all skills, hooks, agents, personalities)
   skills/               # Skill source files (SKILL.md + optional references/)
   hooks/                # Python hook scripts (.py) + support files (.md)
     hooks.json          # Plugin hook configuration (${CLAUDE_PLUGIN_ROOT} paths)
-    bootstrap.sh        # SessionStart hook (replaces IMA_CLAUDE_INIT.md)
+    bootstrap.sh        # SessionStart hook
   personalities/        # Fun themed response overlays
-scripts/                # Install/upgrade/backup/migrate tooling (TypeScript)
-  utils.ts              # VERSION, SKILLS_TO_INSTALL, HOOKS_TO_INSTALL, HOOKS_CONFIG
-  install.ts            # Legacy deployment logic
-  migrate-to-plugin.ts  # Migration from legacy to plugin
 templates/              # CLAUDE.md.example, local-skills template
 projects/               # Claude Web/Code research project templates
 docs/                   # Onboarding, migration, MCP setup, prompt coach
-.claude/rules/          # Rules files deployed to ~/.claude/rules/ (legacy only)
-IMA_CLAUDE_INIT.md      # Bootstrap file deployed to ~/.claude/IMA_CLAUDE_INIT.md
-commands/               # Legacy (commands moved to skills in v1.6.0)
 ```
-
-## Key Files
-
-- **`scripts/utils.ts`** — the central registry. Contains `VERSION`, `SKILLS_TO_INSTALL`, `HOOKS_TO_INSTALL`, `HOOKS_CONFIG`, and `RULES_TO_INSTALL`. Any new skill/hook must be registered here.
-- **`scripts/install.ts`** — deployment logic. Copies from repo dirs to `~/.claude/` and merges hooks into `~/.claude/settings.json`.
-- **`IMA_CLAUDE_INIT.md`** — bootstrap file with persona, memory patterns, orchestrator protocol. Deployed to `~/.claude/`.
 
 ## Adding New Content
 
 ### New Skill
 
-1. Create `skills/{name}/SKILL.md` with frontmatter (`name`, `description`)
-2. Add `"{name}"` to `SKILLS_TO_INSTALL` in `scripts/utils.ts`
-3. Add entry to the Available Skills section below
-4. Run `bun run scripts/install.ts` to deploy
+1. Create `plugins/ima-claude/skills/{name}/SKILL.md` with frontmatter (`name`, `description`)
+2. Add entry to the Available Skills section below
 
 ### New Hook
 
-1. Create `hooks/{name}.py` (exit 0 = soft warning via stderr)
-2. Add `"{name}.py"` to `HOOKS_TO_INSTALL` in `scripts/utils.ts`
-3. Add matcher entry to `HOOKS_CONFIG` in `scripts/utils.ts` (PreToolUse, PostToolUse, or UserPromptSubmit)
-4. Run `bun run scripts/install.ts` to deploy
+1. Create `plugins/ima-claude/hooks/{name}.py` (exit 0 = soft warning via stderr)
+2. Add matcher entry to `plugins/ima-claude/hooks/hooks.json` (PreToolUse, PostToolUse, or UserPromptSubmit)
 
 ### New Agent
 
-1. Create `agents/{name}.md` with YAML frontmatter (`name`, `description`, `model`, optionally `tools`, `permissionMode`, `skills`)
+1. Create `plugins/ima-claude/agents/{name}.md` with YAML frontmatter (`name`, `description`, `model`, optionally `tools`, `permissionMode`, `skills`)
 2. The plugin system auto-discovers `agents/` — no manifest changes needed
 3. Reference as `ima-claude:{name}` when delegating via the Agent tool
 4. Add entry to the Available Agents section below
@@ -111,10 +71,8 @@ commands/               # Legacy (commands moved to skills in v1.6.0)
 
 ## Gotchas
 
-- **Hooks need two registrations**: `HOOKS_TO_INSTALL` (file copy) AND `HOOKS_CONFIG` (settings.json matcher). Missing either = hook doesn't work.
 - **Personalities are `.md` files**, not directories like skills. They live flat in `personalities/`.
 - **package.json version** drifts from `scripts/utils.ts` VERSION — keep both in sync.
-- **`settings.json` merge** is additive. Removing a hook from `HOOKS_CONFIG` doesn't remove it from a user's existing `settings.json`. Users must manually clean stale entries.
 - **Skill frontmatter `description`** is what appears in the skills list sidebar. Keep it under ~200 chars and keyword-rich for auto-discovery.
 
 ## Available Agents
@@ -127,6 +85,7 @@ Named subagents with enforced constraints (model, tools, permissions, skills). T
 | `implementer` | sonnet | full access | `functional-programmer` | Feature dev, bug fixes, refactoring, test writing |
 | `reviewer` | sonnet | read-only (`plan`) | `functional-programmer` | Code review, security audit, FP compliance |
 | `wp-developer` | sonnet | full access | `php-fp`, `php-fp-wordpress`, `wp-local`, `ima-forms-expert`, `ima-bootstrap`, `jquery` | WordPress plugins, themes, WP-CLI, forms, Bootstrap |
+| `memory` | sonnet | full access | `mcp-vestige`, `mcp-qdrant`, `mcp-serena` | Memory search, storage, consolidation across Vestige/Qdrant/Serena |
 
 ## Available Skills
 
@@ -219,7 +178,3 @@ Fun themed response styles (tone only, no expertise change):
 "Enable 40k mode"  # Warhammer 40K themed
 "Enable templars"  # Templar crusader themed
 ```
-
-## Compound Engineering
-
-The `compound-bridge` skill integrates with the [Compound Engineering](https://every.to/guides/compound-engineering) marketplace plugin. Memory bridges, role separation, and per-project config are documented there. Runtime workflow instructions are in `IMA_CLAUDE_INIT.md`.
