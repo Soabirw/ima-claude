@@ -104,10 +104,11 @@ cargo install vestige-mcp
 claude mcp add --scope user vestige -- vestige-mcp
 
 # Qdrant (document RAG)
-docker run -d --name qdrant -p 6333:6333 -v qdrant_storage:/qdrant/storage qdrant/qdrant:latest
+docker run -d --restart unless-stopped --name qdrant -p 6333:6333 -v qdrant_storage:/qdrant/storage qdrant/qdrant:latest
 claude mcp add --transport stdio --scope user qdrant-memory \
   --env QDRANT_URL="http://localhost:6333" \
   --env COLLECTION_NAME="ima-knowledge" \
+  --env FASTEMBED_CACHE_PATH="$HOME/.cache/fastembed" \
   -- uvx mcp-server-qdrant
 
 # Tavily (requires API key from https://tavily.com)
