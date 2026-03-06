@@ -12,9 +12,8 @@ For SCSS implementation (variables, mixins, classes), see the `ima-bootstrap` sk
 
 | Name | Hex | CMYK | RGB | Usage |
 |------|-----|------|-----|-------|
-| Trustworthy Indigo | `#040C53` | 96/83/0/67 | 4, 12, 83 | Primary brand color — headers, titles, trust elements |
-| Aquatic Pulse | `#0296A1` | 85/0/17/34 | 2, 150, 161 | Interactive elements — buttons, CTAs, links |
-| Bright Teal | `#00B8B8` | 78/0/22/26 | 0, 184, 184 | Highlights, hover states, accent |
+| Trustworthy Indigo | `#00066F` | 100/98/20/25 | 0, 6, 111 | Primary brand color — headers, titles, trust elements |
+| Aquatic Pulse | `#00B8B8` | 78/0/22/26 | 0, 184, 184 | Interactive elements — buttons, CTAs, links |
 | Guidance Sky | `#A2CFF0` | 33/12/0/4 | 162, 207, 240 | Light backgrounds, soft accents |
 
 ### Secondary Colors

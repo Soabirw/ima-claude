@@ -52,9 +52,9 @@ What type of brand question?
 
 | Name | Hex | Usage |
 |------|-----|-------|
-| Trustworthy Indigo | `#040C53` | Primary brand, headers, trust |
-| Aquatic Pulse | `#0296A1` | CTAs, buttons, links |
-| Bright Teal | `#00B8B8` | Highlights, hover states |
+| Trustworthy Indigo | `#00066F` | Primary brand, headers, trust |
+| Aquatic Pulse | `#00B8B8` | CTAs, buttons, links |
+| Accessible Teal | `#007BB4` | Hover states, WCAG compliance |
 | Guidance Sky | `#A2CFF0` | Light accents, backgrounds |
 | Vital Gold | `#FFCC00` | Warnings, attention |
 | Red Ribbon | `#DD153B` | Urgency, errors |

@@ -1,6 +1,6 @@
 {
   "name": "ima-claude",
-  "version": "2.6.0",
+  "version": "2.6.1",
   "description": "IMA's Claude Code Skills - FP patterns, architecture guidance, and team standards",
   "type": "module",
   "scripts": {

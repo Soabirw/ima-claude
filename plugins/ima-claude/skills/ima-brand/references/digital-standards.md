@@ -13,16 +13,16 @@ For CSS/SCSS implementation details, see the `ima-bootstrap` skill.
 Same brand colors as print, using hex values. Key digital-specific notes:
 
 - **Background**: White (`#FFFFFF`) or Clarity Wash (`#F2F3F5`) for content areas
-- **Text**: Gravel (`#494949`) for body, Trustworthy Indigo (`#040C53`) for headings
-- **Links**: Aquatic Pulse (`#0296A1`), hover → Bright Teal (`#00B8B8`)
+- **Text**: Gravel (`#494949`) for body, Trustworthy Indigo (`#00066F`) for headings
+- **Links**: Aquatic Pulse (`#00B8B8`), hover → Accessible Teal (`#007BB4`)
 - **Gradient**: Reserve for hero sections and premium elements, not for small UI
 
 ### Typography Hierarchy (Digital)
 
 | Element | Font | Size | Color | WCAG Ratio | Level |
 |---------|------|------|-------|------------|-------|
-| H1 | Lato Black | 40px | `#040C53` | 16.5:1 | AAA |
-| H2 | Lato Bold | 32px | `#0296A1` | 5.04:1 | AA |
+| H1 | Lato Black | 40px | `#00066F` | 16.5:1 | AAA |
+| H2 | Lato Bold | 32px | `#00B8B8` | 5.04:1 | AA |
 | H3 | Lato Regular | 28px | `#DD153B` | 4.94:1 | AA |
 | Body | Proxima Nova | 16px | `#494949` | 9:1 | AAA |
 
@@ -30,11 +30,11 @@ Same brand colors as print, using hex values. Key digital-specific notes:
 
 | Type | Background | Text | Padding | Radius |
 |------|-----------|------|---------|--------|
-| Primary | `#0296A1` | White | 20px / 40px | 10px |
-| Primary (hover) | `#00B8B8` | White | 20px / 40px | 10px |
-| Primary wide | `#0296A1` | White | 20px / 80px | 10px |
-| Large/digital | `#0296A1` | White | 20px / 40px | 20px |
-| Outline | Transparent | `#040C53` | 20px / 40px | 10px |
+| Primary | `#00B8B8` | White | 20px / 40px | 10px |
+| Primary (hover) | `#007BB4` | White | 20px / 40px | 10px |
+| Primary wide | `#00B8B8` | White | 20px / 80px | 10px |
+| Large/digital | `#00B8B8` | White | 20px / 40px | 20px |
+| Outline | Transparent | `#00066F` | 20px / 40px | 10px |
 
 ---
 
@@ -44,8 +44,8 @@ Same brand colors as print, using hex values. Key digital-specific notes:
 
 | Combination | Ratio | Level | Pass |
 |-------------|-------|-------|------|
-| Indigo `#040C53` on White | 16.5:1 | AAA | Yes |
-| Aquatic Pulse `#0296A1` on White | 5.04:1 | AA | Yes |
+| Indigo `#00066F` on White | 16.5:1 | AAA | Yes |
+| Aquatic Pulse `#00B8B8` on White | 3.07:1 | — | Large text only |
 | Red Ribbon `#DD153B` on White | 4.94:1 | AA | Yes |
 | Body text `#494949` on White | 9:1 | AAA | Yes |
 | Accessible Teal `#007BB4` on White | 4.58:1 | AA | Yes |
@@ -58,7 +58,7 @@ Same brand colors as print, using hex values. Key digital-specific notes:
 - **Focus states**: Visible focus indicators on all interactive elements
 - **Font sizes**: Minimum 16px for body text, 14px for labels
 - **Touch targets**: Minimum 44x44px for mobile interactive elements
-- **High-contrast teal**: Use `#007BB4` when standard teal (`#0296A1`) doesn't meet contrast needs
+- **High-contrast teal**: Use `#007BB4` when Aquatic Pulse (`#00B8B8`) doesn't meet contrast needs
 
 ---
 
