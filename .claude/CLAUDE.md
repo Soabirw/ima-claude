@@ -88,6 +88,7 @@ Named subagents with enforced constraints (model, tools, permissions, skills). T
 | `explorer` | haiku | read-only (`plan`) | — | File discovery, codebase exploration, architecture understanding |
 | `implementer` | sonnet | full access | `functional-programmer` | Feature dev, bug fixes, refactoring, test writing |
 | `reviewer` | sonnet | read-only (`plan`) | `functional-programmer` | Code review, security audit, FP compliance |
+| `tester` | sonnet | full access | `unit-testing`, `functional-programmer` | Test creation, TDD, test running, debugging test failures |
 | `wp-developer` | sonnet | full access | `php-fp`, `php-fp-wordpress`, `wp-local`, `ima-forms-expert`, `ima-bootstrap`, `jquery` | WordPress plugins, themes, WP-CLI, forms, Bootstrap |
 | `memory` | sonnet | full access | `mcp-vestige`, `mcp-qdrant`, `mcp-serena` | Memory search, storage, consolidation across Vestige/Qdrant/Serena |
 
@@ -116,6 +117,9 @@ Named subagents with enforced constraints (model, tools, permissions, skills). T
 
 ### Payment & API Skills
 - `php-authnet` - Authorize.Net PHP SDK (transactions, CIM profiles, ARB subscriptions, Accept.js, webhooks)
+
+### Testing Skills
+- `unit-testing` - Test workflow orchestration (decision tree routing to phpunit-wp, playwright, js-fp, php-fp)
 
 ### Domain Expert Skills
 - `architect` - System design, scalability, long-term architecture

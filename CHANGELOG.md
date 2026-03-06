@@ -5,6 +5,14 @@ All notable changes to ima-claude will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.6.0] - 2026-03-05
+
+### Added
+
+- **Tester agent** — sonnet, full access, dedicated testing specialist with `unit-testing` + `functional-programmer` skills for test creation, TDD, running suites, and debugging failures
+- **Unit-testing skill** — orchestration skill with decision tree routing to domain skills (phpunit-wp, playwright, js-fp, php-fp). Includes 3 reference files: test strategy, mock patterns, TDD workflow
+- **Task-runner updated** — tester agent added to agent selection tree and integration points
+
 ## [2.5.0] - 2026-03-04
 
 ### Added

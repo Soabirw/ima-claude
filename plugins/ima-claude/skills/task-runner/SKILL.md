@@ -54,6 +54,8 @@ What does the subtask need?
 │   → ima-claude:wp-developer (sonnet, full WP skill bundle)
 ├── Review code quality, check for bugs/security?
 │   → ima-claude:reviewer (sonnet, read-only)
+├── Write tests, run test suites, TDD, debug test failures?
+│   → ima-claude:tester (sonnet, test orchestration + FP)
 ├── Memory operations (search, store, consolidate)?
 │   → ima-claude:memory (sonnet, Vestige/Qdrant/Serena)
 ├── Needs a custom tool/skill combination?
@@ -67,6 +69,7 @@ What does the subtask need?
 | **explorer** | haiku | read-only | File discovery, architecture understanding, code search |
 | **implementer** | sonnet | full access | Feature dev, bug fixes, refactoring, tests |
 | **reviewer** | sonnet | read-only | Code review, security audit, FP compliance |
+| **tester** | sonnet | full access | Test creation, test running, TDD, debugging failures |
 | **wp-developer** | sonnet | full access | WordPress plugins, themes, WP-CLI, forms, Bootstrap |
 | **memory** | sonnet | full access | Memory search, storage, consolidation (Vestige/Qdrant/Serena) |
 
@@ -175,7 +178,7 @@ Before delegating to a subagent, ask:
 ## Integration Points
 
 This skill works with:
-- **Named agents** - `ima-claude:explorer`, `ima-claude:implementer`, `ima-claude:reviewer`, `ima-claude:wp-developer` — preferred delegation targets
+- **Named agents** - `ima-claude:explorer`, `ima-claude:implementer`, `ima-claude:reviewer`, `ima-claude:tester`, `ima-claude:wp-developer` — preferred delegation targets
 - **task-planner** - For decomposition before delegation
 - **mcp-serena** - For persistent memory across sessions
 - **mcp-vestige** - For cross-project decisions, patterns, and intentions
