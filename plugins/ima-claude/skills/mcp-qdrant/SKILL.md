@@ -17,22 +17,54 @@ Our permanent reference library. Unlike Vestige (neural memory that fades if unu
 
 **Will it fade if we stop referencing it?** If no → Qdrant (permanent). If yes → Vestige (neural decay).
 
+## Embedding Stack
+
+| Component | Value |
+|---|---|
+| MCP server | `qdrant-mcp` (custom, at `~/dev/qdrant-mcp-server`) |
+| Embedding model | `nomic-embed-text` via Ollama |
+| Vector dimensions | 768 |
+| Distance metric | Cosine |
+| Vector type | Default (unnamed) |
+| Default collection | `ima-knowledge` |
+
+## Per-Project Collection
+
+Projects can specify their Qdrant collection via a `.qdrant` file in the project root (YAML format, like `.serena`):
+
+```yaml
+# .qdrant — project-level config
+collection: my-project-knowledge
+```
+
+**At session start**, check for a `.qdrant` file in the working directory. If found, read its `collection` value and pass it as `collection_name` on every `qdrant_store` and `qdrant_find` call for that session.
+
+If no `.qdrant` file is found, omit `collection_name` — the server defaults to `ima-knowledge` (from the `COLLECTION_NAME` env var).
+
 ## MCP Tools
 
-Tool prefix depends on MCP server name (default: `qdrant-memory`).
+MCP server name: `qdrant-memory`. Tool prefix: `mcp__qdrant-memory__`.
 
-| Tool | Purpose |
-|------|---------|
-| `qdrant-store` | Store text with auto-embedding |
-| `qdrant-find` | Semantic search across stored knowledge |
+| Tool | Purpose | Parameters |
+|------|---------|------------|
+| `qdrant_store` | Store text with auto-embedding | `information` (required), `collection_name`, `metadata` |
+| `qdrant_find` | Semantic search across stored knowledge | `query` (required), `collection_name`, `limit` |
 
 ## Storing Knowledge
 
 ```
-mcp__qdrant-memory__qdrant-store
+mcp__qdrant-memory__qdrant_store
   information: "The IMA donation system uses Authorize.net Accept.js for payment
     processing. Guest donations use charge-then-profile for ARB recurring."
   metadata: {"source": "donation-system-prd", "type": "architecture", "date": "2026-02-21"}
+```
+
+To target a specific collection explicitly:
+
+```
+mcp__qdrant-memory__qdrant_store
+  collection_name: "other-project-knowledge"
+  information: "..."
 ```
 
 ### What to Store
@@ -66,7 +98,7 @@ Include the document title in each chunk so search results have context.
 ## Searching Knowledge
 
 ```
-mcp__qdrant-memory__qdrant-find
+mcp__qdrant-memory__qdrant_find
   query: "how does guest recurring donation work"
 ```
 
@@ -112,7 +144,7 @@ When user shares content from Claude Web Projects:
 ```
 IF reference material that should never be forgotten
    (wiki, standards, PRDs, architecture docs, code samples, plans):
-    → Qdrant qdrant-store (permanent library)
+    → Qdrant qdrant_store (permanent library)
 ELSE IF knowledge that should strengthen with use, fade if unused
    (preferences, decisions, patterns, bugs):
     → Vestige smart_ingest (neural memory)
@@ -121,7 +153,7 @@ ELSE IF session state or project progress:
 
 Searching:
 IF need reference docs, architecture context, prior art:
-    → Qdrant qdrant-find
+    → Qdrant qdrant_find
 IF need user preferences or past decisions:
     → Vestige search
 IF starting any new work:
@@ -143,6 +175,7 @@ IF starting any new work:
 | No results | Broaden query terms |
 | Irrelevant results | Use more specific key terms |
 | Qdrant not responding | `docker ps \| grep qdrant` — restart if needed |
+| Ollama not responding | `ollama list` — ensure it's running with `nomic-embed-text` |
 | Duplicate content | Search before storing to verify novelty |
 
 ## When NOT to Use
@@ -156,21 +189,45 @@ IF starting any new work:
 ## Setup
 
 ```bash
-# Start Qdrant with persistent storage
+# 1. Start Qdrant with persistent storage
 docker run -d --name qdrant \
   -p 6333:6333 \
   -v qdrant_storage:/qdrant/storage \
   qdrant/qdrant:latest
 
-# Add to Claude Code (global)
-claude mcp add --transport stdio --scope user qdrant-memory \
-  --env QDRANT_URL="http://localhost:6333" \
-  --env COLLECTION_NAME="ima-knowledge" \
-  -- uvx mcp-server-qdrant
+# 2. Install Ollama and pull embedding model
+ollama pull nomic-embed-text
 
-# Verify
+# 3. Install custom MCP server
+cd ~/dev/qdrant-mcp-server && pip install -e .
+
+# 4. Add to Claude Code (in ~/.claude.json mcpServers)
+# "qdrant-memory": {
+#   "type": "stdio",
+#   "command": "qdrant-mcp",
+#   "args": [],
+#   "env": {
+#     "QDRANT_URL": "http://localhost:6333",
+#     "COLLECTION_NAME": "ima-knowledge",
+#     "OLLAMA_URL": "http://localhost:11434",
+#     "EMBEDDING_MODEL": "nomic-embed-text"
+#   }
+# }
+
+# 5. Verify
 curl http://localhost:6333/health
 ```
 
 **Persistence**: `-v qdrant_storage:/qdrant/storage` preserves data across restarts.
-**Embeddings**: FastEmbed (local, no API keys). All data stays on your machine.
+**Embeddings**: Ollama with `nomic-embed-text` (768d). All data stays on your machine.
+
+### Per-Project Setup
+
+Add a `.qdrant` file to any project root to use a project-specific collection:
+
+```yaml
+# .qdrant
+collection: my-project-knowledge
+```
+
+This keeps project knowledge isolated from the global `ima-knowledge` collection. The collection is created automatically on first store.
