@@ -5,6 +5,12 @@ All notable changes to ima-claude will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.7.1] - 2026-03-09
+
+### Updated
+
+- **README** — replaced official `mcp-server-qdrant` references with [ima-qdrant-mcp-server](https://github.com/Soabirw/ima-qdrant-mcp-server), updated install commands (Ollama + pip), added `py-fp` to skills table, updated skill count to 47
+
 ## [2.7.0] - 2026-03-09
 
 ### Added
