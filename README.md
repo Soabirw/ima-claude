@@ -40,7 +40,7 @@ Or use `/plugin` inside Claude Code to manage updates interactively via the **In
 
 ## What's Included
 
-- **40+ Skills**: Foundational + FP implementation + domain expert + integration + meta-skills
+- **47 Skills**: Foundational + FP implementation + domain expert + integration + meta-skills
 - **5 Named Agents**: Explorer (haiku), Implementer (sonnet), Reviewer (sonnet), WP Developer (sonnet), Memory (sonnet) — enforced constraints
 - **23 Hooks**: Automatic behavioral enforcement (security, memory, workflow, Serena, code quality)
 - **Default Persona**: "The Practitioner" - 25-year veteran mindset, collaborative, plan-first
@@ -64,7 +64,7 @@ ima-claude includes helper skills for these MCP servers. Install any that fit yo
 |------------|---------|-------|
 | **[Serena](https://github.com/oraios/serena)** | Code symbol operations, refactoring, session memory | JetBrains IDE + Serena plugin |
 | **[Vestige](https://github.com/samvallad33/vestige)** | Cognitive memory engine (preferences, decisions, patterns) | Cargo or binary install |
-| **[Qdrant MCP](https://github.com/qdrant/mcp-server-qdrant)** | Permanent library (standards, PRDs, architecture, code samples) | [Docker](https://github.com/qdrant/qdrant) + uvx |
+| **[ima-qdrant-mcp-server](https://github.com/Soabirw/ima-qdrant-mcp-server)** | Permanent library (standards, PRDs, architecture, code samples) | [Docker](https://github.com/qdrant/qdrant) + Ollama + pip |
 | **[Tavily](https://docs.tavily.com/documentation/mcp)** | Web research and current information | API key ([tavily.com](https://tavily.com)) |
 | **[Context7](https://github.com/upstash/context7)** | Official library documentation lookup | npx |
 | **[Sequential Thinking](https://github.com/modelcontextprotocol/servers/tree/main/src/sequentialthinking)** | Structured reasoning for complex problems | npx |
@@ -103,13 +103,15 @@ claude mcp add --scope user serena -- uvx --from git+https://github.com/oraios/s
 cargo install vestige-mcp
 claude mcp add --scope user vestige -- vestige-mcp
 
-# Qdrant (document RAG)
+# Qdrant (document RAG) — uses ima-qdrant-mcp-server (NOT the official mcp-server-qdrant)
+# See: https://github.com/Soabirw/ima-qdrant-mcp-server
 docker run -d --restart unless-stopped --name qdrant -p 6333:6333 -v qdrant_storage:/qdrant/storage qdrant/qdrant:latest
+ollama pull nomic-embed-text
+pip install -e ~/dev/qdrant-mcp-server  # or wherever you cloned it
 claude mcp add --transport stdio --scope user qdrant-memory \
   --env QDRANT_URL="http://localhost:6333" \
   --env COLLECTION_NAME="ima-knowledge" \
-  --env FASTEMBED_CACHE_PATH="$HOME/.cache/fastembed" \
-  -- uvx mcp-server-qdrant
+  -- qdrant-mcp
 
 # Tavily (requires API key from https://tavily.com)
 claude mcp add --scope user tavily -e TAVILY_API_KEY=your-key -- npx -y tavily-mcp@latest
@@ -223,6 +225,7 @@ Agents are auto-discovered from `plugins/ima-claude/agents/`. No manifest change
 | `jquery` | jQuery patterns and API reference (WordPress-native) |
 | `php-fp` | PHP FP core principles |
 | `php-fp-wordpress` | Security-first WordPress PHP development |
+| `py-fp` | Python FP core - comprehensions, generators, frozen dataclasses |
 | `quasar-fp` | Quasar Framework with utility-first CSS |
 
 ### Domain Expert Skills
