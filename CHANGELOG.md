@@ -5,6 +5,12 @@ All notable changes to ima-claude will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.7.0] - 2026-03-09
+
+### Added
+
+- **py-fp skill** — Python FP core skill with anti-over-engineering focus. Covers comprehensions over map/filter, frozen dataclasses, generators for lazy pipelines, functools/itertools patterns, pandas pipe() and polars for data science, multiprocessing with pure functions, pytest parametrized testing, and Hypothesis property-based testing. Includes 2 reference files (core-principles, testing-patterns) and working examples with tests.
+
 ## [2.6.2] - 2026-03-07
 
 ### Updated

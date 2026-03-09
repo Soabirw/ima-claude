@@ -113,6 +113,7 @@ Named subagents with enforced constraints (model, tools, permissions, skills). T
 - `jquery` - jQuery patterns and API reference (FP-aligned, WordPress-native)
 - `php-fp` - PHP FP core (strict types, native patterns)
 - `php-fp-wordpress` - WordPress PHP (security-first, nonce verification)
+- `py-fp` - Python FP core (comprehensions, generators, frozen dataclasses, pandas pipelines)
 - `quasar-fp` - Quasar Framework (utility-first CSS, composables)
 
 ### Payment & API Skills
