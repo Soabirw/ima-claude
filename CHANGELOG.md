@@ -5,6 +5,22 @@ All notable changes to ima-claude will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.9.0] - 2026-03-11
+
+### Added
+
+- **Multi-platform installer** — platform adapter architecture for installing ima-claude skills across multiple AI coding agents. Supports Claude Code and Junie CLI, with architecture ready for GitHub Copilot and others
+  - Platform adapter pattern with shared interface and per-platform adapters
+  - Junie adapter: agent transformation (strips permissionMode), AGENTS.md generation, hook-to-guideline translations (25 hooks → guidelines)
+  - Interactive CLI with auto-detection, install preview, override warnings, and item exclusion
+  - Dual-runtime build (ESM via tsup, works with both node and bun)
+
+## [2.8.0] - 2026-03-11
+
+### Added
+
+- **ima-cancer-care-guides skill** — IMA cancer care guide document pipeline for DOCX extraction, markdown → HTML → PDF conversion, and Canva template mapping. Includes example files and Python PPTX generation script
+
 ## [2.7.1] - 2026-03-09
 
 ### Updated
