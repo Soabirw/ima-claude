@@ -1,6 +1,7 @@
 import { existsSync, mkdirSync, readdirSync, statSync, copyFileSync, readFileSync, writeFileSync, unlinkSync, chmodSync } from "fs";
 import { join, dirname } from "path";
 import { homedir } from "os";
+import { createInterface } from "readline";
 
 export const CLAUDE_DIR = join(homedir(), ".claude");
 export const SKILLS_DIR = join(CLAUDE_DIR, "skills");
@@ -8,7 +9,7 @@ export const HOOKS_DIR = join(CLAUDE_DIR, "hooks");
 export const COMMANDS_DIR = join(CLAUDE_DIR, "commands");
 export const RULES_DIR = join(CLAUDE_DIR, "rules");
 export const SETTINGS_FILE = join(CLAUDE_DIR, "settings.json");
-export const VERSION = "2.7.1";
+export const VERSION = "2.8.0";
 
 export const colors = {
   reset: "\x1b[0m",
@@ -107,18 +108,21 @@ export function readVersion(skillDir: string): string | null {
   }
 }
 
-export function promptYesNo(question: string): boolean {
-  const rl = require("readline").createInterface({
-    input: process.stdin,
-    output: process.stdout,
-  });
-
-  return new Promise<boolean>((resolve) => {
-    rl.question(`${question} [y/N] `, (answer: string) => {
+export function prompt(question: string): Promise<string> {
+  const rl = createInterface({ input: process.stdin, output: process.stdout });
+  return new Promise((resolve) => {
+    rl.question(question, (answer: string) => {
       rl.close();
-      resolve(answer.toLowerCase() === "y" || answer.toLowerCase() === "yes");
+      resolve(answer.trim());
     });
-  }) as unknown as boolean;
+  });
+}
+
+export async function promptYesNo(question: string, defaultYes = true): Promise<boolean> {
+  const suffix = defaultYes ? "[Y/n]" : "[y/N]";
+  const answer = await prompt(`${question} ${suffix} `);
+  if (!answer) return defaultYes;
+  return answer.toLowerCase() === "y" || answer.toLowerCase() === "yes";
 }
 
 export const SKILLS_TO_INSTALL = [

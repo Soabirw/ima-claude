@@ -132,6 +132,7 @@ Named subagents with enforced constraints (model, tools, permissions, skills). T
 - `wp-local` - WP-CLI commands in Flywheel Local WP environments
 - `jira-checkpoint` - Jira awareness checkpoints for team visibility (before/during/after work sync)
 - `rg` - Ripgrep usage patterns (prefer over grep/find)
+- `ima-cancer-care-guides` - IMA cancer care guide document pipeline (DOCX extraction, markdown → HTML → PDF, Canva template mapping)
 
 ### Integration Skills
 - `compound-bridge` - Compound Engineering integration (memory bridge, role separation, per-project config)
