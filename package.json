@@ -1,16 +1,26 @@
 {
   "name": "ima-claude",
-  "version": "2.7.1",
-  "description": "IMA's Claude Code Skills - FP patterns, architecture guidance, and team standards",
+  "version": "2.8.0",
+  "description": "IMA's AI coding agent skills - FP patterns, architecture guidance, and team standards. Supports Claude Code, Junie CLI, and more.",
   "type": "module",
   "scripts": {
+    "build": "tsup",
+    "dev": "bun run scripts/cli.ts",
     "migrate": "bun run scripts/migrate-to-plugin.ts"
   },
   "bin": {
-    "ima-claude": "./scripts/cli.ts"
+    "ima-claude": "./dist/cli.js"
   },
+  "files": [
+    "dist/",
+    "plugins/",
+    "platforms/"
+  ],
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "@types/node": "^25.4.0",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3"
   },
   "author": {
     "name": "Eric Jensen",
