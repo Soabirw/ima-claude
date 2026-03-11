@@ -1,16 +1,18 @@
 # ima-claude
 
-IMA's Claude Code Skills - FP patterns, architecture guidance, and team standards.
+FP patterns, architecture guidance, and team standards for AI coding agents.
+
+**Supports Claude Code and Junie CLI** — with an extensible adapter architecture ready for more platforms.
 
 Built by [Independent Medical Alliance](https://imahealth.org) (formerly FLCCC)
 
 **Core Philosophy: `Simple > Complex | Evidence > Assumptions`**
 
-> These skills and hooks are built for IMA's team context — but most of the patterns (FP principles, architecture guidance, hooks design, MCP integration, memory system) are general enough to be useful to anyone. If you're building your own Claude Code toolkit, this repo can serve as a reference for structure, conventions, and what's possible. Fork it, strip the IMA-specific skills, and build your own.
+> These skills are built for IMA's team context — but most of the patterns (FP principles, architecture guidance, hooks, MCP integration, memory system) are general enough to be useful to anyone. If you're building your own AI coding toolkit, this repo can serve as a reference for structure, conventions, and what's possible. Fork it, strip the IMA-specific skills, and build your own.
 
 ## Install
 
-### Plugin System (Recommended)
+### Claude Code — Plugin System (Recommended)
 
 Inside Claude Code, run:
 
@@ -27,7 +29,7 @@ Then **restart Claude Code** to load the plugin. Verify with:
 
 Skills are namespaced (`/ima-claude:task-master`, `/ima-claude:quickstart`, etc.) and isolated from other plugins.
 
-### Upgrade
+**Upgrade:**
 
 ```
 claude plugin marketplace update ima-claude
@@ -36,13 +38,61 @@ claude plugin update ima-claude
 
 Or use `/plugin` inside Claude Code to manage updates interactively via the **Installed** tab.
 
+### Junie CLI — Multi-Platform Installer
+
+For Junie (or any non-plugin platform), use the interactive CLI installer:
+
+```bash
+npx ima-claude install
+```
+
+The installer auto-detects which platforms are available and walks you through installation:
+
+1. **Detects platforms** — scans for Claude Code (`~/.claude`) and Junie CLI (`~/.junie`)
+2. **Shows preview** — lists all skills, agents, and platform-specific items to install
+3. **Allows exclusions** — skip specific skills or agents you don't need
+4. **Installs with feedback** — step-by-step progress for each item
+
+You can also target a specific platform directly:
+
+```bash
+npx ima-claude install --target junie    # Junie only
+npx ima-claude install --target claude   # Claude Code only (plugin recommended instead)
+npx ima-claude detect                    # Show detected platforms
+```
+
+**What's different for Junie?**
+
+| | Claude Code | Junie CLI |
+|---|---|---|
+| **Skills** | Plugin system (auto) | Copied to `~/.junie/skills/` |
+| **Agents** | Plugin system (auto) | Transformed (strips `permissionMode`) → `~/.junie/agents/` |
+| **Hooks** | 23 Python hook scripts | No hook system — translated into behavioral guidelines |
+| **Guidelines** | Plugin's `CLAUDE.md` injection | Generated `AGENTS.md` with persona, workflow, and hook-derived rules |
+
+Junie doesn't support hooks, so the installer translates all 25 hook behaviors into persistent guidelines inside `AGENTS.md` — same enforcement, different mechanism.
+
+### Adding New Platforms
+
+The installer uses an adapter pattern. Adding support for a new platform (e.g., GitHub Copilot) means creating one file implementing the `PlatformAdapter` interface:
+
+```
+platforms/
+├── shared/types.ts       # PlatformAdapter interface
+├── claude/adapter.ts     # Claude Code adapter
+└── junie/adapter.ts      # Junie CLI adapter
+```
+
+See [platforms/shared/types.ts](platforms/shared/types.ts) for the interface contract.
+
 ---
 
 ## What's Included
 
-- **47 Skills**: Foundational + FP implementation + domain expert + integration + meta-skills
-- **5 Named Agents**: Explorer (haiku), Implementer (sonnet), Reviewer (sonnet), WP Developer (sonnet), Memory (sonnet) — enforced constraints
-- **23 Hooks**: Automatic behavioral enforcement (security, memory, workflow, Serena, code quality)
+- **Multi-Platform Installer**: Interactive CLI with auto-detection, install preview, and per-item exclusion — supports Claude Code and Junie CLI, extensible adapter architecture for more
+- **48 Skills**: Foundational + FP implementation + domain expert + integration + meta-skills
+- **6 Named Agents**: Explorer (haiku), Implementer (sonnet), Reviewer (sonnet), Tester (sonnet), WP Developer (sonnet), Memory (sonnet) — enforced constraints
+- **23 Hooks**: Automatic behavioral enforcement (security, memory, workflow, Serena, code quality) — translated to guidelines for platforms without hook support
 - **Default Persona**: "The Practitioner" - 25-year veteran mindset, collaborative, plan-first
 - **3-Tier Memory**: Vestige (neural decay) + Qdrant (permanent library) + Serena (project workbench)
 - **IMA Workflow**: Brainstorm → Plan → Implement → Test → Review → Document (habit-driven, not tool-enforced)
@@ -52,7 +102,7 @@ Or use `/plugin` inside Claude Code to manage updates interactively via the **In
 
 ## Prerequisites
 
-- [Claude Code](https://claude.ai/code) installed
+- [Claude Code](https://claude.ai/code) or [Junie CLI](https://www.jetbrains.com/help/idea/junie.html) installed
 
 ## MCP Servers (Highly Recommended)
 
@@ -197,6 +247,7 @@ Named subagents with hard constraints — model, tools, and permissions enforced
 | `ima-claude:explorer` | haiku | read-only | — | File discovery, architecture understanding, code search |
 | `ima-claude:implementer` | sonnet | full access | `functional-programmer` | Feature dev, bug fixes, refactoring, tests |
 | `ima-claude:reviewer` | sonnet | read-only | `functional-programmer` | Code review, security audit, FP compliance |
+| `ima-claude:tester` | sonnet | full access | `unit-testing`, `functional-programmer` | Test creation, TDD, test running, debugging failures |
 | `ima-claude:wp-developer` | sonnet | full access | `php-fp`, `php-fp-wordpress`, `wp-local`, `ima-forms-expert`, `ima-bootstrap`, `jquery` | WordPress plugins, themes, WP-CLI, forms |
 | `ima-claude:memory` | sonnet | full access | `mcp-vestige`, `mcp-qdrant`, `mcp-serena` | Memory search, storage, consolidation across Vestige/Qdrant/Serena |
 
@@ -243,6 +294,7 @@ Agents are auto-discovered from `plugins/ima-claude/agents/`. No manifest change
 | `rg` | Ripgrep usage patterns |
 | `ima-forms-expert` | WordPress form components (IMA Forms) |
 | `discourse-admin` | Discourse admin API (site settings, config export/import, groups) |
+| `ima-cancer-care-guides` | Cancer care guide document pipeline (DOCX → markdown → HTML → PDF, Canva mapping) |
 
 ### Integration Skills
 
@@ -286,7 +338,7 @@ Or explicitly request a skill:
 "Use the js-fp skill to review this code"
 ```
 
-## Hooks (21 Behavioral Hooks)
+## Hooks (23 Behavioral Hooks)
 
 Hooks enforce skill behaviors automatically — Claude can't skip them. All hooks are soft warnings (exit 0) that guide without blocking.
 
@@ -350,12 +402,14 @@ ima-claude follows a **Persona + Skills** architecture:
 - **Skills contain expertise** - Domain knowledge, patterns, implementation guidance
 - **Personalities overlay tone** - Fun themes (40K, Templars) without changing expertise
 - **MCP integration** - Serena for code ops, Vestige for memory, Qdrant for RAG, Tavily for research
+- **Platform adapters** - Shared `PlatformAdapter` interface; each platform implements detect, preview, install, and guideline generation
 
 This makes ima-claude:
-1. **Fully standalone** - Complete system without dependencies
-2. **Consistent** - Same mindset across all interactions
-3. **Efficient** - Skills load on-demand based on context
-4. **Extensible** - Add your own skills in `~/.claude/skills/`
+1. **Multi-platform** - Same skills and agents across Claude Code, Junie CLI, and future platforms
+2. **Fully standalone** - Complete system without dependencies
+3. **Consistent** - Same mindset across all interactions
+4. **Efficient** - Skills load on-demand based on context
+5. **Extensible** - Add your own skills, agents, or platform adapters
 
 ## For Teams
 
