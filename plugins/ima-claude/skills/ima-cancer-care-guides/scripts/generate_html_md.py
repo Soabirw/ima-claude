@@ -5,9 +5,7 @@ Styling matches the Canva "Cancer Drug Resistance Guide March 2026" design.
 Reuses the same CSS and cover layout as the docx-based generator.
 
 Usage:
-    /c/Python313/python.exe generate_html_md.py <path_to_md> [--out <output.html>]
-
-Python path: /c/Python313/python.exe
+    python3 generate_html_md.py <path_to_md> [--out <output.html>]
 
 Markdown conventions:
     ---                          YAML front matter (title1, title2, subtitle, authors, date)
@@ -32,7 +30,7 @@ from pathlib import Path
 
 # ── Reuse CSS from the docx generator ─────────────────────────────────────────
 sys.path.insert(0, str(Path(__file__).parent))
-from generate_html import CSS, load_cover_asset, safe
+from generate_html import CSS, load_cover_asset, safe, render_cover_html, page_footer_html
 
 
 def parse_front_matter(lines):
@@ -69,12 +67,18 @@ def inline_format(text):
     return t
 
 
-def encode_image(path_str):
-    """Read a local image file and return a base64 data URI."""
-    p = Path(path_str)
-    if not p.exists():
+def encode_image(path_str, base_dir):
+    """Read a local image file and return a base64 data URI.
+
+    Resolves path_str relative to base_dir and rejects any path that
+    escapes base_dir (path traversal guard).
+    """
+    resolved = (base_dir / path_str).resolve()
+    if not str(resolved).startswith(str(base_dir.resolve())):
+        return ""
+    if not resolved.exists():
         return path_str  # Return original path if file not found
-    suffix = p.suffix.lower()
+    suffix = resolved.suffix.lower()
     mime_map = {
         '.png': 'image/png',
         '.jpg': 'image/jpeg',
@@ -84,7 +88,7 @@ def encode_image(path_str):
         '.webp': 'image/webp',
     }
     mime = mime_map.get(suffix, 'image/png')
-    b64 = base64.b64encode(p.read_bytes()).decode('ascii')
+    b64 = base64.b64encode(resolved.read_bytes()).decode('ascii')
     return f"data:{mime};base64,{b64}"
 
 
@@ -208,8 +212,10 @@ def parse_markdown(lines):
 
 
 def generate_html_from_md(md_path, out_path):
+    md_path = Path(md_path)
+    base_dir = md_path.parent
     print(f"Reading: {md_path}")
-    text = Path(md_path).read_text(encoding='utf-8')
+    text = md_path.read_text(encoding='utf-8')
     all_lines = text.split('\n')
 
     # Parse front matter
@@ -224,6 +230,13 @@ def generate_html_from_md(md_path, out_path):
 
     # Parse markdown content
     blocks = parse_markdown(content_lines)
+
+    # Build footer string once, used inline during page transitions
+    footer_title = "-".join(title_parts)
+    if subtitle:
+        footer_title += " " + subtitle
+    clean_date = date_str.strip() or "03/04/2026"
+    footer = page_footer_html(footer_title, clean_date)
 
     # ── Build HTML ─────────────────────────────────────────────────────────────
     html = []
@@ -241,40 +254,13 @@ def generate_html_from_md(md_path, out_path):
     logo_b64 = load_cover_asset("logo_b64.txt")
     thumb_b64 = load_cover_asset("thumb_b64.txt")
 
-    html.append('<div class="page cover-page"><div class="cover">')
-
-    if logo_b64:
-        html.append(f'<div class="cover-logo"><img src="{logo_b64}" alt="Independent Medical Alliance"></div>')
-
-    html.append(f'<div class="cover-title-1-wrap"><div class="cover-title-1" data-text="{safe(title1)}">{safe(title1)}</div></div>')
-    html.append('<div class="cover-hero"></div>')
-    html.append(f'<div class="cover-title-2">{safe(title2)}</div>')
-
-    if subtitle:
-        html.append(f'<div class="cover-subtitle">{safe(subtitle)}</div>')
-
-    author_list = [a.strip() for a in authors_str.split('|') if a.strip()]
-    html.append('<div class="cover-authors">')
-    html.append("<br>".join(safe(a) for a in author_list))
-    html.append('</div>')
-
-    if thumb_b64:
-        html.append(f'<img class="cover-info" src="{thumb_b64}" alt="Cancer Care Guide">')
-
     # Disclaimer on cover — find it from blocks
-    disclaimer_text = ""
-    for b in blocks:
-        if b['type'] == 'disclaimer':
-            disclaimer_text = b['text']
-            break
+    disclaimer_text = next((b['text'] for b in blocks if b['type'] == 'disclaimer'), "")
 
-    if disclaimer_text:
-        html.append(f'<div class="cover-info-text">{safe(disclaimer_text)}</div>')
-
-    if date_str:
-        html.append(f'<div class="cover-date">{safe(date_str)}</div>')
-
-    html.append("</div></div>")  # close cover + cover-page
+    author_lines = [a.strip() for a in authors_str.split('|') if a.strip()]
+    html.extend(render_cover_html(
+        title_parts, subtitle, author_lines, disclaimer_text, date_str, logo_b64, thumb_b64
+    ))
 
     # ── Content pages ──────────────────────────────────────────────────────────
     html.append('<div class="page">')
@@ -290,6 +276,12 @@ def generate_html_from_md(md_path, out_path):
         if in_list:
             html.append("</ul>")
             in_list = False
+
+    def new_page():
+        """Emit footer + close current page + open next page."""
+        html.append(footer)
+        html.append('</div>')
+        html.append('<div class="page">')
 
     def next_block_is_bullet(idx):
         return idx + 1 < len(blocks) and blocks[idx + 1]['type'] == 'bullet'
@@ -315,7 +307,7 @@ def generate_html_from_md(md_path, out_path):
         if btype == 'pagebreak':
             close_list()
             if page_has_content:
-                html.append('</div><div class="page">')
+                new_page()
             page_has_content = False
             continue
 
@@ -385,7 +377,7 @@ def generate_html_from_md(md_path, out_path):
 
         # Image
         if btype == 'image':
-            src = encode_image(block['path'])
+            src = encode_image(block['path'], base_dir)
             html.append('<div class="figure">')
             html.append(f'<img src="{src}" alt="{safe(block["alt"])}">')
             html.append('</div>')
@@ -417,34 +409,12 @@ def generate_html_from_md(md_path, out_path):
             continue
 
     close_list()
+    html.append(footer)
     html.append("</div>")  # close last page
     html.append("</body>")
     html.append("</html>")
 
-    # ── Inject footer ──────────────────────────────────────────────────────────
-    footer_title = "-".join(title_parts)
-    if subtitle:
-        footer_title += " " + subtitle
-    clean_date = date_str.strip()
-    if not clean_date:
-        clean_date = "03/04/2026"
-    footer_html = (
-        f'<div class="page-footer">'
-        f'<span class="footer-title">{safe(footer_title)}</span>'
-        f' <span class="footer-date">({safe(clean_date)})</span>'
-        f'</div>'
-    )
-
     output = "\n".join(html)
-    output = output.replace(
-        '</div><div class="page">',
-        f'{footer_html}</div><div class="page">'
-    )
-    output = output.replace(
-        '</div>\n</body>',
-        f'{footer_html}</div>\n</body>'
-    )
-
     with open(str(out_path), "w", encoding="utf-8") as f:
         f.write(output)
     print(f"Done → {out_path}")

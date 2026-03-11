@@ -2,7 +2,7 @@
 Extract structured text from a Word document for Cancer Care Guide mapping.
 
 Usage:
-    /c/Python313/python.exe extract_docx.py <path_to_docx> [--json]
+    python3 extract_docx.py <path_to_docx> [--json]
 
 Outputs a structured representation of the document with:
 - Heading hierarchy (H1, H2, H3)
@@ -11,7 +11,6 @@ Outputs a structured representation of the document with:
 - Q&A detection
 - Word comments (if any @SLOT markers exist)
 
-Python path: /c/Python313/python.exe
 Required: pip install python-docx
 """
 
@@ -21,6 +20,9 @@ import re
 from pathlib import Path
 from docx import Document
 from docx.oxml.ns import qn
+
+sys.path.insert(0, str(Path(__file__).parent))
+from docx_utils import has_page_break
 
 
 def extract_comments(doc):
@@ -93,15 +95,6 @@ def get_num_info(paragraph):
     ilvl = ilvl_el.get(qn('w:val')) if ilvl_el is not None else '0'
     numId = numId_el.get(qn('w:val')) if numId_el is not None else None
     return numId, int(ilvl)
-
-
-def has_page_break(para):
-    """Check if a paragraph contains an explicit page break (w:br type=page)."""
-    for run in para._element.findall(qn('w:r')):
-        for br in run.findall(qn('w:br')):
-            if br.get(qn('w:type'), '') == 'page':
-                return True
-    return False
 
 
 def is_all_bold(para):
@@ -270,10 +263,6 @@ def extract_document(docx_path):
             continue
         elif current_qa and (para_type in ('answer_start', 'body')):
             current_qa['answer_parts'].append(entry)
-            continue
-        elif current_qa and para_type == 'question':
-            qa_pairs.append(current_qa)
-            current_qa = {'question': entry, 'answer_parts': []}
             continue
         elif current_qa and para_type.startswith('h'):
             qa_pairs.append(current_qa)

@@ -5,7 +5,7 @@ Style: navy header (#1F3864) with white bold text, white data rows with dark tex
 thin navy cell borders, navy footer bar. Matches the DAGvyVwZJls table template.
 
 Usage:
-    /c/Python313/python.exe render_table.py <json_file> <output.png>
+    python3 render_table.py <json_file> <output.png>
 
 Or import and call render_table() directly:
     from render_table import render_table
@@ -21,7 +21,6 @@ Table data format:
         ]
     }
 
-Python path: /c/Python313/python.exe
 Required: pip install Pillow
 """
 

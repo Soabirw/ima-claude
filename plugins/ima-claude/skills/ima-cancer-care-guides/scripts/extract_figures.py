@@ -3,7 +3,7 @@ Extract embedded images from a Word document in document order.
 Optionally uploads to file.io for temporary public access.
 
 Usage:
-    /c/Python313/python.exe extract_figures.py <path_to_docx> [--upload] [--output-dir DIR]
+    python3 extract_figures.py <path_to_docx> [--upload] [--output-dir DIR]
 
 Output JSON:
     [
@@ -23,7 +23,7 @@ Notes:
   - Images are extracted in document paragraph order.
   - file.io links expire after 14 days and delete on first download.
   - Requires: pip install python-docx requests
-  - Python path: /c/Python313/python.exe
+  - Requires python3 on PATH
 """
 
 import sys
@@ -33,17 +33,8 @@ from pathlib import Path
 from docx import Document
 from docx.oxml.ns import qn
 
-
-def has_page_break(para):
-    """Detect a hard page break in a Word paragraph."""
-    for run in para.runs:
-        for br in run._element.findall(qn('w:br')):
-            if br.get(qn('w:type')) == 'page':
-                return True
-    pPr = para._element.find(qn('w:pPr'))
-    if pPr is not None and pPr.find(qn('w:sectPr')) is not None:
-        return True
-    return False
+sys.path.insert(0, str(Path(__file__).parent))
+from docx_utils import has_page_break
 
 
 def extract_figures(docx_path, output_dir=None, upload=False):
@@ -85,9 +76,12 @@ def extract_figures(docx_path, output_dir=None, upload=False):
 
             img_part = rel.target_part
             ct = img_part.content_type
-            ext = ct.split('/')[-1]
+            ALLOWED_EXTS = {'png', 'jpg', 'jpeg', 'gif', 'bmp', 'tiff', 'svg'}
+            ext = ct.split('/')[-1].split(';')[0].strip().lower()
             if ext == 'jpeg':
                 ext = 'jpg'
+            if ext not in ALLOWED_EXTS:
+                ext = 'bin'
 
             fig_num += 1
             filename = output_dir / f'figure_{fig_num:02d}.{ext}'

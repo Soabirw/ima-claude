@@ -4,6 +4,10 @@ sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='repla
 
 from docx import Document
 
+if len(sys.argv) < 2:
+    print("Usage: python3 inspect_docx.py <input.docx>")
+    sys.exit(1)
+
 doc = Document(sys.argv[1])
 
 for i, p in enumerate(doc.paragraphs[:80]):

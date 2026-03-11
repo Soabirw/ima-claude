@@ -2,9 +2,8 @@
 Generate a styled IMA Cancer Care companion guide PDF directly from a Word doc.
 
 Usage:
-    /c/Python313/python.exe generate_pdf.py <path_to_docx> [--out <output.pdf>]
+    python3 generate_pdf.py <path_to_docx> [--out <output.pdf>]
 
-Python path: /c/Python313/python.exe
 Required: pip install reportlab python-docx
 """
 
@@ -32,7 +31,7 @@ try:
     from reportlab.pdfbase.ttfonts import TTFont
 except ImportError:
     print("ERROR: reportlab not installed. Run:")
-    print("  /c/Python313/python.exe -m pip install reportlab")
+    print("  pip install reportlab")
     sys.exit(1)
 
 
@@ -285,6 +284,111 @@ def extract_cover_meta(sections):
     return title, authors, disclaimer, date_str
 
 
+# ── Build story helpers ───────────────────────────────────────────────────────
+def group_consecutive_bullets(sections):
+    """Merge consecutive bullet entries into grouped blocks.
+
+    Returns a new list where runs of {'type': 'bullet'} entries are replaced
+    by a single {'type': 'bullet_group', 'items': [...]} dict.
+    """
+    result = []
+    i = 0
+    while i < len(sections):
+        if sections[i]["type"] == "bullet":
+            group = []
+            while i < len(sections) and sections[i]["type"] == "bullet":
+                group.append(sections[i])
+                i += 1
+            result.append({"type": "bullet_group", "items": group})
+        else:
+            result.append(sections[i])
+            i += 1
+    return result
+
+
+def block_to_flowables(block, styles, intro_added, heading_count):
+    """Map a single block dict to a list of ReportLab flowables.
+
+    Returns (flowables, intro_added, heading_count) — the bool state is
+    threaded through so this stays a pure transformation.
+    """
+    t = block["type"]
+
+    if t in ("h1", "date", "author"):
+        return [], intro_added, heading_count
+
+    if t == "heading_bold":
+        heading_count += 1
+        if heading_count == 1:
+            return [], intro_added, heading_count
+        if not intro_added and block["text"].strip().lower() == "introduction":
+            return (
+                [Spacer(1, 0.15 * inch),
+                 Paragraph("Introduction", styles["intro_heading"]),
+                 Spacer(1, 0.05 * inch)],
+                True,
+                heading_count,
+            )
+        return [Paragraph(para_markup(block), styles["section_heading"])], intro_added, heading_count
+
+    if t == "h2":
+        if not intro_added and block["text"].strip().lower() == "introduction":
+            return (
+                [Spacer(1, 0.15 * inch),
+                 Paragraph("Introduction", styles["intro_heading"]),
+                 Spacer(1, 0.05 * inch)],
+                True,
+                heading_count,
+            )
+        return [Paragraph(para_markup(block), styles["section_heading"])], intro_added, heading_count
+
+    if t == "h3":
+        return [Paragraph(para_markup(block), styles["sub_heading"])], intro_added, heading_count
+
+    if t == "ref_heading":
+        return (
+            [PageBreak(),
+             Paragraph("References", styles["ref_heading"]),
+             HRFlowable(width="100%", color=NAVY, thickness=1.5, spaceAfter=8)],
+            intro_added,
+            heading_count,
+        )
+
+    if t == "warning":
+        return [Paragraph(warning_markup(block["text"]), styles["warning"])], intro_added, heading_count
+
+    if t == "disclaimer":
+        return [Paragraph(safe(block["text"]), styles["cover_disclaimer"])], intro_added, heading_count
+
+    if t == "body":
+        return [Paragraph(para_markup(block), styles["body"])], intro_added, heading_count
+
+    if t == "bullet_group":
+        items = [
+            ListItem(
+                Paragraph(para_markup(entry), styles["bullet"]),
+                bulletColor=NAVY, bulletFontSize=10, leftIndent=18,
+            )
+            for entry in block["items"]
+        ]
+        return (
+            [ListFlowable(
+                items, bulletType="bullet",
+                bulletFontName="Lato", bulletFontSize=10,
+                leftIndent=18, bulletOffsetY=-1,
+                spaceBefore=4, spaceAfter=6,
+            )],
+            intro_added,
+            heading_count,
+        )
+
+    if t in ("figure_caption", "table_caption"):
+        return [Paragraph(safe(block["text"]), styles["caption"])], intro_added, heading_count
+
+    # Default
+    return [Paragraph(para_markup(block), styles["body"])], intro_added, heading_count
+
+
 # ── Build story ───────────────────────────────────────────────────────────────
 def build_story(data, styles, title_short, date_str):
     story = []
@@ -295,18 +399,13 @@ def build_story(data, styles, title_short, date_str):
         data["sections"]
     )
 
-    # Split title into two lines for large cover text
-    # e.g. "Cancer Resistance..." → line 1 "CANCER", line 2 "RESISTANCE"
     story.append(Spacer(1, 1.8 * inch))
     if title:
         words = title.upper().split()
         if len(words) >= 2:
-            # First word large, rest as subtitle
             story.append(Paragraph(safe(words[0]), styles["cover_title_1"]))
-            # Second line — could be one or two words
             line2 = " ".join(words[1:3]) if len(words) > 2 else words[1]
             story.append(Paragraph(safe(line2), styles["cover_title_2"]))
-            # Remaining as subtitle if any
             if len(words) > 3:
                 subtitle_text = " ".join(title.split()[3:])
                 story.append(Spacer(1, 0.2 * inch))
@@ -324,108 +423,18 @@ def build_story(data, styles, title_short, date_str):
         story.append(Spacer(1, 0.15 * inch))
         story.append(Paragraph(safe(cover_date), styles["cover_date"]))
 
-    # Switch to content template for all following pages
     story.append(NextPageTemplate("content"))
     story.append(PageBreak())
 
-    # ── Content ──────────────────────────────────────────────────────────
-    sections = data["sections"]
-    heading_count = 0
+    # ── Content — pipeline: group bullets → map blocks → flatten ─────────
+    grouped = group_consecutive_bullets(data["sections"])
     intro_added = False
-    i = 0
-
-    while i < len(sections):
-        entry = sections[i]
-        t = entry["type"]
-
-        # Skip cover metadata we already used
-        if t in ("h1", "date"):
-            i += 1
-            continue
-        if t == "author":
-            i += 1
-            continue
-        if t == "heading_bold":
-            heading_count += 1
-            if heading_count == 1:
-                i += 1
-                continue
-            # Check if this is "Introduction"
-            if not intro_added and entry["text"].strip().lower() == "introduction":
-                story.append(Spacer(1, 0.15 * inch))
-                story.append(Paragraph("Introduction", styles["intro_heading"]))
-                story.append(Spacer(1, 0.05 * inch))
-                intro_added = True
-                i += 1
-                continue
-            story.append(Paragraph(para_markup(entry), styles["section_heading"]))
-            i += 1
-            continue
-
-        if t in ("h2",):
-            if not intro_added and entry["text"].strip().lower() == "introduction":
-                story.append(Spacer(1, 0.15 * inch))
-                story.append(Paragraph("Introduction", styles["intro_heading"]))
-                story.append(Spacer(1, 0.05 * inch))
-                intro_added = True
-                i += 1
-                continue
-            story.append(Paragraph(para_markup(entry), styles["section_heading"]))
-            i += 1
-            continue
-
-        if t in ("h3",):
-            story.append(Paragraph(para_markup(entry), styles["sub_heading"]))
-            i += 1
-            continue
-
-        if t == "ref_heading":
-            story.append(PageBreak())
-            story.append(Paragraph("References", styles["ref_heading"]))
-            story.append(HRFlowable(width="100%", color=NAVY, thickness=1.5,
-                                     spaceAfter=8))
-            i += 1
-            continue
-
-        if t == "warning":
-            story.append(Paragraph(warning_markup(entry["text"]), styles["warning"]))
-            i += 1
-            continue
-
-        if t == "disclaimer":
-            story.append(Paragraph(safe(entry["text"]), styles["cover_disclaimer"]))
-            i += 1
-            continue
-
-        if t == "body":
-            story.append(Paragraph(para_markup(entry), styles["body"]))
-            i += 1
-            continue
-
-        if t == "bullet":
-            items = []
-            while i < len(sections) and sections[i]["type"] == "bullet":
-                items.append(ListItem(
-                    Paragraph(para_markup(sections[i]), styles["bullet"]),
-                    bulletColor=NAVY, bulletFontSize=10, leftIndent=18
-                ))
-                i += 1
-            story.append(ListFlowable(
-                items, bulletType="bullet",
-                bulletFontName="Lato", bulletFontSize=10,
-                leftIndent=18, bulletOffsetY=-1,
-                spaceBefore=4, spaceAfter=6,
-            ))
-            continue
-
-        if t in ("figure_caption", "table_caption"):
-            story.append(Paragraph(safe(entry["text"]), styles["caption"]))
-            i += 1
-            continue
-
-        # Default
-        story.append(Paragraph(para_markup(entry), styles["body"]))
-        i += 1
+    heading_count = 0
+    for block in grouped:
+        flowables, intro_added, heading_count = block_to_flowables(
+            block, styles, intro_added, heading_count
+        )
+        story.extend(flowables)
 
     # ── Q&A ───────────────────────────────────────────────────────────────
     if data.get("qa_pairs"):

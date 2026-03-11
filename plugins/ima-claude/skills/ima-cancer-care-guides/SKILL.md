@@ -1,5 +1,5 @@
 ---
-name: IMA-cancer-care-guides
+name: ima-cancer-care-guides
 description: >
   Create IMA Health Cancer Care companion guides from Markdown source files.
   Outputs branded HTML (primary), PowerPoint, or PDF for Canva import.
@@ -30,14 +30,19 @@ One Markdown file → HTML, PDF, or PowerPoint — all consistently styled.
 
 ## Quick Start
 
+Install dependencies once:
+```bash
+pip install -r scripts/requirements.txt
+```
+
 ### 1. HTML from Markdown
 ```bash
-/c/Python313/python.exe scripts/generate_html_md.py "path/to/guide.md" --out "output.html"
+python3 scripts/generate_html_md.py "path/to/guide.md" --out "output.html"
 ```
 
 ### 2. PowerPoint from Markdown
 ```bash
-/c/Python313/python.exe scripts/generate_pptx.py "path/to/guide.md" --out "output.pptx"
+python3 scripts/generate_pptx.py "path/to/guide.md" --out "output.pptx"
 ```
 
 ### 3. PDF
@@ -124,19 +129,65 @@ All guides follow this pattern:
 - **Running footer**: Document title + date — auto-generated on every page
 - **Special characters**: Preserve Greek (κ, β), em dashes (–), arrows (↔)
 
+> **Brand**: Colors, typography, and logo usage follow the `ima-brand` skill (IMA Brand Book v4.0). Primary palette: navy `#1F3864`, gold `#C9A84C`. Typeface: Lato. Apply brand rules consistently across all guide outputs.
+
+---
+
+## Pipelines
+
+### Pipeline A — Markdown → HTML/PDF (primary)
+
+Write a `.md` file, generate HTML, print to PDF from Chrome. This is the standard workflow.
+
+| Step | Tool |
+|------|------|
+| Author content | `.md` source file (`input-template.md` as starter) |
+| Generate HTML | `generate_html_md.py` |
+| Generate PPTX | `generate_pptx.py` |
+| Print to PDF | Chrome → Ctrl+P → Save as PDF |
+
+**Reference docs for Pipeline A:** `formatting-spec.md`, `markup-spec.md`, `input-template.md`, `test-input-cancer-resistance.md`
+
+---
+
+### Pipeline B — DOCX → Canva API (advanced)
+
+For existing Word source files that need to be imported into a Canva template via the API.
+
+| Step | Tool |
+|------|------|
+| Extract content | `extract_docx.py`, `extract_figures.py` |
+| Map to Canva slots | `map_to_canva.py` |
+| Push via API | Canva editing API |
+
+**Reference docs for Pipeline B:** `slot-map.md`, `template-slot-map.md`, `slot-types.md`, `docx-to-pdf-mapping.md`
+
 ---
 
 ## Scripts Reference
 
-| Script | Purpose |
-|--------|---------|
-| `generate_html_md.py` | Markdown → branded HTML (primary) |
-| `generate_pptx.py` | Markdown → PowerPoint (16:9, IMA branded) |
-| `generate_html.py` | Word docx → HTML (legacy, CSS source of truth) |
-| `extract_docx.py` | Extract text/images from Word doc |
-| `generate_pdf.py` | Direct PDF via reportlab (experimental) |
+| Script | Pipeline | Purpose |
+|--------|----------|---------|
+| `generate_html_md.py` | A | Markdown → branded HTML (primary) |
+| `generate_pptx.py` | A | Markdown → PowerPoint (16:9, IMA branded) |
+| `generate_html.py` | B | Word docx → HTML (legacy, CSS source of truth) |
+| `extract_docx.py` | B | Extract text/images from Word doc |
+| `generate_pdf.py` | A | Direct PDF via reportlab (experimental) |
+| `extract_figures.py` | B | Pull embedded images from a Word doc in order |
+| `render_table.py` | A/B | Render a JSON table spec as a styled PNG |
+| `map_to_canva.py` | B | Map Word doc pages to Canva template slots |
 
-Python path: `/c/Python313/python.exe`
+## Reference Docs
+
+| File | Pipeline | Covers | Read when |
+|------|----------|--------|-----------|
+| `formatting-spec.md` | A | CSS values, font sizes, colors, spacing for HTML output | Debugging visual output or updating styles |
+| `markup-spec.md` | A | Markdown conventions: front matter fields, `:::warning`, spacers, pagebreaks | Writing or troubleshooting a `.md` source file |
+| `input-template.md` | A | Starter template for a new guide `.md` file | Creating a new cancer care guide from scratch |
+| `test-input-cancer-resistance.md` | A | Complete test input (cancer resistance topic) | Running end-to-end tests or verifying script output |
+| `slot-map.md` / `template-slot-map.md` | B | Canva page slot names (p1–p64) and their content types | Using `map_to_canva.py` or placing content in Canva |
+| `slot-types.md` | B | Data types for each slot (text, image, list) | Validating slot payloads before Canva import |
+| `docx-to-pdf-mapping.md` | B | How Word styles map to PDF/HTML equivalents | Working with legacy Word source files |
 
 ---
 

@@ -131,112 +131,109 @@ class Annotator:
 
     def classify(self, para):
         """
-        Return (slot_type, emit) where:
+        Return (slot_type, emit, new_zone) where:
           slot_type  — string label, or None to skip
           emit       — True  = insert marker before this paragraph
                        False = continuation (no new marker needed)
+          new_zone   — zone to transition to, or None to keep current zone
         """
         text = text_of(para)
         if not text:
-            return None, False
+            return None, False, None
 
         bold  = is_bold(para)
         style = style_name(para)
 
         # ── Explicit page break ──────────────────────────────────────────
         if has_word_page_break(para):
-            return 'PAGE_BREAK', True
+            return 'PAGE_BREAK', True, None
 
         # ── COVER ZONE ───────────────────────────────────────────────────
         if self.zone == 'cover':
             # "Introduction" heading ends cover zone
             if re.match(r'^introduction$', text, re.I) and bold:
-                self.zone = 'intro'
-                return 'INTRO_BODY', True   # The Introduction heading itself
+                return 'INTRO_BODY', True, 'intro'   # The Introduction heading itself
 
             # Disclaimer
             if re.search(r'complementary approach|not intended as a comprehensive', text, re.I):
-                return 'COVER_DISCLAIMER', True
+                return 'COVER_DISCLAIMER', True, None
 
             # Authors (any line with medical credentials)
             if re.search(r'\b(MD|PhD|FCCP|FCCM|FACP|DO)\b', text):
-                return 'COVER_AUTHORS', True
+                return 'COVER_AUTHORS', True, None
 
             # Date
             if re.match(r'Updated\s+\w+\s+\d{4}', text):
-                return 'COVER_DATE', True
+                return 'COVER_DATE', True, None
 
             # Bold short lines = title parts (first = COVER_TITLE_1, etc.)
             if bold and len(text) < 80:
                 self.cover_titles += 1
                 key = 'COVER_TITLE_1' if self.cover_titles == 1 else 'COVER_TITLE_2'
-                return key, True
+                return key, True, None
 
             # Everything else on cover = subtitle
-            return 'COVER_SUBTITLE', True
+            return 'COVER_SUBTITLE', True, None
 
         # ── INTRO ZONE ───────────────────────────────────────────────────
         if self.zone == 'intro':
             # Warning box sentinel
             if 'should not treat themselves' in text:
-                return 'INTRO_WARNING', True
+                return 'INTRO_WARNING', True, None
 
             # Any bold heading after intro/warning content exits to content zone
             if bold and len(text) < 100 and not text.endswith('?'):
                 if self.prev_slot not in ('COVER_TITLE_1', 'COVER_TITLE_2',
                                           'COVER_SUBTITLE'):
-                    self.zone = 'content'
-                    return self._content_heading(text, bold, style), True
+                    return self._content_heading(text, bold, style), True, 'content'
 
             # Continuation of intro body — no new marker if previous was INTRO_BODY
             if self.prev_slot == 'INTRO_BODY':
-                return None, False
-            return 'INTRO_BODY', True
+                return None, False, None
+            return 'INTRO_BODY', True, None
 
         # ── Q&A BODY continuation ─────────────────────────────────────────
         if self.zone == 'qa':
             if bold and text.endswith('?'):
-                return 'QA_HEADING', True
+                return 'QA_HEADING', True, None
             if self.prev_slot in ('QA_HEADING',):
-                return 'QA_BODY', True
+                return 'QA_BODY', True, None
             if self.prev_slot == 'QA_BODY' and not (bold and len(text) < 100):
-                return None, False   # continuation
+                return None, False, None   # continuation
             # Fall through to content classification below
 
         # ── REFERENCES ZONE ──────────────────────────────────────────────
         if self.zone == 'refs':
             # Continuation — all refs go into one block
             if self.prev_slot == 'REFERENCES':
-                return None, False
-            return 'REFERENCES', True
+                return None, False, None
+            return 'REFERENCES', True, None
 
         # ── CONTENT ZONE ─────────────────────────────────────────────────
 
         # References heading transitions to refs zone
         if re.match(r'^references$', text, re.I) and bold:
-            self.zone = 'refs'
-            return 'REFERENCES', True   # heading + body share the slot
+            return 'REFERENCES', True, 'refs'   # heading + body share the slot
 
         # Figure captions
         if re.match(r'^Figure\s+\d+[\.\:]', text, re.I):
-            return 'FIGURE_CAPTION', True
+            return 'FIGURE_CAPTION', True, None
 
         # Q&A heading — bold question
         if bold and text.endswith('?'):
-            self.zone = 'qa'
-            return 'QA_HEADING', True
+            return 'QA_HEADING', True, 'qa'
 
         # Q&A answer start
         if self.zone == 'qa' and re.match(r'^(YES|NO)[\.\,\:]?\s', text):
-            return 'QA_BODY', True
+            return 'QA_BODY', True, None
 
         # Bullet / list paragraph
         if 'List' in style or re.match(r'^[•\-\*]\s', text):
             if self.prev_slot == 'BULLET':
-                return None, False   # consecutive bullets share no new marker
-            return 'BULLET', True
+                return None, False, None   # consecutive bullets share no new marker
+            return 'BULLET', True, None
 
-        return self._content_heading(text, bold, style), True
+        return self._content_heading(text, bold, style), True, None
 
     def _content_heading(self, text, bold, style):
         """Distinguish SECTION_HEADING vs SUB_HEADING vs BODY."""
@@ -269,7 +266,9 @@ def annotate(input_path: str, output_path: str):
     insertions = []   # list of (para._element, slot_type)
 
     for para in doc.paragraphs:
-        slot_type, emit = ann.classify(para)
+        slot_type, emit, new_zone = ann.classify(para)
+        if new_zone is not None:
+            ann.zone = new_zone
         if slot_type is not None:
             ann.prev_slot = slot_type
         if slot_type and emit:

@@ -4,7 +4,7 @@ Generate a fully branded IMA PowerPoint from a Markdown cancer care guide.
 One slide per <!-- pagebreak --> in the source. Cover from YAML front matter.
 
 Usage:
-    /c/Python313/python.exe generate_pptx.py <path.md> [--out <output.pptx>]
+    python3 generate_pptx.py <path.md> [--out <output.pptx>]
 
 Required: pip install python-pptx
 """

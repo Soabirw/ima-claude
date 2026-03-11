@@ -5,14 +5,14 @@ Styling matches the Canva "Cancer Drug Resistance Guide March 2026" design.
 Values extracted from Canva design data (176 font-size declarations, 94 elements).
 
 Usage:
-    /c/Python313/python.exe generate_html.py <path_to_docx> [--out <output.html>]
+    python3 generate_html.py <path_to_docx> [--out <output.html>]
 
-Python path: /c/Python313/python.exe
 Required: pip install python-docx
 """
 
 import sys
 import io
+import re
 import base64
 from pathlib import Path
 from docx.oxml.ns import qn
@@ -602,6 +602,67 @@ def load_cover_asset(filename):
     return ""
 
 
+def render_cover_html(title_parts, subtitle, author_lines, disclaimer, date_str, logo_b64, thumb_b64):
+    """Return the cover page HTML as a list of strings.
+
+    Args:
+        title_parts:  list of strings — index 0 is title_1, index 1+ are title_2 elements
+        subtitle:     subtitle string (may be empty)
+        author_lines: list of author strings, already split (rendered with <br>)
+        disclaimer:   disclaimer string (may be empty)
+        date_str:     date string (may be empty)
+        logo_b64:     base64 data URI for logo (may be empty)
+        thumb_b64:    base64 data URI for thumbnail (may be empty)
+    """
+    lines = []
+    lines.append('<div class="page cover-page"><div class="cover">')
+
+    if logo_b64:
+        lines.append(f'<div class="cover-logo"><img src="{logo_b64}" alt="Independent Medical Alliance"></div>')
+
+    if title_parts:
+        lines.append(f'<div class="cover-title-1-wrap"><div class="cover-title-1" data-text="{safe(title_parts[0])}">{safe(title_parts[0])}</div></div>')
+
+    lines.append('<div class="cover-hero"></div>')
+
+    for idx, part in enumerate(title_parts):
+        if idx == 0:
+            continue
+        lines.append(f'<div class="cover-title-2">{safe(part)}</div>')
+
+    if subtitle:
+        lines.append(f'<div class="cover-subtitle">{safe(subtitle)}</div>')
+
+    if author_lines:
+        lines.append('<div class="cover-authors">')
+        lines.append("<br>".join(safe(a) for a in author_lines))
+        lines.append('</div>')
+
+    if thumb_b64:
+        lines.append(f'<img class="cover-info" src="{thumb_b64}" alt="Cancer Care Guide">')
+
+    if disclaimer:
+        lines.append(f'<div class="cover-info-text">{safe(disclaimer)}</div>')
+
+    if date_str:
+        lines.append(f'<div class="cover-date">{safe(date_str)}</div>')
+
+    lines.append("</div>")   # cover
+    lines.append("</div>")   # page cover-page
+
+    return lines
+
+
+def page_footer_html(footer_title, clean_date):
+    """Return the footer markup inserted before each page-closing </div>."""
+    return (
+        f'<div class="page-footer">'
+        f'<span class="footer-title">{safe(footer_title)}</span>'
+        f' <span class="footer-date">({safe(clean_date)})</span>'
+        f'</div>'
+    )
+
+
 def generate_html(docx_path, out_path):
     print(f"Extracting: {docx_path}")
     data = extract_document(str(docx_path))
@@ -615,6 +676,21 @@ def generate_html(docx_path, out_path):
     title_parts, subtitle, authors, disclaimer, date_str = extract_cover_meta(
         data["sections"]
     )
+
+    # Build footer string once, used inline during page transitions
+    footer_title = "-".join(title_parts)
+    if subtitle:
+        footer_title += " " + subtitle
+    clean_date = date_str.replace("Updated ", "").strip() if date_str else ""
+    if not clean_date:
+        clean_date = "03/04/2026"
+    footer = page_footer_html(footer_title, clean_date)
+
+    def new_page():
+        """Emit footer + close current page + open next page."""
+        html.append(footer)
+        html.append('</div>')
+        html.append('<div class="page">')
 
     # Build HTML
     html = []
@@ -632,50 +708,10 @@ def generate_html(docx_path, out_path):
     logo_b64 = load_cover_asset("logo_b64.txt")
     thumb_b64 = load_cover_asset("thumb_b64.txt")
 
-    html.append('<div class="page cover-page"><div class="cover">')
-
-    # Logo — absolute positioned
-    if logo_b64:
-        html.append(f'<div class="cover-logo"><img src="{logo_b64}" alt="Independent Medical Alliance"></div>')
-
-    # CANCER title — absolute positioned, overlaps into blue box
-    if title_parts:
-        html.append(f'<div class="cover-title-1-wrap"><div class="cover-title-1" data-text="{safe(title_parts[0])}">{safe(title_parts[0])}</div></div>')
-
-    # Navy blue box background — absolute positioned
-    html.append('<div class="cover-hero"></div>')
-
-    # RESISTANCE — absolute positioned, starts above blue box
-    for idx, part in enumerate(title_parts):
-        if idx == 0:
-            continue
-        html.append(f'<div class="cover-title-2">{safe(part)}</div>')
-
-    # Subtitle — absolute positioned
-    if subtitle:
-        html.append(f'<div class="cover-subtitle">{safe(subtitle)}</div>')
-
-    # Authors — absolute positioned
-    if authors:
-        author_list = [a.strip() for a in authors.replace("|", "\n").split("\n") if a.strip()]
-        html.append('<div class="cover-authors">')
-        html.append("<br>".join(safe(a) for a in author_list))
-        html.append('</div>')
-
-    # Thumbnail — absolute positioned
-    if thumb_b64:
-        html.append(f'<img class="cover-info" src="{thumb_b64}" alt="Cancer Care Guide">')
-
-    # Disclaimer — absolute positioned
-    if disclaimer:
-        html.append(f'<div class="cover-info-text">{safe(disclaimer)}</div>')
-
-    # Date — absolute positioned
-    if date_str:
-        html.append(f'<div class="cover-date">{safe(date_str)}</div>')
-
-    html.append("</div>")  # cover
-    html.append("</div>")  # page cover-page
+    author_lines = [a.strip() for a in authors.replace("|", "\n").split("\n") if a.strip()]
+    html.extend(render_cover_html(
+        title_parts, subtitle, author_lines, disclaimer, date_str, logo_b64, thumb_b64
+    ))
 
     # Start first content page
     html.append('<div class="page">')
@@ -746,13 +782,13 @@ def generate_html(docx_path, out_path):
 
         # Page breaks from Word document
         if t == "page_break":
-            html.append('</div><div class="page">')
+            new_page()
             i += 1
             continue
         # Honour w:br page breaks on content paragraphs (break before)
         # but not on warnings (handled separately in the warning block)
         if entry.get("page_break") and t != "warning":
-            html.append('</div><div class="page">')
+            new_page()
 
         if t == "heading_bold":
             # Skip cover elements
@@ -763,8 +799,7 @@ def generate_html(docx_path, out_path):
                 i += 1
                 continue
             # Roman numeral sub-labels get roman-label class
-            import re as _re
-            if _re.match(r'^[IVX]+[\.\s]', text):
+            if re.match(r'^[IVX]+[\.\s]', text):
                 classes = ["roman-label"]
                 if next_is_bullet(i):
                     classes.append("lead-in")
@@ -784,7 +819,7 @@ def generate_html(docx_path, out_path):
                 continue
             h2_content_count += 1
             if h2_content_count > 1:
-                html.append('</div><div class="page">')
+                new_page()
             html.append(f"<h2>{para_html(entry)}</h2>")
             i += 1
             continue
@@ -796,8 +831,7 @@ def generate_html(docx_path, out_path):
                 num_counters[nid] = num_counters.get(nid, 0) + 1
                 prefix = f"{num_counters[nid]}. "
             # Roman numeral sub-labels (I., II., III.) → bold body, not heading
-            import re as _re
-            if _re.match(r'^[IVX]+[\.\s]', text):
+            if re.match(r'^[IVX]+[\.\s]', text):
                 classes = ["roman-label"]
                 if next_is_bullet(i):
                     classes.append("lead-in")
@@ -815,9 +849,8 @@ def generate_html(docx_path, out_path):
         if t == "warning":
             # The warning box should only contain the core message.
             # Extra sentences may have been merged in from the docx.
-            import re as _re
             # Split at end of "patients should not treat themselves." sentence
-            m = _re.search(r'patients should not treat themselves\.?', text, flags=_re.IGNORECASE)
+            m = re.search(r'patients should not treat themselves\.?', text, flags=re.IGNORECASE)
             if m:
                 warning_text = text[:m.end()].strip()
                 remainder = text[m.end():].strip()
@@ -825,16 +858,16 @@ def generate_html(docx_path, out_path):
                 warning_text = text
                 remainder = ""
             warning_html = safe(warning_text)
-            warning_html = _re.sub(
+            warning_html = re.sub(
                 r'(patients should not treat themselves)',
                 r'<span class="gold">\1</span>',
                 warning_html,
-                flags=_re.IGNORECASE
+                flags=re.IGNORECASE
             )
             html.append(f'<div class="warning-box">{warning_html}</div>')
             # Honour the Word page break that sits on the warning paragraph
             if entry.get("page_break") or remainder:
-                html.append('</div><div class="page">')
+                new_page()
             if remainder:
                 html.append(f"<p>{safe(remainder)}</p>")
             i += 1
@@ -843,8 +876,7 @@ def generate_html(docx_path, out_path):
         if t == "answer_start":
             # Bold only the YES/NO prefix, rest is regular weight
             full_text = entry["text"]
-            import re as _re
-            m = _re.match(r'^(YES|NO)\.?\s*', full_text)
+            m = re.match(r'^(YES|NO)\.?\s*', full_text)
             if m:
                 prefix = m.group(0).rstrip()
                 rest = full_text[m.end():]
@@ -901,45 +933,17 @@ def generate_html(docx_path, out_path):
 
     # ── References ─────────────────────────────────────────
     if data.get("references"):
-        html.append('</div><div class="page">')
+        new_page()
         html.append('<div class="ref-heading">References</div>')
         for ref in data["references"]:
             html.append(f'<div class="reference">{safe(ref["text"])}</div>')
 
+    html.append(footer)
     html.append("</div>")  # close last page
     html.append("</body>")
     html.append("</html>")
 
-    # ── Inject footer into every content page ─────────────
-    # Build full title: "Cancer-Resistance and Interventions to Mitigate Resistance"
-    footer_title = "-".join(title_parts)
-    if subtitle:
-        footer_title += " " + subtitle
-    # Date from cover or fallback
-    clean_date = date_str.replace("Updated ", "").strip() if date_str else ""
-    if not clean_date:
-        # Try to extract from filename or use cover date
-        clean_date = "03/04/2026"
-    footer_html = (
-        f'<div class="page-footer">'
-        f'<span class="footer-title">{safe(footer_title)}</span>'
-        f' <span class="footer-date">({safe(clean_date)})</span>'
-        f'</div>'
-    )
-
-    # Insert footer before every closing </div> of a content page
-    # Pages are: <div class="page">...</div> (not cover-page)
     output = "\n".join(html)
-    # Replace page close tags with footer + close, but skip cover page
-    output = output.replace(
-        '</div><div class="page">',
-        f'{footer_html}</div><div class="page">'
-    )
-    # Add footer to the last page (before final </div></body>)
-    output = output.replace(
-        '</div>\n</body>',
-        f'{footer_html}</div>\n</body>'
-    )
     with open(str(out_path), "w", encoding="utf-8") as f:
         f.write(output)
     print(f"Done → {out_path}")

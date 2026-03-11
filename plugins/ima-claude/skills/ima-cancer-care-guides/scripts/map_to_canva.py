@@ -5,7 +5,7 @@ Architecture: The Word doc uses explicit page breaks to define Canva page bounda
 Each page in the Word doc maps 1:1 to a page in the Canva design.
 
 Usage:
-    /c/Python313/python.exe map_to_canva.py <path_to_docx> [--dry-run] [--json]
+    python3 map_to_canva.py <path_to_docx> [--dry-run] [--json]
 
 Pipeline:
   1. Split Word doc by explicit page breaks → list of pages
@@ -19,7 +19,6 @@ Pipeline:
 
 Design: DAHDZNUAgxE (64 pages: p1 cover, p2 intro, p3–p62 content, p63 references, p64 donation)
 
-Python path: /c/Python313/python.exe
 Required: pip install python-docx
 """
 
@@ -32,6 +31,7 @@ from docx import Document
 from docx.oxml.ns import qn
 
 sys.path.insert(0, str(Path(__file__).parent))
+from docx_utils import has_page_break
 from extract_docx import classify_paragraph, extract_runs_with_formatting
 
 
@@ -199,22 +199,6 @@ FIGURE_IMAGE_DIMENSION = {"width": 736, "height": 790}
 
 # Maximum figure pages supported per document
 MAX_FIGURE_PAGES = 8
-
-
-# ---------------------------------------------------------------------------
-# Page break detection
-# ---------------------------------------------------------------------------
-
-def has_page_break(para):
-    """Detect a hard page break in a Word paragraph."""
-    for run in para.runs:
-        for br in run._element.findall(qn('w:br')):
-            if br.get(qn('w:type')) == 'page':
-                return True
-    pPr = para._element.find(qn('w:pPr'))
-    if pPr is not None and pPr.find(qn('w:sectPr')) is not None:
-        return True
-    return False
 
 
 # ---------------------------------------------------------------------------
