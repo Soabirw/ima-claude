@@ -1,6 +1,6 @@
 {
   "name": "ima-claude",
-  "version": "2.9.0",
+  "version": "2.9.1",
   "description": "IMA's AI coding agent skills - FP patterns, architecture guidance, and team standards. Supports Claude Code, Junie CLI, and more.",
   "type": "module",
   "scripts": {
@@ -14,7 +14,11 @@
   "files": [
     "dist/",
     "plugins/",
-    "platforms/"
+    "platforms/",
+    "!**/ima-cancer-care-guides/**",
+    "!**/__pycache__/**",
+    "!**/*.pyc",
+    "!**/*.skill"
   ],
   "devDependencies": {
     "@types/bun": "latest",

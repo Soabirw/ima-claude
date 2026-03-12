@@ -50,6 +50,7 @@ docs/                   # Onboarding, migration, MCP setup, prompt coach
 
 1. Create `plugins/ima-claude/skills/{name}/SKILL.md` with frontmatter (`name`, `description`)
 2. Add entry to the Available Skills section below
+3. **Keep skills lean** — large files (examples, sample documents, datasets, binary assets) must not be committed to the repo. Store them on your team's internal shared storage and reference them in the SKILL.md. Only instruction text, small code snippets, and lightweight references belong in the skill directory.
 
 ### New Hook
 
@@ -78,6 +79,7 @@ All four must match or the plugin system thinks you're testing locally:
 - **Personalities are `.md` files**, not directories like skills. They live flat in `personalities/`.
 - **package.json version** drifts from `scripts/utils.ts` VERSION — keep both in sync.
 - **Skill frontmatter `description`** is what appears in the skills list sidebar. Keep it under ~200 chars and keyword-rich for auto-discovery.
+- **No large or binary files in the repo.** Example documents, sample outputs, datasets, images, fonts, and other bulky assets belong on internal shared storage, not in git. Skills should contain instructions and lightweight references only. This keeps the repo fast to clone and FOSS-friendly.
 
 ## Available Agents
 

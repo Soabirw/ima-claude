@@ -5,6 +5,18 @@ All notable changes to ima-claude will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.9.1] - 2026-03-11
+
+### Changed
+
+- **ima-cancer-care-guides** — removed bundled fonts (2.7 MB) and example files (14 MB) from repo. Fonts are now fetched from Google Fonts at runtime; examples moved to internal shared storage
+- **Contributor guidelines** — added policy: large and binary files (examples, datasets, fonts) must not be committed to the repo. Store on team shared storage and reference from skill docs
+
+### Removed
+
+- Bundled Lato TTF fonts and LFS `.gitattributes` from cancer-care-guides skill
+- Example documents (DOCX, PDF, HTML, PNG, Markdown) from cancer-care-guides skill
+
 ## [2.9.0] - 2026-03-11
 
 ### Added

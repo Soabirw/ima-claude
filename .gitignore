@@ -25,6 +25,9 @@ skills/*-private/
 templates/local-skills/*
 !templates/local-skills/.gitkeep
 
+# Downloaded/cached fonts (fetched at runtime)
+**/fonts/*.ttf
+
 # Session and personal data
 *.jsonl
 session.md

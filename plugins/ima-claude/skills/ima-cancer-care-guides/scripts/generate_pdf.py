@@ -38,20 +38,32 @@ except ImportError:
 # ── Register Lato fonts ──────────────────────────────────────────────────────
 FONT_DIR = Path(__file__).parent.parent / "fonts"
 
-def register_fonts():
-    """Register Lato TTF fonts with reportlab."""
-    fonts = {
-        "Lato":            "Lato-Regular.ttf",
-        "Lato-Bold":       "Lato-Bold.ttf",
-        "Lato-Italic":     "Lato-Italic.ttf",
-        "Lato-BoldItalic": "Lato-BoldItalic.ttf",
-    }
-    for name, filename in fonts.items():
+GOOGLE_FONTS_BASE = "https://github.com/google/fonts/raw/main/ofl/lato"
+
+FONT_FILES = {
+    "Lato":            "Lato-Regular.ttf",
+    "Lato-Bold":       "Lato-Bold.ttf",
+    "Lato-Italic":     "Lato-Italic.ttf",
+    "Lato-BoldItalic": "Lato-BoldItalic.ttf",
+}
+
+def _ensure_fonts():
+    """Download Lato TTF files from Google Fonts if not cached locally."""
+    import urllib.request
+    FONT_DIR.mkdir(parents=True, exist_ok=True)
+    for filename in FONT_FILES.values():
         path = FONT_DIR / filename
-        if path.exists():
-            pdfmetrics.registerFont(TTFont(name, str(path)))
-        else:
-            print(f"WARNING: Font not found: {path}")
+        if not path.exists():
+            url = f"{GOOGLE_FONTS_BASE}/{filename}"
+            print(f"Downloading {filename} from Google Fonts...")
+            urllib.request.urlretrieve(url, path)
+
+def register_fonts():
+    """Register Lato TTF fonts with reportlab, downloading if needed."""
+    _ensure_fonts()
+    for name, filename in FONT_FILES.items():
+        path = FONT_DIR / filename
+        pdfmetrics.registerFont(TTFont(name, str(path)))
 
     # Register font family so <b> and <i> markup works in Paragraphs
     from reportlab.pdfbase.pdfmetrics import registerFontFamily
