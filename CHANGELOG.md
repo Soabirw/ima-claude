@@ -5,6 +5,16 @@ All notable changes to ima-claude will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.10.0] - 2026-03-11
+
+### Added
+
+- **ima-doc2pdf** — new skill for converting DOCX content into branded IMA PDF documents using ReportLab. Lato typography, navy headings, justified body text, running footers, embedded images. Auto-downloads Lato fonts from Google Fonts on first run. Generalized classifiers for headings, disclaimers, warnings, authors, and references — works with any IMA document, not just cancer care guides.
+
+### Removed
+
+- **ima-cover-creator** — removed low-value cover page generator skill
+
 ## [2.9.1] - 2026-03-11
 
 ### Changed
