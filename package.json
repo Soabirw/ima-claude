@@ -1,6 +1,6 @@
 {
   "name": "ima-claude",
-  "version": "2.10.0",
+  "version": "2.11.0",
   "description": "IMA's AI coding agent skills - FP patterns, architecture guidance, and team standards. Supports Claude Code, Junie CLI, and more.",
   "type": "module",
   "scripts": {

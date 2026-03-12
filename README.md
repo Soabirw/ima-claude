@@ -200,6 +200,8 @@ ima-claude includes skills that teach Claude how to use each MCP server effectiv
 | **mcp-context7** | Library documentation lookup strategies |
 | **mcp-sequential** | Structured reasoning workflows |
 | **mcp-atlassian** | Jira & Confluence operations (Claude's bundled integration) |
+| **mcp-gitea** | Internal Git management: PRs, issues, releases, branches, tags, wikis, CI/CD actions |
+| **mcp-github** | FOSS/public repo management: PRs, issues, code review, repo search (`gh` CLI fallback) |
 | ~~**compound-bridge**~~ | Compound Engineering integration — **deprecated**, only useful if your team actively uses Compound Engineering |
 
 ### Session Management Skills

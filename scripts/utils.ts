@@ -9,7 +9,7 @@ export const HOOKS_DIR = join(CLAUDE_DIR, "hooks");
 export const COMMANDS_DIR = join(CLAUDE_DIR, "commands");
 export const RULES_DIR = join(CLAUDE_DIR, "rules");
 export const SETTINGS_FILE = join(CLAUDE_DIR, "settings.json");
-export const VERSION = "2.10.0";
+export const VERSION = "2.11.0";
 
 export const colors = {
   reset: "\x1b[0m",
@@ -162,6 +162,8 @@ export const SKILLS_TO_INSTALL = [
   "compound-bridge",
   // MCP integration skills
   "mcp-atlassian",
+  "mcp-gitea",
+  "mcp-github",
   "mcp-tavily",
   "mcp-context7",
   "mcp-serena",

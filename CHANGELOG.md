@@ -5,6 +5,17 @@ All notable changes to ima-claude will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.11.0] - 2026-03-12
+
+### Added
+
+- **mcp-gitea** — new skill for Gitea MCP integration (internal Git repository management: PRs, issues, releases, branches, tags, wikis, CI/CD actions, time tracking)
+- **mcp-github** — new skill for GitHub MCP integration (FOSS/public repo management: PRs, issues, code review, repo search; falls back to `gh` CLI)
+
+### Changed
+
+- **Release checklist** — expanded CLAUDE.md version bump docs from 5 steps to 10, covering installer registries (`SKILLS_TO_INSTALL`), README tables, and plugin description counts
+
 ## [2.10.0] - 2026-03-11
 
 ### Added

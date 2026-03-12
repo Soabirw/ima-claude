@@ -64,15 +64,32 @@ docs/                   # Onboarding, migration, MCP setup, prompt coach
 3. Reference as `ima-claude:{name}` when delegating via the Agent tool
 4. Add entry to the Available Agents section below
 
-### Version Bump
+### Version Bump (Release Checklist)
 
-All four must match or the plugin system thinks you're testing locally:
+All version strings must match or the plugin system thinks you're testing locally.
+When adding new skills or hooks, the registries and docs must also be updated.
 
-1. `scripts/utils.ts` — `VERSION`
+**Version strings** (must all match):
+
+1. `scripts/utils.ts` — `VERSION` constant
 2. `package.json` — `version`
 3. `plugins/ima-claude/.claude-plugin/plugin.json` — `version`
 4. `.claude-plugin/marketplace.json` — plugin `version`
-5. `CHANGELOG.md` — new entry
+
+**Registries** (when adding new skills/hooks):
+
+5. `scripts/utils.ts` — `SKILLS_TO_INSTALL` array (new skills)
+6. `scripts/utils.ts` — `HOOKS_TO_INSTALL` array (new hooks)
+
+**Documentation** (always update):
+
+7. `CHANGELOG.md` — new version entry
+8. `README.md` — skills tables, MCP tables, agent tables as needed
+9. `.claude/CLAUDE.md` — Available Skills table
+
+**Counts** (keep accurate):
+
+10. `plugins/ima-claude/.claude-plugin/plugin.json` — `description` field skill/hook counts
 
 ## Gotchas
 
@@ -139,6 +156,8 @@ Named subagents with enforced constraints (model, tools, permissions, skills). T
 ### Integration Skills
 - `compound-bridge` - Compound Engineering integration (memory bridge, role separation, per-project config)
 - `mcp-atlassian` - Jira & Confluence operations (issues, pages, search, user mentions)
+- `mcp-gitea` - Gitea internal Git management (PRs, issues, releases, branches, tags, wikis, CI/CD actions)
+- `mcp-github` - GitHub MCP for FOSS/public repos — PRs, issues, code review, repo search (github.com only; use mcp-gitea for internal)
 - `mcp-vestige` - Cognitive memory engine (semantic search, spaced repetition, intentions, codebase awareness)
 - `mcp-qdrant` - Persistent knowledge base with semantic search (local RAG for docs, plans, solutions)
 - `mcp-tavily` - Web research via Tavily (prefer over WebSearch/WebFetch)
