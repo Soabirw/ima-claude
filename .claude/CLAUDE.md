@@ -158,6 +158,7 @@ Named subagents with enforced constraints (model, tools, permissions, skills). T
 - `mcp-atlassian` - Jira & Confluence operations (issues, pages, search, user mentions)
 - `mcp-gitea` - Gitea internal Git management (PRs, issues, releases, branches, tags, wikis, CI/CD actions)
 - `mcp-github` - GitHub MCP for FOSS/public repos — PRs, issues, code review, repo search (github.com only; use mcp-gitea for internal)
+- `gh-cli` - GitHub CLI (`gh`) for PRs, issues, releases, Actions, code review, search, and raw API access (reliable alternative to MCP)
 - `mcp-vestige` - Cognitive memory engine (semantic search, spaced repetition, intentions, codebase awareness)
 - `mcp-qdrant` - Persistent knowledge base with semantic search (local RAG for docs, plans, solutions)
 - `mcp-tavily` - Web research via Tavily (prefer over WebSearch/WebFetch)
