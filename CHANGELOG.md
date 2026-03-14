@@ -5,6 +5,19 @@ All notable changes to ima-claude will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.14.0] - 2026-03-14
+
+### Added
+
+- **GitHub Copilot platform support** — new `platforms/gh-copilot/adapter.ts` deploys skills, agents, hooks, and `copilot-instructions.md` guidelines to `~/.copilot/`
+- **Hook translator shim** (`hooks-translator.py`) — translates Copilot tool names to Claude equivalents so all 24 existing hooks work unmodified
+- Hook event mapping: `PreToolUse` → `preToolUse`, `PostToolUse` → `postToolUse`, `UserPromptSubmit` → `userPromptSubmitted`
+- Tool name mapping: `Bash` → `run_terminal_command`, `Edit` → `edit_file`, `Grep` → `search_code`, `Glob` → `find_files`, etc.
+- Agent files renamed `.md` → `.agent.md` per Copilot convention; frontmatter strips `model` and `permissionMode`, maps tool names
+- Flattened hook config format with `version: 1` wrapper and `bash` field (Copilot's JSON schema)
+- Idempotent hook merge: strips old ima-claude entries on re-install, preserves user hooks
+- Auto-detection via `~/.copilot` directory; target with `npx ima-claude install --target gh-copilot`
+
 ## [2.13.0] - 2026-03-14
 
 ### Added

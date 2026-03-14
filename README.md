@@ -2,7 +2,7 @@
 
 FP patterns, architecture guidance, and team standards for AI coding agents.
 
-**Supports Claude Code, Junie CLI, and Gemini CLI** — with an extensible adapter architecture ready for more platforms.
+**Supports Claude Code, Junie CLI, Gemini CLI, and GitHub Copilot** — with an extensible adapter architecture ready for more platforms.
 
 Built by [Independent Medical Alliance](https://imahealth.org) (formerly FLCCC)
 
@@ -38,9 +38,9 @@ claude plugin update ima-claude
 
 Or use `/plugin` inside Claude Code to manage updates interactively via the **Installed** tab.
 
-### Junie CLI / Gemini CLI — Multi-Platform Installer
+### Junie CLI / Gemini CLI / GitHub Copilot — Multi-Platform Installer
 
-For Junie, Gemini, or any non-plugin platform, use the interactive CLI installer:
+For Junie, Gemini, GitHub Copilot, or any non-plugin platform, use the interactive CLI installer:
 
 ```bash
 npx ima-claude install
@@ -48,7 +48,7 @@ npx ima-claude install
 
 The installer auto-detects which platforms are available and walks you through installation:
 
-1. **Detects platforms** — scans for Claude Code (`~/.claude`), Junie CLI (`~/.junie`), and Gemini CLI (`~/.gemini`)
+1. **Detects platforms** — scans for Claude Code (`~/.claude`), Junie CLI (`~/.junie`), Gemini CLI (`~/.gemini`), and GitHub Copilot (`~/.copilot`)
 2. **Shows preview** — lists all skills, agents, and platform-specific items to install
 3. **Allows exclusions** — skip specific skills or agents you don't need
 4. **Installs with feedback** — step-by-step progress for each item
@@ -56,33 +56,35 @@ The installer auto-detects which platforms are available and walks you through i
 You can also target a specific platform directly:
 
 ```bash
-npx ima-claude install --target junie    # Junie only
-npx ima-claude install --target gemini   # Gemini CLI only
-npx ima-claude install --target claude   # Claude Code only (plugin recommended instead)
-npx ima-claude detect                    # Show detected platforms
+npx ima-claude install --target junie       # Junie only
+npx ima-claude install --target gemini      # Gemini CLI only
+npx ima-claude install --target gh-copilot  # GitHub Copilot only
+npx ima-claude install --target claude      # Claude Code only (plugin recommended instead)
+npx ima-claude detect                       # Show detected platforms
 ```
 
 **What's different per platform?**
 
-| | Claude Code | Junie CLI | Gemini CLI |
-|---|---|---|---|
-| **Skills** | Plugin system (auto) | Copied to `~/.junie/skills/` | Copied to `~/.gemini/skills/` |
-| **Agents** | Plugin system (auto) | Strips `permissionMode` | Strips `model` + `permissionMode`, maps tool names |
-| **Hooks** | 24 Python hook scripts | No hook system — behavioral guidelines | Translated events + tool names, translator shim |
-| **Guidelines** | Plugin's `CLAUDE.md` injection | Generated `AGENTS.md` | Generated `GEMINI.md` |
+| | Claude Code | Junie CLI | Gemini CLI | GitHub Copilot |
+|---|---|---|---|---|
+| **Skills** | Plugin system (auto) | Copied to `~/.junie/skills/` | Copied to `~/.gemini/skills/` | Copied to `~/.copilot/skills/` |
+| **Agents** | Plugin system (auto) | Strips `permissionMode` | Strips `model` + `permissionMode`, maps tool names | Strips `model` + `permissionMode`, maps tool names, renames to `.agent.md` |
+| **Hooks** | 24 Python hook scripts | No hook system — behavioral guidelines | Translated events + tool names, translator shim | Translated events + tool names, translator shim, flattened config |
+| **Guidelines** | Plugin's `CLAUDE.md` injection | Generated `AGENTS.md` | Generated `GEMINI.md` | Generated `copilot-instructions.md` |
 
-Junie doesn't support hooks, so behaviors become guidelines in `AGENTS.md`. Gemini has hooks but uses different event names (`BeforeTool`/`AfterTool`) and tool names (`run_shell_command`, `replace`, etc.) — a translator shim normalizes input so all existing hooks work unmodified.
+Junie doesn't support hooks, so behaviors become guidelines in `AGENTS.md`. Gemini and GitHub Copilot have hooks but use different event/tool names — a translator shim normalizes input so all existing hooks work unmodified. Copilot additionally uses a flat hook config format with `bash` field and `version: 1` wrapper.
 
 ### Adding New Platforms
 
-The installer uses an adapter pattern. Adding support for a new platform (e.g., GitHub Copilot) means creating one file implementing the `PlatformAdapter` interface:
+The installer uses an adapter pattern. Adding support for a new platform means creating one file implementing the `PlatformAdapter` interface:
 
 ```
 platforms/
-├── shared/types.ts       # PlatformAdapter interface
-├── claude/adapter.ts     # Claude Code adapter
-├── junie/adapter.ts      # Junie CLI adapter
-└── gemini/adapter.ts     # Gemini CLI adapter
+├── shared/types.ts          # PlatformAdapter interface
+├── claude/adapter.ts        # Claude Code adapter
+├── junie/adapter.ts         # Junie CLI adapter
+├── gemini/adapter.ts        # Gemini CLI adapter
+└── gh-copilot/adapter.ts    # GitHub Copilot adapter
 ```
 
 See [platforms/shared/types.ts](platforms/shared/types.ts) for the interface contract.
@@ -91,7 +93,7 @@ See [platforms/shared/types.ts](platforms/shared/types.ts) for the interface con
 
 ## What's Included
 
-- **Multi-Platform Installer**: Interactive CLI with auto-detection, install preview, and per-item exclusion — supports Claude Code, Junie CLI, and Gemini CLI
+- **Multi-Platform Installer**: Interactive CLI with auto-detection, install preview, and per-item exclusion — supports Claude Code, Junie CLI, Gemini CLI, and GitHub Copilot
 - **48 Skills**: Foundational + FP implementation + domain expert + integration + meta-skills
 - **6 Named Agents**: Explorer (haiku), Implementer (sonnet), Reviewer (sonnet), Tester (sonnet), WP Developer (sonnet), Memory (sonnet) — enforced constraints
 - **23 Hooks**: Automatic behavioral enforcement (security, memory, workflow, Serena, code quality) — translated to guidelines for platforms without hook support
@@ -104,7 +106,7 @@ See [platforms/shared/types.ts](platforms/shared/types.ts) for the interface con
 
 ## Prerequisites
 
-- [Claude Code](https://claude.ai/code), [Junie CLI](https://www.jetbrains.com/help/idea/junie.html), or [Gemini CLI](https://github.com/google-gemini/gemini-cli) installed
+- [Claude Code](https://claude.ai/code), [Junie CLI](https://www.jetbrains.com/help/idea/junie.html), [Gemini CLI](https://github.com/google-gemini/gemini-cli), or [GitHub Copilot](https://github.com/features/copilot) installed
 
 ## MCP Servers (Highly Recommended)
 
@@ -410,7 +412,7 @@ ima-claude follows a **Persona + Skills** architecture:
 - **Platform adapters** - Shared `PlatformAdapter` interface; each platform implements detect, preview, install, and guideline generation
 
 This makes ima-claude:
-1. **Multi-platform** - Same skills and agents across Claude Code, Junie CLI, and future platforms
+1. **Multi-platform** - Same skills and agents across Claude Code, Junie CLI, Gemini CLI, and GitHub Copilot
 2. **Fully standalone** - Complete system without dependencies
 3. **Consistent** - Same mindset across all interactions
 4. **Efficient** - Skills load on-demand based on context

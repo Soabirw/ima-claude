@@ -2,11 +2,13 @@ import type { DetectedPlatform, PlatformAdapter } from "./types";
 import { ClaudeAdapter } from "../claude/adapter";
 import { JunieAdapter } from "../junie/adapter";
 import { GeminiAdapter } from "../gemini/adapter";
+import { GhCopilotAdapter } from "../gh-copilot/adapter";
 
 const ADAPTERS: PlatformAdapter[] = [
   new ClaudeAdapter(),
   new JunieAdapter(),
   new GeminiAdapter(),
+  new GhCopilotAdapter(),
 ];
 
 export function detectPlatforms(): DetectedPlatform[] {
