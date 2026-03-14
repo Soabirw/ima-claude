@@ -1,10 +1,12 @@
 import type { DetectedPlatform, PlatformAdapter } from "./types";
 import { ClaudeAdapter } from "../claude/adapter";
 import { JunieAdapter } from "../junie/adapter";
+import { GeminiAdapter } from "../gemini/adapter";
 
 const ADAPTERS: PlatformAdapter[] = [
   new ClaudeAdapter(),
   new JunieAdapter(),
+  new GeminiAdapter(),
 ];
 
 export function detectPlatforms(): DetectedPlatform[] {
@@ -12,7 +14,9 @@ export function detectPlatforms(): DetectedPlatform[] {
     const detected = adapter.detect();
     const note = adapter.name === "claude" && detected
       ? "Recommended: install via plugin marketplace instead"
-      : undefined;
+      : adapter.name === "gemini" && detected
+        ? "Also available as a Gemini extension"
+        : undefined;
 
     return { adapter, detected, note };
   });

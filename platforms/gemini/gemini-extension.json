@@ -1,0 +1,17 @@
+{
+  "name": "ima-claude",
+  "version": "2.13.0",
+  "description": "IMA's AI coding agent skills — FP patterns, architecture guidance, and team standards. 50+ skills, 24 hooks, 6 agents.",
+  "publisher": "Soabirw",
+  "repository": "https://github.com/Soabirw/ima-claude",
+  "contextFileName": "GEMINI.md",
+  "skills": {
+    "path": "${extensionPath}/skills"
+  },
+  "agents": {
+    "path": "${extensionPath}/agents"
+  },
+  "hooks": {
+    "path": "${extensionPath}/hooks/hooks.json"
+  }
+}

@@ -18,7 +18,7 @@ ${colors.cyan}Usage:${colors.reset}
 
 ${colors.cyan}Commands:${colors.reset}
   install             Interactive install (auto-detects platforms)
-  install --target X  Install for specific platform (claude, junie)
+  install --target X  Install for specific platform (claude, junie, gemini)
   upgrade             Upgrade installed skills to latest version
   detect              Show detected platforms
   help                Show this help message
@@ -78,7 +78,7 @@ async function interactiveInstall() {
     console.log(
       `\n${colors.yellow}No supported platforms detected.${colors.reset}`
     );
-    console.log("Install Claude Code or Junie CLI first, then run this installer again.\n");
+    console.log("Install Claude Code, Junie CLI, or Gemini CLI first, then run this installer again.\n");
     return;
   }
 
@@ -116,7 +116,7 @@ async function targetedInstall(targetName: string) {
   const adapter = getAdapter(targetName);
   if (!adapter) {
     log.error(`Unknown target: ${targetName}`);
-    console.log("Available targets: claude, junie");
+    console.log("Available targets: claude, junie, gemini");
     process.exit(1);
   }
 

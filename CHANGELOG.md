@@ -5,6 +5,18 @@ All notable changes to ima-claude will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.13.0] - 2026-03-14
+
+### Added
+
+- **Gemini CLI platform support** — new `platforms/gemini/adapter.ts` deploys skills, agents, hooks, and `GEMINI.md` guidelines to `~/.gemini/`
+- **Hook translator shim** (`hooks-translator.py`) — translates Gemini tool names to Claude equivalents so all 24 existing hooks work unmodified
+- **Gemini extension manifest** (`gemini-extension.json`) — enables `gemini extensions install` from the repo
+- Hook event mapping: `PreToolUse` → `BeforeTool`, `PostToolUse` → `AfterTool`, `UserPromptSubmit` → `BeforeAgent`
+- Tool name mapping: `Bash` → `run_shell_command`, `Edit` → `replace`, `Read` → `read_file`, etc.
+- Agent frontmatter transformation: strips `model` and `permissionMode`, maps tool names
+- Settings merge preserves existing user hooks in `~/.gemini/settings.json`
+
 ## [2.12.0] - 2026-03-12
 
 ### Added

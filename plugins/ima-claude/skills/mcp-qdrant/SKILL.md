@@ -19,14 +19,18 @@ Our permanent reference library. Unlike Vestige (neural memory that fades if unu
 
 ## Embedding Stack
 
-| Component | Value |
-|---|---|
-| MCP server | `qdrant-mcp` (custom, at `~/dev/qdrant-mcp-server`) |
-| Embedding model | `nomic-embed-text` via Ollama |
-| Vector dimensions | 768 |
-| Distance metric | Cosine |
-| Vector type | Default (unnamed) |
-| Default collection | `ima-knowledge` |
+Two embedding providers are supported. Ollama is the default; fastembed is a CPU-only alternative for machines where Ollama has performance issues.
+
+| Component | Ollama (default) | fastembed |
+|---|---|---|
+| MCP server | `qdrant-mcp` (custom, at `~/dev/qdrant-mcp-server`) | same |
+| Embedding model | `nomic-embed-text` | `BAAI/bge-small-en-v1.5` |
+| Vector dimensions | 768 | 384 |
+| Distance metric | Cosine | Cosine |
+| Dependency | Ollama running locally | `pip install qdrant-mcp[fastembed]` |
+| Default collection | `ima-knowledge` | `ima-knowledge` |
+
+**Warning**: Collections can't be shared across providers (different vector dimensions). Switching providers requires a collection rebuild.
 
 ## Per-Project Collection
 
@@ -176,6 +180,8 @@ IF starting any new work:
 | Irrelevant results | Use more specific key terms |
 | Qdrant not responding | `docker ps \| grep qdrant` — restart if needed |
 | Ollama not responding | `ollama list` — ensure it's running with `nomic-embed-text` |
+| fastembed not installed | `pip install qdrant-mcp[fastembed]` |
+| Switched providers, bad results | Different vector dimensions — rebuild the collection |
 | Duplicate content | Search before storing to verify novelty |
 
 ## When NOT to Use
@@ -195,8 +201,11 @@ docker run -d --name qdrant \
   -v qdrant_storage:/qdrant/storage \
   qdrant/qdrant:latest
 
-# 2. Install Ollama and pull embedding model
+# 2a. Option A: Ollama (default)
 ollama pull nomic-embed-text
+
+# 2b. Option B: fastembed (CPU-only, no Ollama needed)
+# pip install qdrant-mcp[fastembed]
 
 # 3. Install custom MCP server
 cd ~/dev/qdrant-mcp-server && pip install -e .
@@ -209,17 +218,19 @@ cd ~/dev/qdrant-mcp-server && pip install -e .
 #   "env": {
 #     "QDRANT_URL": "http://localhost:6333",
 #     "COLLECTION_NAME": "ima-knowledge",
+#     "EMBEDDING_PROVIDER": "ollama",
 #     "OLLAMA_URL": "http://localhost:11434",
 #     "EMBEDDING_MODEL": "nomic-embed-text"
 #   }
 # }
+# For fastembed, set EMBEDDING_PROVIDER=fastembed (OLLAMA_URL not needed)
 
 # 5. Verify
 curl http://localhost:6333/health
 ```
 
 **Persistence**: `-v qdrant_storage:/qdrant/storage` preserves data across restarts.
-**Embeddings**: Ollama with `nomic-embed-text` (768d). All data stays on your machine.
+**Embeddings**: Ollama with `nomic-embed-text` (768d) or fastembed with `bge-small-en-v1.5` (384d). All data stays on your machine.
 
 ### Per-Project Setup
 

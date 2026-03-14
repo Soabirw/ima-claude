@@ -2,7 +2,7 @@
 
 FP patterns, architecture guidance, and team standards for AI coding agents.
 
-**Supports Claude Code and Junie CLI** — with an extensible adapter architecture ready for more platforms.
+**Supports Claude Code, Junie CLI, and Gemini CLI** — with an extensible adapter architecture ready for more platforms.
 
 Built by [Independent Medical Alliance](https://imahealth.org) (formerly FLCCC)
 
@@ -38,9 +38,9 @@ claude plugin update ima-claude
 
 Or use `/plugin` inside Claude Code to manage updates interactively via the **Installed** tab.
 
-### Junie CLI — Multi-Platform Installer
+### Junie CLI / Gemini CLI — Multi-Platform Installer
 
-For Junie (or any non-plugin platform), use the interactive CLI installer:
+For Junie, Gemini, or any non-plugin platform, use the interactive CLI installer:
 
 ```bash
 npx ima-claude install
@@ -48,7 +48,7 @@ npx ima-claude install
 
 The installer auto-detects which platforms are available and walks you through installation:
 
-1. **Detects platforms** — scans for Claude Code (`~/.claude`) and Junie CLI (`~/.junie`)
+1. **Detects platforms** — scans for Claude Code (`~/.claude`), Junie CLI (`~/.junie`), and Gemini CLI (`~/.gemini`)
 2. **Shows preview** — lists all skills, agents, and platform-specific items to install
 3. **Allows exclusions** — skip specific skills or agents you don't need
 4. **Installs with feedback** — step-by-step progress for each item
@@ -57,20 +57,21 @@ You can also target a specific platform directly:
 
 ```bash
 npx ima-claude install --target junie    # Junie only
+npx ima-claude install --target gemini   # Gemini CLI only
 npx ima-claude install --target claude   # Claude Code only (plugin recommended instead)
 npx ima-claude detect                    # Show detected platforms
 ```
 
-**What's different for Junie?**
+**What's different per platform?**
 
-| | Claude Code | Junie CLI |
-|---|---|---|
-| **Skills** | Plugin system (auto) | Copied to `~/.junie/skills/` |
-| **Agents** | Plugin system (auto) | Transformed (strips `permissionMode`) → `~/.junie/agents/` |
-| **Hooks** | 23 Python hook scripts | No hook system — translated into behavioral guidelines |
-| **Guidelines** | Plugin's `CLAUDE.md` injection | Generated `AGENTS.md` with persona, workflow, and hook-derived rules |
+| | Claude Code | Junie CLI | Gemini CLI |
+|---|---|---|---|
+| **Skills** | Plugin system (auto) | Copied to `~/.junie/skills/` | Copied to `~/.gemini/skills/` |
+| **Agents** | Plugin system (auto) | Strips `permissionMode` | Strips `model` + `permissionMode`, maps tool names |
+| **Hooks** | 24 Python hook scripts | No hook system — behavioral guidelines | Translated events + tool names, translator shim |
+| **Guidelines** | Plugin's `CLAUDE.md` injection | Generated `AGENTS.md` | Generated `GEMINI.md` |
 
-Junie doesn't support hooks, so the installer translates all 25 hook behaviors into persistent guidelines inside `AGENTS.md` — same enforcement, different mechanism.
+Junie doesn't support hooks, so behaviors become guidelines in `AGENTS.md`. Gemini has hooks but uses different event names (`BeforeTool`/`AfterTool`) and tool names (`run_shell_command`, `replace`, etc.) — a translator shim normalizes input so all existing hooks work unmodified.
 
 ### Adding New Platforms
 
@@ -80,7 +81,8 @@ The installer uses an adapter pattern. Adding support for a new platform (e.g., 
 platforms/
 ├── shared/types.ts       # PlatformAdapter interface
 ├── claude/adapter.ts     # Claude Code adapter
-└── junie/adapter.ts      # Junie CLI adapter
+├── junie/adapter.ts      # Junie CLI adapter
+└── gemini/adapter.ts     # Gemini CLI adapter
 ```
 
 See [platforms/shared/types.ts](platforms/shared/types.ts) for the interface contract.
@@ -89,7 +91,7 @@ See [platforms/shared/types.ts](platforms/shared/types.ts) for the interface con
 
 ## What's Included
 
-- **Multi-Platform Installer**: Interactive CLI with auto-detection, install preview, and per-item exclusion — supports Claude Code and Junie CLI, extensible adapter architecture for more
+- **Multi-Platform Installer**: Interactive CLI with auto-detection, install preview, and per-item exclusion — supports Claude Code, Junie CLI, and Gemini CLI
 - **48 Skills**: Foundational + FP implementation + domain expert + integration + meta-skills
 - **6 Named Agents**: Explorer (haiku), Implementer (sonnet), Reviewer (sonnet), Tester (sonnet), WP Developer (sonnet), Memory (sonnet) — enforced constraints
 - **23 Hooks**: Automatic behavioral enforcement (security, memory, workflow, Serena, code quality) — translated to guidelines for platforms without hook support
@@ -102,7 +104,7 @@ See [platforms/shared/types.ts](platforms/shared/types.ts) for the interface con
 
 ## Prerequisites
 
-- [Claude Code](https://claude.ai/code) or [Junie CLI](https://www.jetbrains.com/help/idea/junie.html) installed
+- [Claude Code](https://claude.ai/code), [Junie CLI](https://www.jetbrains.com/help/idea/junie.html), or [Gemini CLI](https://github.com/google-gemini/gemini-cli) installed
 
 ## MCP Servers (Highly Recommended)
 
