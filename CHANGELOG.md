@@ -5,6 +5,12 @@ All notable changes to ima-claude will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.14.1] - 2026-03-17
+
+### Fixed
+
+- **wp-local: marketplace install path** — `wp-local.sh` path in Quick Start and shell alias setup was hardcoded to the legacy local-install location (`~/.claude/skills/`). Updated to a discovery-based approach that checks the local path first and falls back to the marketplace glob (`~/.claude/plugins/*/*/plugins/ima-claude/`), covering both install methods transparently.
+
 ## [2.14.0] - 2026-03-14
 
 ### Added

@@ -13,17 +13,17 @@ Execute WP-CLI commands in Flywheel Local WP environments without disrupting Cla
 - **Recommended**: Use Kitty terminal with `$WP_LOCAL_SITE` configured (see Configuration)
 - **Alternative**: Create `.wp-local` file in project root: `echo "19efkkzWB" > .wp-local`
 
-**Run wp commands**:
-```bash
-bash ~/.claude/skills/wp-local/scripts/wp-local.sh plugin list
-bash ~/.claude/skills/wp-local/scripts/wp-local.sh db query "SELECT * FROM wp_posts LIMIT 5"
-bash ~/.claude/skills/wp-local/scripts/wp-local.sh user list
-```
-
-**With shell alias** (recommended, see Configuration):
+**Run wp commands** (after alias setup in Configuration):
 ```bash
 wpl plugin list
-wpl db query "SELECT * FROM wp_users"
+wpl db query "SELECT * FROM wp_posts LIMIT 5"
+wpl user list
+```
+
+**Or run directly** (discovers install location automatically):
+```bash
+WP_LOCAL_SH=$(ls ~/.claude/skills/wp-local/scripts/wp-local.sh 2>/dev/null || ls ~/.claude/plugins/*/*/plugins/ima-claude/skills/wp-local/scripts/wp-local.sh 2>/dev/null | head -1)
+bash "$WP_LOCAL_SH" plugin list
 ```
 
 **Verify configuration**:

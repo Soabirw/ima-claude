@@ -115,8 +115,14 @@ echo "journal-back" > .wp-local
 
 Add to `~/.bashrc` or `~/.zshrc`:
 ```bash
-alias wpl='bash ~/.claude/skills/wp-local/scripts/wp-local.sh'
+wpl() {
+  local s=~/.claude/skills/wp-local/scripts/wp-local.sh
+  [[ -f "$s" ]] || s=$(ls ~/.claude/plugins/*/*/plugins/ima-claude/skills/wp-local/scripts/wp-local.sh 2>/dev/null | head -1)
+  bash "$s" "$@"
+}
 ```
+
+This works for both local installs (`~/.claude/skills/`) and marketplace installs (`~/.claude/plugins/marketplaces/*/`).
 
 Reload shell:
 ```bash
