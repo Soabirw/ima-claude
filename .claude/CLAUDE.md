@@ -152,6 +152,7 @@ Named subagents with enforced constraints (model, tools, permissions, skills). T
 - `jira-checkpoint` - Jira awareness checkpoints for team visibility (before/during/after work sync)
 - `rg` - Ripgrep usage patterns (prefer over grep/find)
 - `ima-cancer-care-guides` - IMA cancer care guide document pipeline (DOCX extraction, markdown → HTML → PDF, Canva template mapping)
+- `prompt-starter` - Zero-friction prompt templates (quick, brainstorm, plan-implement) with Jira pre-fill and editor spawn
 
 ### Integration Skills
 - `compound-bridge` - Compound Engineering integration (memory bridge, role separation, per-project config)

@@ -94,7 +94,7 @@ See [platforms/shared/types.ts](platforms/shared/types.ts) for the interface con
 ## What's Included
 
 - **Multi-Platform Installer**: Interactive CLI with auto-detection, install preview, and per-item exclusion — supports Claude Code, Junie CLI, Gemini CLI, and GitHub Copilot
-- **48 Skills**: Foundational + FP implementation + domain expert + integration + meta-skills
+- **49 Skills**: Foundational + FP implementation + domain expert + integration + meta-skills
 - **6 Named Agents**: Explorer (haiku), Implementer (sonnet), Reviewer (sonnet), Tester (sonnet), WP Developer (sonnet), Memory (sonnet) — enforced constraints
 - **23 Hooks**: Automatic behavioral enforcement (security, memory, workflow, Serena, code quality) — translated to guidelines for platforms without hook support
 - **Default Persona**: "The Practitioner" - 25-year veteran mindset, collaborative, plan-first
@@ -302,6 +302,7 @@ Agents are auto-discovered from `plugins/ima-claude/agents/`. No manifest change
 | `ima-forms-expert` | WordPress form components (IMA Forms) |
 | `discourse-admin` | Discourse admin API (site settings, config export/import, groups) |
 | `ima-cancer-care-guides` | Cancer care guide document pipeline (DOCX → markdown → HTML → PDF, Canva mapping) |
+| `prompt-starter` | Zero-friction prompt templates (quick, brainstorm, plan-implement) with Jira pre-fill and editor spawn |
 
 ### Integration Skills
 

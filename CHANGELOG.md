@@ -5,6 +5,12 @@ All notable changes to ima-claude will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.15.0] - 2026-03-19
+
+### Added
+
+- **prompt-starter** — zero-friction prompt templates (quick, brainstorm, plan-implement). Selects template from trigger words, pre-fills from Jira via mcp-atlassian, spawns GUI editor (`$VISUAL` → `$EDITOR` → auto-detect → inline fallback) using the `git commit --wait` pattern, reads the result back on close. Quick templates present inline; brainstorm and plan-implement open the editor. Checks Serena memory for prior brainstorm when using plan-implement. Complementary to `prompt_coach.py` (starter = "what to say", coach = "is it good enough").
+
 ## [2.14.1] - 2026-03-17
 
 ### Fixed

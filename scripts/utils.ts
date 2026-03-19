@@ -9,7 +9,7 @@ export const HOOKS_DIR = join(CLAUDE_DIR, "hooks");
 export const COMMANDS_DIR = join(CLAUDE_DIR, "commands");
 export const RULES_DIR = join(CLAUDE_DIR, "rules");
 export const SETTINGS_FILE = join(CLAUDE_DIR, "settings.json");
-export const VERSION = "2.14.1";
+export const VERSION = "2.15.0";
 
 export const colors = {
   reset: "\x1b[0m",
@@ -172,6 +172,8 @@ export const SKILLS_TO_INSTALL = [
   "mcp-memory",
   "mcp-vestige",
   "mcp-qdrant",
+  // Prompt workflow skills
+  "prompt-starter",
   // Quick reference
   "quickstart",
   "scorecard",
