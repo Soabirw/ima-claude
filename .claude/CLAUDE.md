@@ -152,6 +152,10 @@ Named subagents with enforced constraints (model, tools, permissions, skills). T
 - `jira-checkpoint` - Jira awareness checkpoints for team visibility (before/during/after work sync)
 - `rg` - Ripgrep usage patterns (prefer over grep/find)
 - `ima-cancer-care-guides` - IMA cancer care guide document pipeline (DOCX extraction, markdown → HTML → PDF, Canva template mapping)
+- `ima-copywriting` - IMA editorial voice across all formats (newsletters, blogs, press releases, fundraising, op-eds, social)
+- `ima-editorial-scorecard` - Score IMA content against editorial standards (Brand Voice, Evidence, Audience, Structure, CTA)
+- `ima-editorial-workflow` - Orchestrates Plan → Write → Review → Approve → Learn editorial process
+- `ima-email-creator` - Render branded email-client-safe HTML from editorial copy (table layouts, inline CSS, EspoCRM)
 - `prompt-starter` - Zero-friction prompt templates (quick, brainstorm, plan-implement) with Jira pre-fill and editor spawn
 
 ### Integration Skills

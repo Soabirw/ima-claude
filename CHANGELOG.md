@@ -5,6 +5,19 @@ All notable changes to ima-claude will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.16.0] - 2026-03-21
+
+### Added
+
+- **ima-copywriting** — IMA editorial voice skill for writing and rewriting content across all formats (newsletters, webinar emails, blog posts, press releases, fundraising emails, op-eds, social posts). Includes format-specific reference templates, writing principles, CTA patterns, and quality checklist. Always pairs with ima-brand.
+- **ima-editorial-scorecard** — Score any IMA content against editorial standards with letter grades across Brand Voice, Evidence Quality, Audience Clarity, Structural Craft, and CTA Effectiveness. Includes AI detection flags, disclaimer checks, and independence signal verification.
+- **ima-editorial-workflow** — Orchestrates the IMA editorial process (Plan → Write → Review → Approve → Learn). Routes to ima-copywriting for drafting and ima-editorial-scorecard for review. Handles `/write`, `/rewrite`, `/social`, `/brainstorm` commands.
+- **ima-email-creator** — Render branded, email-client-safe HTML from editorial copy with table-based layouts, inline CSS, and EspoCRM compatibility.
+
+### Fixed
+
+- **SKILLS_TO_INSTALL registry** — Added 8 skills that existed in the skills directory but were missing from the install array: `py-fp`, `ruby-fp`, `rails`, `unit-testing`, `phpunit-wp`, `livecanvas`, `ima-doc2pdf`, `ima-cancer-care-guides`.
+
 ## [2.15.0] - 2026-03-19
 
 ### Added

@@ -9,7 +9,7 @@ export const HOOKS_DIR = join(CLAUDE_DIR, "hooks");
 export const COMMANDS_DIR = join(CLAUDE_DIR, "commands");
 export const RULES_DIR = join(CLAUDE_DIR, "rules");
 export const SETTINGS_FILE = join(CLAUDE_DIR, "settings.json");
-export const VERSION = "2.15.0";
+export const VERSION = "2.16.0";
 
 export const colors = {
   reset: "\x1b[0m",
@@ -139,6 +139,8 @@ export const SKILLS_TO_INSTALL = [
   "js-fp-wordpress",
   "php-fp",
   "php-fp-wordpress",
+  "py-fp",
+  "ruby-fp",
   "quasar-fp",
   "jquery",
   // Payment & API skills
@@ -151,9 +153,20 @@ export const SKILLS_TO_INSTALL = [
   "ima-forms-expert",
   "ima-brand",
   "ima-bootstrap",
+  "ima-copywriting",
+  "ima-editorial-scorecard",
+  "ima-editorial-workflow",
+  "ima-email-creator",
+  "ima-cancer-care-guides",
+  "ima-doc2pdf",
+  "livecanvas",
   "jira-checkpoint",
   // Testing skills
+  "unit-testing",
+  "phpunit-wp",
   "playwright",
+  // Rails/Ruby skills
+  "rails",
   // Discourse skills
   "discourse",
   "discourse-admin",

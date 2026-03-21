@@ -302,6 +302,10 @@ Agents are auto-discovered from `plugins/ima-claude/agents/`. No manifest change
 | `ima-forms-expert` | WordPress form components (IMA Forms) |
 | `discourse-admin` | Discourse admin API (site settings, config export/import, groups) |
 | `ima-cancer-care-guides` | Cancer care guide document pipeline (DOCX → markdown → HTML → PDF, Canva mapping) |
+| `ima-copywriting` | IMA editorial voice across all formats (newsletters, blogs, press releases, fundraising, social) |
+| `ima-editorial-scorecard` | Score IMA content against editorial standards (Brand Voice, Evidence, Audience, Structure, CTA) |
+| `ima-editorial-workflow` | Orchestrates Plan → Write → Review → Approve → Learn editorial process |
+| `ima-email-creator` | Render branded email-client-safe HTML (table layouts, inline CSS, EspoCRM compatibility) |
 | `prompt-starter` | Zero-friction prompt templates (quick, brainstorm, plan-implement) with Jira pre-fill and editor spawn |
 
 ### Integration Skills
