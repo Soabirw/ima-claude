@@ -138,6 +138,10 @@ Named subagents with enforced constraints (model, tools, permissions, skills). T
 ### Payment & API Skills
 - `php-authnet` - Authorize.Net PHP SDK (transactions, CIM profiles, ARB subscriptions, Accept.js, webhooks)
 
+### CRM Skills
+- `espocrm` - EspoCRM skill family router (intent detection, Salesforce mapping, child skill routing)
+- `espocrm-api` - EspoCRM v9.x REST API (auth, CRUD, WHERE filtering, relationships, webhooks, mass ops)
+
 ### Testing Skills
 - `unit-testing` - Test workflow orchestration (decision tree routing to phpunit-wp, playwright, js-fp, php-fp)
 

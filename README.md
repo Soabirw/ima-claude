@@ -286,6 +286,13 @@ Agents are auto-discovered from `plugins/ima-claude/agents/`. No manifest change
 | `py-fp` | Python FP core - comprehensions, generators, frozen dataclasses |
 | `quasar-fp` | Quasar Framework with utility-first CSS |
 
+### CRM Skills
+
+| Skill | Description |
+|-------|-------------|
+| `espocrm` | EspoCRM skill family router (intent detection, Salesforce mapping, child skill routing) |
+| `espocrm-api` | EspoCRM v9.x REST API (auth, CRUD, WHERE filtering, relationships, webhooks, mass ops) |
+
 ### Domain Expert Skills
 
 | Skill | Description |

@@ -9,7 +9,7 @@ export const HOOKS_DIR = join(CLAUDE_DIR, "hooks");
 export const COMMANDS_DIR = join(CLAUDE_DIR, "commands");
 export const RULES_DIR = join(CLAUDE_DIR, "rules");
 export const SETTINGS_FILE = join(CLAUDE_DIR, "settings.json");
-export const VERSION = "2.16.0";
+export const VERSION = "2.17.0";
 
 export const colors = {
   reset: "\x1b[0m",
@@ -145,6 +145,9 @@ export const SKILLS_TO_INSTALL = [
   "jquery",
   // Payment & API skills
   "php-authnet",
+  // CRM skills
+  "espocrm",
+  "espocrm-api",
   // Domain expert skills
   "architect",
   "docs-organize",

@@ -5,6 +5,13 @@ All notable changes to ima-claude will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.17.0] - 2026-03-24
+
+### Added
+
+- **espocrm** — Skill family router for EspoCRM work. Detects intent (API, extensions, UI) and routes to the appropriate child skill. Includes Salesforce mental model mapping and shared context (v9.x target, entity-based architecture). Context7 docs integration.
+- **espocrm-api** — EspoCRM v9.x REST API spec skill. Authentication (API Key, HMAC), CRUD operations, JSON WHERE filtering, relationship management, webhooks, mass operations, error handling, performance best practices. Official PHP client (`espocrm/php-espo-api-client`) and Node.js patterns. WHERE operator reference extracted to `references/where-operators.md`.
+
 ## [2.16.0] - 2026-03-21
 
 ### Added
