@@ -255,7 +255,7 @@ Named subagents with hard constraints — model, tools, and permissions enforced
 | `ima-claude:implementer` | sonnet | full access | `functional-programmer` | Feature dev, bug fixes, refactoring, tests |
 | `ima-claude:reviewer` | sonnet | read-only | `functional-programmer` | Code review, security audit, FP compliance |
 | `ima-claude:tester` | sonnet | full access | `unit-testing`, `functional-programmer` | Test creation, TDD, test running, debugging failures |
-| `ima-claude:wp-developer` | sonnet | full access | `php-fp`, `php-fp-wordpress`, `wp-local`, `ima-forms-expert`, `ima-bootstrap`, `jquery` | WordPress plugins, themes, WP-CLI, forms |
+| `ima-claude:wp-developer` | sonnet | full access | `php-fp`, `php-fp-wordpress`, `wp-ddev`, `wp-local`, `ima-forms-expert`, `ima-bootstrap`, `jquery` | WordPress plugins, themes, WP-CLI, forms |
 | `ima-claude:memory` | sonnet | full access | `mcp-vestige`, `mcp-qdrant`, `mcp-serena` | Memory search, storage, consolidation across Vestige/Qdrant/Serena |
 
 Agents are auto-discovered from `plugins/ima-claude/agents/`. No manifest changes needed to add new ones.
@@ -302,6 +302,7 @@ Agents are auto-discovered from `plugins/ima-claude/agents/`. No manifest change
 | `ima-bootstrap` | Bootstrap 5.3 + IMA brand (utility-first CSS, SCSS) |
 | `playwright` | E2E testing with Playwright + TypeScript |
 | `docs-organize` | Three-tier documentation organization |
+| `wp-ddev` | WP-CLI commands for DDEV WordPress environments |
 | `wp-local` | WP-CLI commands for Flywheel Local WP |
 | `jira-checkpoint` | Jira awareness checkpoints for team visibility |
 | `phpunit-wp` | PHPUnit testing for WordPress plugins with FP principles |

@@ -13,7 +13,7 @@
 | WordPress plugin, nonce, sanitization, capability | `php-fp-wordpress` |
 | Architecture, new project, scaling, microservices | `architect` |
 | Documentation structure, organize docs | `docs-organize` |
-| WP-CLI, Local WP, wp plugin, wp db query | `wp-local` |
+| WP-CLI, DDEV, ddev wp, wp plugin, wp db query | `wp-ddev` (DDEV) or `wp-local` (Flywheel) |
 | Find in files, search code, grep | `rg` |
 | Latest, current, 2025/2026, recent updates, research | `mcp-tavily` |
 | Library docs, React API, how to use [library] | `mcp-context7` |

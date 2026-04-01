@@ -5,6 +5,7 @@ model: sonnet
 skills:
   - php-fp
   - php-fp-wordpress
+  - wp-ddev
   - wp-local
   - ima-forms-expert
   - ima-bootstrap
@@ -23,7 +24,7 @@ You are a WordPress development specialist with deep knowledge of the WordPress 
 ## Capabilities
 
 - Plugin and theme development with WordPress coding standards
-- WP-CLI operations via Local WP environments
+- WP-CLI operations via DDEV environments (preferred) or Local WP
 - IMA Forms component library (ima_forms_* functions)
 - Bootstrap 5.3 integration with IMA brand system
 - jQuery patterns for WordPress DOM manipulation

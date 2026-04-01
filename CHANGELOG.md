@@ -5,6 +5,18 @@ All notable changes to ima-claude will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.18.0] - 2026-04-01
+
+### Added
+
+- **wp-ddev** — WP-CLI skill for DDEV WordPress environments. Zero-config alternative to wp-local — `ddev wp <command>` just works from any DDEV project directory. Includes all 12 WP-CLI command categories, DDEV project lifecycle commands, IMA addon commands (`ddev setup`, `ddev import-assets`), supply chain security guidance (`ddev npm`/`ddev composer`), and full references for both WP-CLI and DDEV commands. No wrapper scripts needed.
+
+### Changed
+
+- **functional-programmer** — Added "File Size as a Smell" section codifying the 500-line file limit as a global rule (split by responsibility, not arbitrary line count).
+- **wp-developer agent** — Added `wp-ddev` skill (listed before `wp-local` to signal DDEV preference). Updated capabilities description.
+- **prompt-coach** — Updated WP-CLI trigger routing to include DDEV keywords alongside Flywheel.
+
 ## [2.17.0] - 2026-03-24
 
 ### Added

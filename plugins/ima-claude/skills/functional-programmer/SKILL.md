@@ -158,6 +158,21 @@ Every abstraction has a cost:
 
 **The question to ask:** Does this abstraction pay for itself? Will I use it enough to justify the cost? Would a junior developer understand it?
 
+### File Size as a Smell
+
+Keep files under 500 lines. This isn't an arbitrary limit — it's a smell detector. A file approaching 500 lines almost certainly has multiple responsibilities that should be separated.
+
+**When a file grows too large:**
+- Split by responsibility, not by arbitrary line count
+- A 300-line file with two unrelated concerns is worse than a 480-line file with one
+- The goal is cohesion: each file should have a single, clear reason to exist
+
+**Why this matters:**
+- Readability: Developers can hold one file's purpose in their head
+- Testability: Smaller, focused files are easier to test in isolation
+- Navigation: Finding what you need is faster in a well-structured codebase
+- Review: Code review quality drops sharply beyond 500 lines
+
 ### Context-Appropriate Complexity
 
 A CLI script has different needs than a production API.

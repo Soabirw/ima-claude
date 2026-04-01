@@ -1,7 +1,7 @@
 {
   "name": "ima-claude",
-  "version": "2.17.0",
-  "description": "IMA's Claude Code skills for functional programming, architecture, and team standards. 59 skills, 24 hooks, default persona, 3-tier memory system.",
+  "version": "2.18.0",
+  "description": "IMA's Claude Code skills for functional programming, architecture, and team standards. 60 skills, 24 hooks, default persona, 3-tier memory system.",
   "author": {
     "name": "IMA",
     "url": "https://github.com/Soabirw/ima-claude"

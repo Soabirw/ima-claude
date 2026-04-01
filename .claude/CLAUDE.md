@@ -108,7 +108,7 @@ Named subagents with enforced constraints (model, tools, permissions, skills). T
 | `implementer` | sonnet | full access | `functional-programmer` | Feature dev, bug fixes, refactoring, test writing |
 | `reviewer` | sonnet | read-only (`plan`) | `functional-programmer` | Code review, security audit, FP compliance |
 | `tester` | sonnet | full access | `unit-testing`, `functional-programmer` | Test creation, TDD, test running, debugging test failures |
-| `wp-developer` | sonnet | full access | `php-fp`, `php-fp-wordpress`, `wp-local`, `ima-forms-expert`, `ima-bootstrap`, `jquery` | WordPress plugins, themes, WP-CLI, forms, Bootstrap |
+| `wp-developer` | sonnet | full access | `php-fp`, `php-fp-wordpress`, `wp-ddev`, `wp-local`, `ima-forms-expert`, `ima-bootstrap`, `jquery` | WordPress plugins, themes, WP-CLI, forms, Bootstrap |
 | `memory` | sonnet | full access | `mcp-vestige`, `mcp-qdrant`, `mcp-serena` | Memory search, storage, consolidation across Vestige/Qdrant/Serena |
 
 ## Available Skills
@@ -152,6 +152,7 @@ Named subagents with enforced constraints (model, tools, permissions, skills). T
 - `livecanvas` - LiveCanvas page builder with Bootstrap 5, Loops & Logic (Tangible) templating, PicoStrap integration
 - `playwright` - E2E testing and QA automation (Playwright + TypeScript, POM, fixtures, mocking)
 - `docs-organize` - Three-tier documentation (Active/Archive/Transient)
+- `wp-ddev` - WP-CLI commands in DDEV WordPress environments (preferred over wp-local)
 - `wp-local` - WP-CLI commands in Flywheel Local WP environments
 - `jira-checkpoint` - Jira awareness checkpoints for team visibility (before/during/after work sync)
 - `rg` - Ripgrep usage patterns (prefer over grep/find)
