@@ -9,7 +9,7 @@ export const HOOKS_DIR = join(CLAUDE_DIR, "hooks");
 export const COMMANDS_DIR = join(CLAUDE_DIR, "commands");
 export const RULES_DIR = join(CLAUDE_DIR, "rules");
 export const SETTINGS_FILE = join(CLAUDE_DIR, "settings.json");
-export const VERSION = "2.18.0";
+export const VERSION = "2.20.0";
 
 export const colors = {
   reset: "\x1b[0m",
@@ -163,6 +163,7 @@ export const SKILLS_TO_INSTALL = [
   "ima-email-creator",
   "ima-cancer-care-guides",
   "ima-doc2pdf",
+  "design-to-code",
   "livecanvas",
   "jira-checkpoint",
   // Testing skills
@@ -189,6 +190,8 @@ export const SKILLS_TO_INSTALL = [
   "mcp-memory",
   "mcp-vestige",
   "mcp-qdrant",
+  // Agentic workflow skills
+  "agentic-workflows",
   // Prompt workflow skills
   "prompt-starter",
   // Quick reference
@@ -237,6 +240,7 @@ export const HOOKS_TO_INSTALL = [
   // Sequential Thinking hooks
   "sequential_thinking_check.py",
   // Code quality hooks
+  "block_sed_edits.py",
   "fp_utility_check.py",
   "jquery_in_wordpress.py",
   "bootstrap_utility_check.py",

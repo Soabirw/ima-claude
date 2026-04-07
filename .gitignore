@@ -9,6 +9,8 @@
 node_modules/
 package-lock.json
 bun.lockb
+bun.lock
+yarn.lock
 
 # IDE
 .idea/
@@ -22,6 +24,9 @@ Thumbs.db
 
 # Private/Local skills (keep locally, don't publish)
 skills/*-private/
+
+# Large template files (local-only until storage strategy decided)
+plugins/ima-claude/skills/agentic-workflows/references/templates/
 templates/local-skills/*
 !templates/local-skills/.gitkeep
 
@@ -38,6 +43,7 @@ stats-cache.json
 dist/
 *.exe
 *.skill
+*.zip
 
 # Python
 __pycache__/

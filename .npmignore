@@ -1,0 +1,22 @@
+# Source & config (not needed in published package)
+src/
+scripts/*.ts
+tsup.config.ts
+tsconfig.json
+tests/
+docs/
+projects/
+templates/
+.claude/
+.github/
+*.lock
+
+# Build artifacts & caches
+**/__pycache__/
+*.pyc
+
+# Heavy/specialized skills (not suitable for npm distribution)
+**/ima-cancer-care-guides/**
+
+# Packaged skill bundles
+*.skill

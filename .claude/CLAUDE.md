@@ -156,12 +156,16 @@ Named subagents with enforced constraints (model, tools, permissions, skills). T
 - `wp-local` - WP-CLI commands in Flywheel Local WP environments
 - `jira-checkpoint` - Jira awareness checkpoints for team visibility (before/during/after work sync)
 - `rg` - Ripgrep usage patterns (prefer over grep/find)
+- `design-to-code` - Convert design screenshots → implementation prompt → working WordPress code (two-phase: design-to-prompt + prompt-to-code)
 - `ima-cancer-care-guides` - IMA cancer care guide document pipeline (DOCX extraction, markdown → HTML → PDF, Canva template mapping)
 - `ima-copywriting` - IMA editorial voice across all formats (newsletters, blogs, press releases, fundraising, op-eds, social)
 - `ima-editorial-scorecard` - Score IMA content against editorial standards (Brand Voice, Evidence, Audience, Structure, CTA)
 - `ima-editorial-workflow` - Orchestrates Plan → Write → Review → Approve → Learn editorial process
 - `ima-email-creator` - Render branded email-client-safe HTML from editorial copy (table layouts, inline CSS, EspoCRM)
-- `prompt-starter` - Zero-friction prompt templates (quick, brainstorm, plan-implement) with Jira pre-fill and editor spawn
+- `prompt-starter` - Build better prompts from rough ideas (template selection, Jira pre-fill, editor spawn). Returns refined prompt — does NOT execute the work.
+
+### Agentic Workflow Skills
+- `agentic-workflows` - Headless workflow phases, recipes, and standards for Jira-triggered content creation (gather → outline → draft → review → deliver)
 
 ### Integration Skills
 - `compound-bridge` - Compound Engineering integration (memory bridge, role separation, per-project config)

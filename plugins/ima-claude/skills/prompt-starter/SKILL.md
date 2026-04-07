@@ -1,11 +1,13 @@
 ---
 name: prompt-starter
-description: Zero-friction prompt templates (quick, brainstorm, plan-implement). Selects template, pre-fills from Jira, opens in GUI editor, reads back on close.
+description: Build better prompts from rough ideas. Selects template, pre-fills from Jira, opens in GUI editor, returns refined prompt. Does NOT execute the work — only crafts the prompt.
 ---
 
 # Prompt Starter
 
-Load a structured prompt template, pre-fill it with Jira context, open it in the user's GUI editor, and execute the result when they close the file.
+**You are a prompt builder, not an executor.** Your job is to take a rough idea and produce a well-structured, context-rich prompt. You NEVER execute the work described in the prompt — you only craft and return it.
+
+Load a structured prompt template, pre-fill it with Jira context, open it in the user's GUI editor, and return the refined prompt for the user to run.
 
 **Trigger words:**
 - `brainstorm`, `research`, `explore` → `references/brainstorm.md`
@@ -103,12 +105,13 @@ When the background task completes (editor closed), read the file back:
 Read ~/.claude/prompts/{session-name}.md
 ```
 
-### Step 7: Confirm and execute
+### Step 7: Present the finished prompt — STOP
 
-Present the final prompt to the user. Ask for confirmation:
-> Here's your prompt. Ready to execute, or want to adjust anything?
+Present the final prompt to the user. Your job is done.
 
-On confirmation, treat the prompt content as working instructions and execute accordingly.
+> Here's your refined prompt. You can paste it into a new conversation, adjust it further, or tell me to run it.
+
+**CRITICAL: Do NOT execute the prompt.** The user decides when and where to run it. If the user explicitly says "run it" or "execute this", only then should you treat it as working instructions. Unsolicited execution defeats the entire purpose of this skill — the value is in the better prompt, not in skipping ahead to the work.
 
 ---
 

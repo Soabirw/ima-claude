@@ -1,19 +1,20 @@
 ---
 name: mcp-atlassian
 description: >-
-  Atlassian MCP for Jira and Confluence operations (Claude's bundled integration).
-  Token-efficient workflows for issue management, page creation, search, and user mentions.
+  Hybrid Atlassian integration — MCP-first for Jira/Confluence operations,
+  direct REST API (curl) for gaps the MCP doesn't cover.
   Use when: creating/editing Jira issues, searching with JQL/CQL, creating/updating Confluence
   pages, adding comments, transitioning issue status, looking up users, mentioning/tagging
-  users in Jira or Confluence content, or any Atlassian Cloud operation. Triggers on: Jira,
-  Confluence, JQL, CQL, sprint, epic, story, issue, wiki page, Atlassian, @mention in
-  Jira/Confluence context. Provides 50-80% token savings over naive API usage through
-  field filtering, pagination control, and format selection.
+  users in Jira or Confluence content, downloading/uploading attachments, sprint/board
+  management, bulk operations, or any Atlassian Cloud operation. Triggers on: Jira,
+  Confluence, JQL, CQL, sprint, epic, story, issue, wiki page, Atlassian, attachment,
+  board, backlog, @mention in Jira/Confluence context.
 ---
 
-# Atlassian MCP - Jira & Confluence Integration
+# Atlassian Integration — Hybrid MCP + Direct API
 
-Claude's bundled Atlassian MCP. All tools prefixed `mcp__claude_ai_Atlassian__`.
+MCP-first: use bundled tools (prefixed `mcp__claude_ai_Atlassian__`) for covered operations.
+Direct REST API (curl via Bash) for gaps. See [Decision Logic](#decision-logic) to pick the right approach.
 
 ## Bootstrap (Required First Call)
 
@@ -89,6 +90,51 @@ getAccessibleAtlassianResources  → returns cloudId (UUID or site URL)
 |------|---------|
 | `search` | Rovo natural language search across Jira + Confluence |
 | `fetch` | Get detail by ARI (Atlassian Resource Identifier). Read-only |
+
+## Direct API — Gap Operations
+
+When the MCP tools don't cover an operation, use `curl` via Bash with direct REST API calls.
+
+### When to Use Direct API
+
+The MCP handles issue CRUD, transitions, comments, Confluence pages, and search well.
+Use direct API **only** for operations not in the Tool Catalog above.
+
+### Auth Setup
+
+Set ENV variables for direct API access. Two auth methods supported:
+
+- **Gateway (Bearer)** — preferred for service accounts: `ATLASSIAN_CLOUD_ID` + `ATLASSIAN_BEARER_TOKEN`
+- **Direct (Basic)** — fallback for personal tokens: `ATLASSIAN_DOMAIN` + `ATLASSIAN_EMAIL` + `ATLASSIAN_API_TOKEN`
+
+Before first direct API call, verify auth works:
+```bash
+curl -s -H "Authorization: Bearer $ATLASSIAN_BEARER_TOKEN" \
+  "https://api.atlassian.com/ex/jira/$ATLASSIAN_CLOUD_ID/rest/api/3/myself" | jq '.displayName'
+```
+
+Full setup guide: [references/direct-api-auth.md](references/direct-api-auth.md)
+
+### Available Recipes
+
+| Operation | Reference | Priority |
+|-----------|-----------|----------|
+| Attachment download/upload (Jira + Confluence) | [direct-api-attachments.md](references/direct-api-attachments.md) | P0 |
+| Sprint/board management (Agile API) | [direct-api-sprints.md](references/direct-api-sprints.md) | P1 |
+| Bulk operations (batch edit, bulk transition) | [direct-api-bulk.md](references/direct-api-bulk.md) | P1 |
+| Comment edit/delete, watchers, components, versions, page deletion | [direct-api-misc.md](references/direct-api-misc.md) | P2 |
+
+### MCP vs Direct API Decision
+
+```
+Can an MCP tool handle it?  →  Use the MCP tool (always preferred)
+Attachment download/upload? →  Direct API (references/direct-api-attachments.md)
+Sprint or board operation?  →  Direct API (references/direct-api-sprints.md)
+Bulk operation (5+ issues)? →  Direct API (references/direct-api-bulk.md)
+Edit/delete comment?        →  Direct API (references/direct-api-misc.md)
+Watchers, components, versions? → Direct API (references/direct-api-misc.md)
+Delete Confluence page?     →  Direct API (references/direct-api-misc.md)
+```
 
 ## User Mentions (@tagging)
 
@@ -300,6 +346,28 @@ createConfluenceInlineComment(
 )
 ```
 
+### Download Attachments from an Issue (Hybrid)
+
+```
+1. getJiraIssue(issueIdOrKey: "PROJ-123", fields: ["attachment"])
+   → get attachment metadata (filename, content URL)
+2. curl -s -L -H "Authorization: Bearer $ATLASSIAN_BEARER_TOKEN" \
+     -o "mockup.png" "<content-url-from-step-1>"
+```
+
+Full recipes: [references/direct-api-attachments.md](references/direct-api-attachments.md)
+
+### Move Issues to a Sprint (Direct API)
+
+```
+1. curl: GET /rest/agile/1.0/board?projectKeyOrId=PROJ → boardId
+2. curl: GET /rest/agile/1.0/board/{boardId}/sprint?state=active → sprintId
+3. curl: POST /rest/agile/1.0/sprint/{sprintId}/issue
+   body: {"issues": ["PROJ-101", "PROJ-102"]}
+```
+
+Full recipes: [references/direct-api-sprints.md](references/direct-api-sprints.md)
+
 ## Decision Logic
 
 ```
@@ -328,12 +396,24 @@ Creating a Confluence page?
   → Need spaceId (NOT space key). Get from getConfluenceSpaces
 ```
 
-## What This MCP Does NOT Support
+## Limitations
 
-- Direct Atlassian storage format (XML) - uses Markdown or ADF only
+### Not Supported (no MCP or direct API recipe)
+
+- Direct Atlassian storage format (XML) — MCP uses Markdown or ADF only
 - Confluence page permissions management
-- Jira board/sprint management
-- Jira custom field creation
-- Attachment uploads
-- Bulk operations
+- Jira custom field creation (reading custom fields via `editJiraIssue` may work)
 - Confluence page templates
+- Jira automation rules / webhooks
+
+### Covered by Direct API (not in MCP, but recipes available)
+
+| Gap | Recipe |
+|-----|--------|
+| Attachment download/upload | [direct-api-attachments.md](references/direct-api-attachments.md) |
+| Sprint/board management | [direct-api-sprints.md](references/direct-api-sprints.md) |
+| Bulk operations | [direct-api-bulk.md](references/direct-api-bulk.md) |
+| Comment edit/delete | [direct-api-misc.md](references/direct-api-misc.md) |
+| Watchers | [direct-api-misc.md](references/direct-api-misc.md) |
+| Components & versions | [direct-api-misc.md](references/direct-api-misc.md) |
+| Confluence page deletion | [direct-api-misc.md](references/direct-api-misc.md) |

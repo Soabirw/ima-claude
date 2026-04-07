@@ -5,6 +5,18 @@ All notable changes to ima-claude will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.20.0] - 2026-04-06
+
+### Added
+
+- **design-to-code** — Two-phase workflow skill for converting design screenshots into working WordPress code. Phase A: analyze screenshots + Jira context → detailed implementation prompt (~280 lines). Phase B: execute prompt → PHP/SCSS via agent delegation. Includes progressive disclosure references for each phase, prompt template, and guardrails from real implementation failures. Foundation-first decomposition pattern with parallel story execution.
+
+## [2.19.0] - 2026-04-04
+
+### Added
+
+- **agentic-workflows** — Headless 5-phase content pipeline (gather → outline → draft → review → deliver). Phase skill files designed for `claude -p` headless execution. Includes editorial standards, outline format, and draft format reference files. First recipe: `webinar-summary` for webinar → blog post pipeline.
+
 ## [2.18.0] - 2026-04-01
 
 ### Added
