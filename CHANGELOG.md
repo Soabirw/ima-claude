@@ -34,8 +34,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.21.0] - 2026-04-11
 
-## [2.21.0] - 2026-04-11
-
 ### Changed
 
 - **All code-investigating agents** — Added `mcp-serena` as a default skill on explorer, implementer, reviewer, tester, and wp-developer agents. Serena-first code navigation is now automatic — no need to specify `with skills: mcp-serena` when delegating.
