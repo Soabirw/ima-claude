@@ -5,7 +5,7 @@ description: "Generate a quick visual scorecard for any project's README. Scores
 
 # Scorecard — Project Quality Assessment
 
-Generate a compact visual scorecard and insert it into the project README.
+Generate compact visual scorecard and insert into project README.
 
 ## Invocation
 
@@ -19,36 +19,26 @@ Arguments are domain skills to evaluate against. If none provided, auto-detect f
 
 ## Process
 
-Use `task-master` to organize all work. Delegate review categories to parallel agents.
-
 ### Step 1: Setup
 
-1. Invoke `task-master` skill for orchestration
-2. Invoke each domain skill passed as arguments (these define the code standards to score against)
-3. Identify the project's primary language(s) and framework(s)
-4. Locate the README (or note its absence)
+1. Invoke `task-master` for orchestration
+2. Load each domain skill passed as argument (defines code standards to score against)
+3. Identify project's primary language(s) and framework(s)
+4. Locate README (or note its absence)
 
-### Step 2: Parallel Review (delegate via task-master)
+### Step 2: Parallel Review
 
-Spawn parallel agents for each scoring category:
+Spawn parallel agents per category (`model: "sonnet"`). Each returns letter grade (A-F) + 2-3 justifying bullets. Be honest — inflated scores help nobody.
 
 | Category | What to Evaluate | Key Signals |
 |----------|-----------------|-------------|
-| **Code Standards** | FP adherence, naming, patterns, consistency | Pure functions, immutability, composition, no anti-patterns from loaded skills |
-| **Security** | Input validation, injection risks, auth patterns, secrets | OWASP top 10, hardcoded credentials, SQL/XSS/command injection, dependency vulnerabilities |
-| **Test Coverage** | Test existence, quality, edge cases | Test files present, assertions meaningful, critical paths covered |
-| **Documentation** | README quality, inline docs where needed, API docs | Setup instructions, usage examples, architecture notes |
-| **Maintainability** | Complexity, coupling, file organization, dead code | Small functions, clear boundaries, no circular deps, sensible structure |
-
-Each agent should:
-- Use `model: "sonnet"` (Opus orchestrates, Sonnet evaluates)
-- Scan relevant files for its category
-- Return a letter grade (A-F) with 2-3 bullet points justifying the score
-- Be honest — inflated scores help nobody
+| **Code Standards** | FP adherence, naming, patterns | Pure functions, immutability, composition, no anti-patterns |
+| **Security** | Input validation, injection, auth, secrets | OWASP top 10, hardcoded credentials, SQL/XSS/command injection |
+| **Test Coverage** | Test existence, quality, edge cases | Test files present, meaningful assertions, critical paths covered |
+| **Documentation** | README quality, inline docs, API docs | Setup instructions, usage examples, architecture notes |
+| **Maintainability** | Complexity, coupling, file organization | Small functions, clear boundaries, no circular deps |
 
 ### Step 3: Compile Scores
-
-Collect agent results into the scorecard table format:
 
 ```markdown
 ## Scorecard
@@ -67,30 +57,26 @@ Collect agent results into the scorecard table format:
 ### Grading Scale
 
 **Formatting rules (non-negotiable):**
-- Use **exact emoji characters**: `🟢` `🟡` `🔴` — never GitHub shortcodes (`:green_circle:`), never Unicode geometric shapes (`●`, `◐`, `○`). Shortcodes don't render outside GitHub; geometric shapes are grey in terminals.
-- Use **whole letter grades only**: A, B, C, D, F — no `+` or `-` modifiers. Nuance belongs in the Notes column, not the grade.
-- Format as `🟢 A` (emoji + space + letter) — no backticks around the grade in the README output.
+- Use **exact emoji characters**: `🟢` `🟡` `🔴` — never GitHub shortcodes (`:green_circle:`), never Unicode geometric shapes
+- **Whole letter grades only**: A, B, C, D, F — no `+` or `-`. Nuance goes in Notes column
+- Format as `🟢 A` (emoji + space + letter) — no backticks in README output
 
 | Grade | Indicator | Meaning |
 |-------|-----------|---------|
-| A | 🟢 A | Excellent — meets or exceeds standards |
+| A | 🟢 A | Excellent |
 | B | 🟢 B | Good — minor improvements possible |
-| C | 🟡 C | Adequate — notable gaps to address |
+| C | 🟡 C | Adequate — notable gaps |
 | D | 🔴 D | Poor — significant issues |
 | F | 🔴 F | Failing — critical problems |
 
 ### Step 4: Insert into README
 
-- Find the existing `## Scorecard` section and replace it, OR
-- Insert after the first heading (title) if no scorecard section exists
-- Keep the table compact — no lengthy explanations in the README
-- Present the full scorecard to the user before writing, in case they want adjustments
+- Replace existing `## Scorecard` section, or insert after first heading if absent
+- Present full scorecard to user before writing
+- Notes: 5-10 words max each
 
-## Guidelines
+## Rules
 
-- **Honest scores only.** A scorecard that says everything is an A is useless.
-- **Notes are terse.** Each note is 5-10 words max. The scorecard is a glance, not a report.
-- **Domain skills define "Code Standards."** The loaded FP/framework skills set the bar for what good looks like.
-- **Security is always evaluated** regardless of which domain skills are passed.
-- **Auto-detect when no skills given.** Scan for package.json (JS), composer.json (PHP), etc. and suggest appropriate skills.
-- **Date stamp every scorecard** so readers know how fresh it is.
+- Security always evaluated regardless of domain skills passed
+- Auto-detect skills when none given (scan package.json, composer.json, etc.)
+- Date-stamp every scorecard

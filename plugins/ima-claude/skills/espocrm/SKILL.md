@@ -11,39 +11,30 @@ description: >-
 
 # EspoCRM - Skill Family Router
 
-Routes EspoCRM work to the right child skill based on intent.
-
-**Target version**: v9.x (9.0+)
-**Architecture**: Entity-based REST API, PHP backend, Backbone.js frontend
+**Target**: v9.x (9.0+) | **Architecture**: Entity-based REST API, PHP backend, Backbone.js frontend
 
 ## Decision Tree
 
 ```
 What are you doing with EspoCRM?
 ├── REST API calls (external integration)?
-│   → espocrm-api (primary) + php-fp or js-fp-api
-│   → Auth, CRUD, filtering, webhooks, mass ops
+│   → espocrm-api + php-fp or js-fp-api
 │
 ├── PHP extension development (hooks, services, custom entities)?
 │   → espocrm-extensions (Phase 2) + php-fp
-│   → ORM, hooks, services, DI, custom controllers, modules
 │
 ├── Frontend/UI customization (views, fields, layouts)?
 │   → espocrm-ui (Phase 3)
-│   → Backbone views, Espo.Ajax, Handlebars templates
 │
 └── Not sure / mixed?
-    → Start with espocrm-api for data access
-    → Route to extension/UI skill once scope is clear
+    → Start with espocrm-api, route to extension/UI once scope is clear
 ```
 
 ## Shared Context
 
-### Entity-Based Model
-EspoCRM organizes data as **Entity Types** (Account, Contact, Lead, Opportunity, custom types). Every entity type gets automatic REST endpoints. Custom entities created via Entity Manager are immediately API-accessible.
+Every Entity Type (Account, Contact, Lead, Opportunity, custom) gets automatic REST endpoints. Custom entities via Entity Manager are immediately API-accessible.
 
-### Salesforce Mental Model
-For developers familiar with Salesforce, this mapping accelerates onboarding:
+### Salesforce Mapping
 
 | Salesforce | EspoCRM |
 |---|---|
@@ -56,19 +47,19 @@ For developers familiar with Salesforce, this mapping accelerates onboarding:
 | LWC / Visualforce | Custom Views (JS, extending base views) |
 | Platform Events / CDC | Webhooks ({Entity}.create, .update, .delete) |
 | Bulk API 2.0 | No equivalent (loop individual calls or use Import) |
-| Governor Limits | None (self-hosted, you manage resources) |
+| Governor Limits | None (self-hosted) |
 | AppExchange | EspoCRM Extensions marketplace |
 
 ### Key Differences from Salesforce
-- **No SOQL** — queries use structured JSON WHERE filters (verbose but explicit)
-- **No Bulk API** — mass operations exist (massUpdate, massDelete) but no batch create
-- **No Composite API** — one request per operation
-- **No governor limits** — self-hosted, manage at server/proxy level
-- **Simpler auth** — API Key in one header vs. multi-step OAuth
-- **Metadata is JSON files** — no deployment steps, changes take effect on cache clear
 
-### Documentation Lookup
-Use Context7 for live EspoCRM docs: `resolve-library-id("espocrm")` resolves to `/espocrm/documentation`.
+- No SOQL — structured JSON WHERE filters
+- No Bulk API — mass ops (massUpdate, massDelete) but no batch create
+- No Composite API — one request per operation
+- No governor limits
+- Simpler auth — API Key in one header
+- Metadata is JSON files — changes take effect on cache clear
+
+**Docs**: Use Context7 `resolve-library-id("espocrm")` → `/espocrm/documentation`
 
 ## Child Skill Status
 

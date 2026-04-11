@@ -102,7 +102,7 @@ See [platforms/shared/types.ts](platforms/shared/types.ts) for the interface con
 - **IMA Workflow**: Brainstorm → Plan → Implement → Test → Review → Document (habit-driven, not tool-enforced)
 - **Session Management**: MCP-based save/resume via Serena (no file path confusion)
 - **Meta-skills**: Create and analyze skills
-- **Personalities**: Fun themed response styles (40K, Templars)
+- **Personalities**: Token-efficient modes (efficient, terse) + themed fun (40K, Templars)
 
 ## Prerequisites
 
@@ -388,16 +388,33 @@ See [hooks/README.md](hooks/README.md) for details.
 
 See [docs/PROMPT_COACH.md](docs/PROMPT_COACH.md) for setup, configuration, and usage.
 
-## Personalities (Optional Fun)
+## Personalities
+
+### Functional (Token-Efficient)
+
+Communication styles that reduce output tokens. Based on research showing brevity constraints improve model accuracy ([arxiv.org/abs/2604.00025](https://arxiv.org/abs/2604.00025)).
+
+| Personality | Style | Target Savings |
+|---|---|---|
+| **enable-efficient** | Precise, no filler, full sentences (Star Trek Data-like) | ~30-40% |
+| **enable-terse** | Blunt fragments, bullets over prose, compressed | ~50-65% |
+
+Both include an **auto-clarity rule** — automatically revert to normal English for security warnings, irreversible operations, or user confusion.
+
+### Flavor (Themed Fun)
 
 Themed response styles that change Claude's tone without affecting expertise:
 
-- **enable-40k**: Warhammer 40K themed code purification
-- **enable-templars**: Templar crusader themed responses
+| Personality | Style |
+|---|---|
+| **enable-40k** | Warhammer 40K themed code purification |
+| **enable-templars** | Templar crusader themed responses |
 
 Usage:
 ```
+"Enable terse mode"
 "Enable 40k mode and review this code"
+"Return to normal mode"
 ```
 
 ## Projects (Manual Setup)
@@ -420,6 +437,22 @@ claude
 ```
 
 See [projects/README.md](projects/README.md) for setup guide and instructions for building your own projects.
+
+## Token Efficiency
+
+All skills, agents, and instruction files are written for LLM consumption, not human reading. A systematic optimization pass reduced the skill corpus by **35% (~33,700 tokens)** without losing any functionality.
+
+| Category | Before | After | Saved |
+|----------|--------|-------|-------|
+| Skills (62) | 70,401 words | 44,990 words | 36% |
+| Agents (6) | 1,726 words | 1,451 words | 16% |
+| Hooks (3) | 1,109 words | 891 words | 20% |
+
+The writing convention (`.claude/rules/llm-optimized-writing.md`) ensures all future content follows the same rules: imperatives over explanations, tables over prose, drop filler/hedging/pleasantries, one concept per line.
+
+Based on research showing brevity constraints actually improve LLM accuracy: [Brevity Constraints Reverse Performance Hierarchies in Language Models](https://arxiv.org/abs/2604.00025) (March 2026).
+
+**Output token savings** are available via the `enable-efficient` and `enable-terse` personalities (see [Personalities](#personalities)).
 
 ## Architecture
 

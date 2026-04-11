@@ -14,12 +14,12 @@ description: >-
 # Atlassian Integration — Hybrid MCP + Direct API
 
 MCP-first: use bundled tools (prefixed `mcp__claude_ai_Atlassian__`) for covered operations.
-Direct REST API (curl via Bash) for gaps. See [Decision Logic](#decision-logic) to pick the right approach.
+Direct REST API (curl via Bash) for gaps. See [Decision Logic](#decision-logic).
 
 ## Bootstrap (Required First Call)
 
-Every session MUST start with `getAccessibleAtlassianResources` to obtain the `cloudId`.
-Nearly all other tools require it. Cache this value mentally for the session.
+Every session MUST start with `getAccessibleAtlassianResources` to obtain `cloudId`.
+Nearly all other tools require it. Cache for the session.
 
 ```
 getAccessibleAtlassianResources  → returns cloudId (UUID or site URL)
@@ -35,26 +35,26 @@ getAccessibleAtlassianResources  → returns cloudId (UUID or site URL)
 | `atlassianUserInfo` | Current authenticated user | *(none)* |
 | `lookupJiraAccountId` | Find user accountId by name/email | `cloudId`, `searchString` |
 
-### Search (3 tools - choose wisely)
+### Search (choose wisely)
 
 | Tool | Query Language | Scope | When to Use |
 |------|---------------|-------|-------------|
-| `search` | Natural language | Jira + Confluence | Default search. Always use unless JQL/CQL specifically needed |
-| `searchJiraIssuesUsingJql` | JQL | Jira only | Structured queries: status, assignee, project, date ranges |
-| `searchConfluenceUsingCql` | CQL | Confluence only | Structured queries: space, label, type, creator |
+| `search` | Natural language | Jira + Confluence | Default. Use unless JQL/CQL specifically needed |
+| `searchJiraIssuesUsingJql` | JQL | Jira only | Structured: status, assignee, project, date ranges |
+| `searchConfluenceUsingCql` | CQL | Confluence only | Structured: space, label, type, creator |
 
-### Jira - Read
+### Jira — Read
 
 | Tool | Purpose | Token-Saving Tip |
 |------|---------|------------------|
-| `getJiraIssue` | Get issue details | Use `fields` param to request ONLY needed fields |
+| `getJiraIssue` | Get issue details | Use `fields` param — request ONLY needed fields |
 | `getVisibleJiraProjects` | List projects | Use `searchString` to filter |
-| `getJiraProjectIssueTypesMetadata` | Issue types for a project | Call before `createJiraIssue` |
-| `getJiraIssueTypeMetaWithFields` | Field metadata for issue type | Call before `editJiraIssue` to know valid fields |
+| `getJiraProjectIssueTypesMetadata` | Issue types for project | Call before `createJiraIssue` |
+| `getJiraIssueTypeMetaWithFields` | Field metadata for issue type | Call before `editJiraIssue` |
 | `getTransitionsForJiraIssue` | Available status transitions | MUST call before `transitionJiraIssue` |
-| `getJiraIssueRemoteIssueLinks` | Remote links on an issue | |
+| `getJiraIssueRemoteIssueLinks` | Remote links on issue | |
 
-### Jira - Write
+### Jira — Write
 
 | Tool | Content Format | Purpose |
 |------|---------------|---------|
@@ -64,18 +64,18 @@ getAccessibleAtlassianResources  → returns cloudId (UUID or site URL)
 | `transitionJiraIssue` | Transition object | Change status. Get transition IDs first |
 | `addWorklogToJiraIssue` | Duration string | Log time: `"2h"`, `"30m"`, `"4d"` |
 
-### Confluence - Read
+### Confluence — Read
 
 | Tool | Purpose | Token-Saving Tip |
 |------|---------|------------------|
-| `getConfluencePage` | Get page by ID | Use `contentFormat: "markdown"` for smaller responses |
+| `getConfluencePage` | Get page by ID | Use `contentFormat: "markdown"` — much smaller than ADF |
 | `getConfluenceSpaces` | List spaces | Filter with `keys`, `type`, `labels` |
-| `getPagesInConfluenceSpace` | Pages in a space | Filter with `title`, `status`, `sort` |
+| `getPagesInConfluenceSpace` | Pages in space | Filter with `title`, `status`, `sort` |
 | `getConfluencePageDescendants` | Child pages | Use `depth` to limit |
 | `getConfluencePageFooterComments` | Footer comments | |
 | `getConfluencePageInlineComments` | Inline comments | Filter by `resolutionStatus` |
 
-### Confluence - Write
+### Confluence — Write
 
 | Tool | Content Format | Purpose |
 |------|---------------|---------|
@@ -93,29 +93,23 @@ getAccessibleAtlassianResources  → returns cloudId (UUID or site URL)
 
 ## Direct API — Gap Operations
 
-When the MCP tools don't cover an operation, use `curl` via Bash with direct REST API calls.
-
-### When to Use Direct API
-
-The MCP handles issue CRUD, transitions, comments, Confluence pages, and search well.
-Use direct API **only** for operations not in the Tool Catalog above.
+Use `curl` via Bash only for operations not in the Tool Catalog above.
 
 ### Auth Setup
 
-Set ENV variables for direct API access. Two auth methods supported:
-
+Two methods:
 - **Gateway (Bearer)** — preferred for service accounts: `ATLASSIAN_CLOUD_ID` + `ATLASSIAN_BEARER_TOKEN`
 - **Direct (Basic)** — fallback for personal tokens: `ATLASSIAN_DOMAIN` + `ATLASSIAN_EMAIL` + `ATLASSIAN_API_TOKEN`
 
-Before first direct API call, verify auth works:
+Verify auth before first direct call:
 ```bash
 curl -s -H "Authorization: Bearer $ATLASSIAN_BEARER_TOKEN" \
   "https://api.atlassian.com/ex/jira/$ATLASSIAN_CLOUD_ID/rest/api/3/myself" | jq '.displayName'
 ```
 
-Full setup guide: [references/direct-api-auth.md](references/direct-api-auth.md)
+Full setup: [references/direct-api-auth.md](references/direct-api-auth.md)
 
-### Available Recipes
+### Gap Recipes
 
 | Operation | Reference | Priority |
 |-----------|-----------|----------|
@@ -124,23 +118,36 @@ Full setup guide: [references/direct-api-auth.md](references/direct-api-auth.md)
 | Bulk operations (batch edit, bulk transition) | [direct-api-bulk.md](references/direct-api-bulk.md) | P1 |
 | Comment edit/delete, watchers, components, versions, page deletion | [direct-api-misc.md](references/direct-api-misc.md) | P2 |
 
-### MCP vs Direct API Decision
+## Decision Logic
 
 ```
-Can an MCP tool handle it?  →  Use the MCP tool (always preferred)
-Attachment download/upload? →  Direct API (references/direct-api-attachments.md)
-Sprint or board operation?  →  Direct API (references/direct-api-sprints.md)
-Bulk operation (5+ issues)? →  Direct API (references/direct-api-bulk.md)
-Edit/delete comment?        →  Direct API (references/direct-api-misc.md)
-Watchers, components, versions? → Direct API (references/direct-api-misc.md)
-Delete Confluence page?     →  Direct API (references/direct-api-misc.md)
+Can MCP tool handle it?             → MCP tool (always preferred)
+Attachment download/upload?         → direct-api-attachments.md
+Sprint or board operation?          → direct-api-sprints.md
+Bulk operation (5+ issues)?         → direct-api-bulk.md
+Edit/delete comment?                → direct-api-misc.md
+Watchers, components, versions?     → direct-api-misc.md
+Delete Confluence page?             → direct-api-misc.md
+
+Search across Jira AND Confluence?  → search (Rovo, natural language)
+Structured Jira query?              → searchJiraIssuesUsingJql (JQL)
+Structured Confluence query?        → searchConfluenceUsingCql (CQL)
+
+@mention in content?                → lookupJiraAccountId first, then:
+  Confluence page                   → ADF with mention node
+  Jira description                  → editJiraIssue with ADF fields
+  Jira/Confluence comment           → plain text name (Markdown limitation)
+
+Issue field metadata before editing? → getJiraIssueTypeMetaWithFields
+Change issue status?                 → getTransitionsForJiraIssue THEN transitionJiraIssue
+Creating Confluence page?            → need spaceId (NOT space key) from getConfluenceSpaces
 ```
 
 ## User Mentions (@tagging)
 
-**This is the most error-prone area.** Follow these patterns exactly.
+**Most error-prone area.** Follow exactly.
 
-### Step 1: Always Look Up the accountId First
+### Step 1: Look Up accountId
 
 ```
 lookupJiraAccountId
@@ -148,14 +155,13 @@ lookupJiraAccountId
   searchString: "john@example.com"   # or "John Doe" or partial "john"
 ```
 
-Returns users with `accountId` values. This works for BOTH Jira and Confluence
-(same Atlassian org user pool).
+Works for both Jira and Confluence (same org user pool).
 
-### Step 2: Choose the Right Mention Strategy
+### Step 2: Choose Mention Strategy
 
-#### Confluence Pages (RELIABLE - use ADF)
+#### Confluence Pages — use ADF (reliable)
 
-Use `createConfluencePage` or `updateConfluencePage` with `contentFormat: "adf"`:
+`createConfluencePage` / `updateConfluencePage` with `contentFormat: "adf"`:
 
 ```json
 {
@@ -167,10 +173,9 @@ Use `createConfluencePage` or `updateConfluencePage` with `contentFormat: "adf"`
 }
 ```
 
-**Critical:** The `body` value MUST be a JSON **string** (result of JSON.stringify),
-NOT a raw object. This is the #1 cause of failures.
+**Critical:** `body` MUST be a JSON **string** (result of JSON.stringify), NOT a raw object. This is the #1 cause of failures.
 
-ADF mention node structure:
+ADF mention node:
 ```json
 {
   "type": "mention",
@@ -181,19 +186,15 @@ ADF mention node structure:
 }
 ```
 
-The mention node is **inline** - it MUST be inside a `paragraph.content` array,
-never at the top-level `doc.content`.
+Mention node is **inline** — MUST be inside `paragraph.content`, never at top-level `doc.content`.
 
-#### Confluence Comments (Markdown only - no native mentions)
+#### Confluence Comments — no native mentions
 
-`createConfluenceFooterComment` and `createConfluenceInlineComment` accept only
-Markdown. Real @mentions are not supported in Markdown mode. Workaround:
-reference the user by name in plain text, or create/update the parent **page**
-with ADF to include the mention there instead.
+`createConfluenceFooterComment` / `createConfluenceInlineComment` accept Markdown only. Real @mentions unsupported. Workaround: reference by name in plain text, or add the mention to the parent page via ADF instead.
 
-#### Jira Issue Description (RELIABLE - use editJiraIssue with ADF)
+#### Jira Description — use ADF (reliable)
 
-For mentions in descriptions, use `editJiraIssue` with the ADF description field:
+Use `editJiraIssue` with ADF description:
 
 ```json
 {
@@ -224,69 +225,49 @@ For mentions in descriptions, use `editJiraIssue` with the ADF description field
 }
 ```
 
-**Note:** `createJiraIssue` takes Markdown for description. To create an issue
-WITH mentions, create the issue first (Markdown description), then immediately
-`editJiraIssue` to replace the description with ADF containing mentions.
+To create issue WITH mentions: create with `createJiraIssue` (Markdown), then immediately `editJiraIssue` to replace description with ADF.
 
-#### Jira Comments (Markdown - limited mention support)
+#### Jira Comments — limited
 
-`addCommentToJiraIssue` accepts Markdown via `commentBody`. Real ADF mentions
-are not directly available. Workaround: reference users by display name in the
-Markdown text. If real @mentions in comments are critical, use a two-step
-approach: add the comment, then use the Jira UI or a direct API call for the
-mention.
+`addCommentToJiraIssue` accepts Markdown only. Reference users by display name. For real @mentions in comments, use direct API after adding the comment.
 
-### Mention Pitfalls Checklist
+### Mention Pitfalls
 
 | Pitfall | Symptom | Fix |
 |---------|---------|-----|
 | Using `username` instead of `accountId` | Shows "unlicensed user" | Always use `lookupJiraAccountId` first |
-| ADF body as object instead of string | "invalid request body" error | `JSON.stringify()` the ADF for Confluence |
+| ADF body as object instead of string | "invalid request body" | `JSON.stringify()` the ADF for Confluence |
 | Mention at doc level, not in paragraph | Silent failure / no mention | Wrap in `{"type": "paragraph", "content": [...]}` |
-| Missing `<ac:link>` wrapper (storage format) | Not rendered as mention | N/A for this MCP (uses ADF/Markdown, not storage format) |
-| Wiki notation `[~accountId:xxx]` in Markdown | Raw text, not a mention | Use ADF via `editJiraIssue` instead |
-| Using `@username` in Markdown | Plain text, not a real mention | Use ADF path for real mentions |
+| Wiki notation `[~accountId:xxx]` in Markdown | Raw text, not mention | Use ADF via `editJiraIssue` instead |
+| `@username` in Markdown | Plain text, not real mention | Use ADF path for real mentions |
 
 ## Token-Saving Strategies
 
-### 1. Filter Jira Fields
-
+**Filter Jira fields** — never fetch all:
 ```
 getJiraIssue
-  fields: ["summary", "status", "assignee", "priority"]  # NOT the full issue
+  fields: ["summary", "status", "assignee", "priority"]
 ```
 
-Never fetch all fields. Common useful subsets:
-- **Quick status check:** `["summary", "status", "priority"]`
-- **Assignment info:** `["summary", "assignee", "reporter"]`
-- **Planning:** `["summary", "status", "priority", "issuetype", "parent"]`
+Common subsets:
+- Quick status: `["summary", "status", "priority"]`
+- Assignment: `["summary", "assignee", "reporter"]`
+- Planning: `["summary", "status", "priority", "issuetype", "parent"]`
 
-### 2. Use Markdown for Confluence Reads
-
+**Markdown for Confluence reads** — ADF is 5-10x larger:
 ```
 getConfluencePage
-  contentFormat: "markdown"  # Much smaller than ADF
+  contentFormat: "markdown"
 ```
 
-ADF responses can be 5-10x larger than Markdown equivalents.
-
-### 3. Limit Search Results
-
+**Limit search results:**
 ```
 searchJiraIssuesUsingJql
-  maxResults: 10       # Default is 50, often excessive
-  fields: ["summary", "status"]  # Minimal fields
+  maxResults: 10
+  fields: ["summary", "status"]
 ```
 
-### 4. Use Rovo Search for Discovery, JQL/CQL for Precision
-
-- "Find issues about authentication" → `search` (natural language, cross-product)
-- "All open bugs in PROJ assigned to me" → `searchJiraIssuesUsingJql` with JQL
-- "Pages labeled 'architecture' in DEV space" → `searchConfluenceUsingCql` with CQL
-
-### 5. Avoid Redundant Discovery Calls
-
-Cache these within a session (they rarely change):
+**Cache within session** (rarely change):
 - `cloudId` from `getAccessibleAtlassianResources`
 - Project keys from `getVisibleJiraProjects`
 - Space IDs from `getConfluenceSpaces`
@@ -294,46 +275,29 @@ Cache these within a session (they rarely change):
 
 ## Common Workflows
 
-### Create and Assign a Jira Issue
-
+### Create and Assign Jira Issue
 ```
 1. getAccessibleAtlassianResources → cloudId
 2. lookupJiraAccountId(searchString: "jane@co.com") → accountId
-3. createJiraIssue(
-     projectKey: "PROJ",
-     issueTypeName: "Task",
-     summary: "Review Q4 report",
-     description: "Review and approve the Q4 financial report",
-     assignee_account_id: "<accountId>"
-   )
+3. createJiraIssue(projectKey: "PROJ", issueTypeName: "Task",
+     summary: "Review Q4 report", assignee_account_id: "<accountId>")
 ```
 
-### Transition a Jira Issue
-
+### Transition Jira Issue
 ```
-1. getTransitionsForJiraIssue(issueIdOrKey: "PROJ-123") → find transition ID
-2. transitionJiraIssue(
-     issueIdOrKey: "PROJ-123",
-     transition: { "id": "<transitionId>" }
-   )
+1. getTransitionsForJiraIssue(issueIdOrKey: "PROJ-123") → transition ID
+2. transitionJiraIssue(issueIdOrKey: "PROJ-123", transition: {"id": "<transitionId>"})
 ```
 
-### Create a Confluence Page with User Mention
-
+### Create Confluence Page with Mention
 ```
 1. getAccessibleAtlassianResources → cloudId
 2. lookupJiraAccountId(searchString: "john") → accountId
 3. getConfluenceSpaces(keys: ["DEV"]) → spaceId
-4. createConfluencePage(
-     spaceId: "<spaceId>",
-     title: "Meeting Notes",
-     contentFormat: "adf",
-     body: "<ADF JSON string with mention node>"
-   )
+4. createConfluencePage(spaceId, title, contentFormat: "adf", body: "<ADF JSON string>")
 ```
 
 ### Inline Comment on Specific Text
-
 ```
 createConfluenceInlineComment(
   pageId: "<pageId>",
@@ -346,67 +310,33 @@ createConfluenceInlineComment(
 )
 ```
 
-### Download Attachments from an Issue (Hybrid)
-
+### Download Attachments (Hybrid)
 ```
-1. getJiraIssue(issueIdOrKey: "PROJ-123", fields: ["attachment"])
-   → get attachment metadata (filename, content URL)
+1. getJiraIssue(issueIdOrKey: "PROJ-123", fields: ["attachment"]) → content URL
 2. curl -s -L -H "Authorization: Bearer $ATLASSIAN_BEARER_TOKEN" \
-     -o "mockup.png" "<content-url-from-step-1>"
+     -o "mockup.png" "<content-url>"
 ```
-
 Full recipes: [references/direct-api-attachments.md](references/direct-api-attachments.md)
 
-### Move Issues to a Sprint (Direct API)
-
+### Move Issues to Sprint (Direct API)
 ```
 1. curl: GET /rest/agile/1.0/board?projectKeyOrId=PROJ → boardId
 2. curl: GET /rest/agile/1.0/board/{boardId}/sprint?state=active → sprintId
-3. curl: POST /rest/agile/1.0/sprint/{sprintId}/issue
-   body: {"issues": ["PROJ-101", "PROJ-102"]}
+3. curl: POST /rest/agile/1.0/sprint/{sprintId}/issue  body: {"issues": ["PROJ-101"]}
 ```
-
 Full recipes: [references/direct-api-sprints.md](references/direct-api-sprints.md)
-
-## Decision Logic
-
-```
-Need to search across Jira AND Confluence?
-  → search (Rovo, natural language)
-
-Need structured Jira query (by project/status/assignee/date)?
-  → searchJiraIssuesUsingJql (JQL)
-
-Need structured Confluence query (by space/label/type)?
-  → searchConfluenceUsingCql (CQL)
-
-Need to @mention a user in content?
-  → lookupJiraAccountId first, then:
-    - Confluence page → ADF with mention node
-    - Jira description → editJiraIssue with ADF fields
-    - Jira/Confluence comment → Plain text name (Markdown limitation)
-
-Need issue field metadata before editing?
-  → getJiraIssueTypeMetaWithFields
-
-Need to change issue status?
-  → getTransitionsForJiraIssue THEN transitionJiraIssue
-
-Creating a Confluence page?
-  → Need spaceId (NOT space key). Get from getConfluenceSpaces
-```
 
 ## Limitations
 
-### Not Supported (no MCP or direct API recipe)
+### Not Supported
 
-- Direct Atlassian storage format (XML) — MCP uses Markdown or ADF only
+- Atlassian storage format (XML) — MCP uses Markdown or ADF only
 - Confluence page permissions management
-- Jira custom field creation (reading custom fields via `editJiraIssue` may work)
+- Jira custom field creation
 - Confluence page templates
 - Jira automation rules / webhooks
 
-### Covered by Direct API (not in MCP, but recipes available)
+### Covered by Direct API
 
 | Gap | Recipe |
 |-----|--------|

@@ -1,6 +1,6 @@
 # IMA Skills Digest for Prompt Coaching
 
-## Skill Triggers (suggest when prompt matches)
+## Skill Triggers
 
 | Prompt Contains | Suggest |
 |----------------|---------|
@@ -19,30 +19,27 @@
 | Library docs, React API, how to use [library] | `mcp-context7` |
 | Find references, rename symbol, refactor, what calls X | `mcp-serena` |
 | Think through, step by step, debug, complex problem | `mcp-sequential` |
-| Remember this, save preference, architectural decision | `mcp-memory` |
+| Remember this, save preference, architectural decision | `mcp-vestige` |
 | IMA Forms, form validation, repeater field | `ima-forms-expert` |
 | Analyze skill, audit skill, skill review | `skill-analyzer` |
 | Create skill, build skill, skill template | `skill-creator` |
 
-## Core Anti-Patterns (flag these)
+## Anti-Patterns (flag these)
 
-**FP Utilities**: Creating custom pipe/compose/curry/partial - use native patterns
-**Over-Engineering**: "make it generic", "add wrapper", "create utility" without evidence
-**Premature Abstraction**: Extracting helpers before 3+ genuine reuses
-**Security Gaps**: Raw SQL, missing nonces (WP), unsanitized input, hardcoded secrets
-**Wrong Tool**: grep instead of rg, WebSearch instead of mcp-tavily, reading files instead of mcp-serena
+- **FP Utilities**: custom pipe/compose/curry/partial → use native patterns
+- **Over-Engineering**: "make generic", "add wrapper", "create utility" without evidence
+- **Premature Abstraction**: helpers before 3+ genuine reuses
+- **Security Gaps**: raw SQL, missing nonces (WP), unsanitized input, hardcoded secrets
+- **Wrong Tool**: grep→rg, WebSearch→mcp-tavily, Read files→mcp-serena
 
-## Team Philosophy
+## Philosophy
 
-- Simple > Complex
-- Evidence > Assumptions
-- Specific > Generic (generalize with evidence)
-- Add complexity only when proven needed
+Simple > Complex. Evidence > Assumptions. Specific > Generic. Add complexity only when proven needed.
 
-## When Skills Already Apply (stay silent)
+## Stay Silent When
 
-- Prompt mentions a skill by name
-- Prompt has clear, specific requirements
+- Prompt names a skill
+- Clear, specific requirements
 - Bug fix with reproduction steps
-- Exploring/reading code without modification
+- Exploring/reading without modification
 - Simple follow-ups

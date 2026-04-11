@@ -12,65 +12,12 @@ description: >-
 
 # EspoCRM REST API (v9.x)
 
-Patterns for the EspoCRM REST API. External integrations, data pipelines, and automation.
-
-**Base URL**: `https://{your-site}/api/v1/`
-**Content-Type**: `application/json` (all requests)
-**Parent skill**: `espocrm` (router — Salesforce mapping, shared context)
-**Companion skills**: `php-fp` (PHP integrations), `js-fp-api` (Node integrations)
-**Live docs**: Context7 `/espocrm/documentation`
+**Base URL**: `https://{your-site}/api/v1/`  **Content-Type**: `application/json`
+**Parent skill**: `espocrm` | **Companion skills**: `php-fp`, `js-fp-api` | **Live docs**: Context7 `/espocrm/documentation`
 
 ---
 
 ## Authentication
-
-Three methods, in order of recommendation:
-
-### 1. API Key (Simple, Recommended for Dev/Internal)
-
-Create an API User at Administration > API Users. Authentication method: "API Key". Assign a Role for scope.
-
-```
-X-Api-Key: {key_from_api_user_detail_view}
-```
-
-One header. Done. Use when transport is already secured (HTTPS, internal network).
-
-### 2. HMAC (Production, Most Secure)
-
-Create an API User with "HMAC" auth. Both API Key and Secret Key are generated. Secret never leaves your server.
-
-```
-X-Hmac-Authorization: base64(apiKey + ':' + hmacSha256(METHOD + ' /' + uri, secretKey))
-```
-
-Where `METHOD` is uppercase (GET, POST, PUT, DELETE) and `uri` is the path after `/api/v1/`.
-
-```php
-// PHP
-$string = $method . ' /' . $uri;
-$hash = hash_hmac('sha256', $string, $secretKey);
-$header = base64_encode($apiKey . ':' . $hash);
-// X-Hmac-Authorization: $header
-```
-
-```javascript
-// Node.js
-import { createHmac } from 'node:crypto';
-const hash = createHmac('sha256', secretKey).update(`${method} /${uri}`).digest('hex');
-const header = Buffer.from(`${apiKey}:${hash}`).toString('base64');
-// X-Hmac-Authorization: header
-```
-
-### 3. Basic / Token Auth (Session-Based Only)
-
-```
-Espo-Authorization: base64(username + ':' + token)
-```
-
-Obtain token via `GET App/user` with initial credentials. Only for session flows (SPA, frontend). Never for server-to-server.
-
-### Auth Decision
 
 | Context | Method |
 |---|---|
@@ -79,44 +26,41 @@ Obtain token via `GET App/user` with initial credentials. Only for session flows
 | Frontend SPA, session flows | Token auth |
 | Never | Basic auth with plaintext password |
 
+### API Key
+Create API User at Administration > API Users, auth method "API Key", assign Role.
+```
+X-Api-Key: {key_from_api_user_detail_view}
+```
+
+### HMAC (Production)
+Create API User with "HMAC" auth. Both API Key and Secret Key generated.
+```
+X-Hmac-Authorization: base64(apiKey + ':' + hmacSha256(METHOD + ' /' + uri, secretKey))
+```
+`METHOD` = uppercase verb; `uri` = path after `/api/v1/`.
+
+```php
+$hash = hash_hmac('sha256', $method . ' /' . $uri, $secretKey);
+$header = base64_encode($apiKey . ':' . $hash);
+```
+
+```javascript
+import { createHmac } from 'node:crypto';
+const hash = createHmac('sha256', secretKey).update(`${method} /${uri}`).digest('hex');
+const header = Buffer.from(`${apiKey}:${hash}`).toString('base64');
+```
+
+### Token Auth (Session only)
+```
+Espo-Authorization: base64(username + ':' + token)
+```
+Obtain token via `GET App/user`. Never use for server-to-server.
+
 ---
 
 ## CRUD Operations
 
-All entity types share the same endpoint pattern. Replace `{Entity}` with the type name (Account, Contact, Lead, CMyCustomEntity, etc.).
-
-### List Records
-```
-GET {Entity}
-```
-Returns `{"list": [...], "total": N}`. Total is `-1` if more records exist (pagination needed), `-2` if count disabled.
-
-### Read One Record
-```
-GET {Entity}/{id}
-```
-
-### Create
-```
-POST {Entity}
-{"name": "Acme Corp", "assignedUserId": "someUserId"}
-```
-Returns the created record with generated `id`. Use `X-Skip-Duplicate-Check: true` to bypass duplicate detection.
-
-### Update (Partial)
-```
-PUT {Entity}/{id}
-{"status": "Closed Won"}
-```
-Only send changed fields. Returns full updated record.
-
-### Delete
-```
-DELETE {Entity}/{id}
-```
-Returns `true`.
-
-### Endpoint Summary
+Replace `{Entity}` with type name (Account, Contact, Lead, custom, etc.).
 
 | Operation | Method | Path |
 |---|---|---|
@@ -137,70 +81,60 @@ Returns `true`.
 | Attachment down | GET | `Attachment/file/{id}` |
 | OpenAPI spec | GET | `OpenApi` |
 
+- List returns `{"list": [...], "total": N}`. Total `-1` = more exist (paginate), `-2` = count disabled.
+- Create: add `X-Skip-Duplicate-Check: true` to bypass dupe detection.
+- Update: send only changed fields. Returns full record.
+- Delete: returns `true`.
+
 ---
 
 ## Filtering & Search
 
-Parameters go as query params or as a single JSON-encoded `searchParams` param.
-
-### Core Parameters
+Params as query params or JSON-encoded `searchParams` param.
 
 | Param | Type | Purpose |
 |---|---|---|
 | `select` | string | Comma-separated fields: `id,name,status` |
-| `maxSize` | int | Records per page (max 200, default varies) |
+| `maxSize` | int | Records per page (max 200) |
 | `offset` | int | Pagination offset |
 | `orderBy` | string | Sort field |
 | `order` | string | `asc` or `desc` |
-| `where` | array | Filter conditions (see below) |
+| `where` | array | Filter conditions |
 | `primaryFilter` | string | Named server-side filter (`open`, `onlyMy`, etc.) |
-| `boolFilterList` | array | Boolean toggles: `["onlyMy", "followed"]` |
+| `boolFilterList` | array | `["onlyMy", "followed"]` |
 
 v9.0+ aliases (WAF-safe): `attributeSelect` for `select`, `whereGroup` for `where`.
 
 ### WHERE Operators
 
-Each filter is `{"type": "...", "attribute": "...", "value": "..."}`. Multiple items in the `where` array are implicitly ANDed. Use `{"type": "or", "value": [...]}` for OR logic.
+Each filter: `{"type": "...", "attribute": "...", "value": "..."}`. Multiple items ANDed. Use `{"type": "or", "value": [...]}` for OR.
 
-**Operator categories**: equality (`equals`, `notEquals`), comparison (`greaterThan`, `lessThan`, `greaterThanOrEquals`, `lessThanOrEquals`), null (`isNull`, `isNotNull`), boolean (`isTrue`, `isFalse`), string (`contains`, `notContains`, `startsWith`, `endsWith`, `like`, `notLike`), set (`in`, `notIn`), relationship (`linkedWith`, `notLinkedWith`, `isLinked`, `isNotLinked`), date helpers (`today`, `past`, `future`, `lastSevenDays`, `currentMonth`, `lastMonth`, `currentYear`, `between`, `lastXDays`, `nextXDays`), logical (`or`, `and`).
+- **Equality**: `equals`, `notEquals`
+- **Comparison**: `greaterThan`, `lessThan`, `greaterThanOrEquals`, `lessThanOrEquals`
+- **Null**: `isNull`, `isNotNull`
+- **Boolean**: `isTrue`, `isFalse`
+- **String**: `contains`, `notContains`, `startsWith`, `endsWith`, `like`, `notLike`
+- **Set**: `in`, `notIn`
+- **Relationship**: `linkedWith`, `notLinkedWith`, `isLinked`, `isNotLinked`
+- **Date**: `today`, `past`, `future`, `lastSevenDays`, `currentMonth`, `lastMonth`, `currentYear`, `between`, `lastXDays`, `nextXDays`
+- **Logical**: `or`, `and`
 
-Full operator reference with examples: `references/where-operators.md`
+Full reference with examples: `references/where-operators.md`
 
 ---
 
 ## Relationships
 
-Link names are visible at Administration > Entity Manager > {Entity} > Relationships (4th column).
+Link names visible at Administration > Entity Manager > {Entity} > Relationships (4th column).
 
-### List Related Records
 ```
 GET Account/{id}/contacts?select=id,name,emailAddress&maxSize=50
+POST Account/{id}/contacts        {"id": "contactId"}
+POST Account/{id}/contacts        {"ids": ["id1", "id2"]}
+POST Account/{id}/contacts        {"massRelate": true, "where": [...]}
+DELETE Account/{id}/contacts      {"id": "contactId"}
+DELETE Account/{id}/contacts      {"ids": ["id1", "id2"]}
 ```
-Same search params as list endpoint.
-
-### Link Records
-```
-POST Account/{id}/contacts
-{"id": "contactId"}
-```
-
-Multiple at once:
-```json
-{"ids": ["id1", "id2", "id3"]}
-```
-
-Mass relate by filter:
-```json
-{"massRelate": true, "where": [{"type": "equals", "attribute": "status", "value": "Active"}]}
-```
-
-### Unlink Records
-```
-DELETE Account/{id}/contacts
-{"id": "contactId"}
-```
-
-Multiple: `{"ids": ["id1", "id2"]}`.
 
 ---
 
@@ -211,78 +145,45 @@ Multiple: `{"ids": ["id1", "id2"]}`.
 POST Webhook
 {"event": "Contact.create", "url": "https://your-server.com/hook"}
 ```
-Returns `{"id": "webhookId", "secretKey": "generatedKey"}`. Save both for signature verification.
+Returns `{"id": "webhookId", "secretKey": "generatedKey"}`. Save both.
 
 ### Event Types
-- `{Entity}.create` — record created (all attributes in payload)
-- `{Entity}.update` — record updated (only changed attributes)
-- `{Entity}.delete` — record removed (ID only)
+- `{Entity}.create` — all attributes in payload
+- `{Entity}.update` — only changed attributes
+- `{Entity}.delete` — ID only
 - `{Entity}.fieldUpdate.{field}` — specific field changed
 
-### Payload Format
-Always an array (even for single events):
-```json
-[{"id": "abc123", "name": "Updated Name", "status": "Active"}]
-```
+Payload is always an array: `[{"id": "abc123", ...}]`
 
 ### Signature Verification
-The `Signature` header contains: `base64(webhookId + ':' + hmacSha256(rawBody, secretKey))`.
-
+`Signature` header = `base64(webhookId + ':' + hmacSha256(rawBody, secretKey))`.
 ```php
 $expected = base64_encode($webhookId . ':' . hash_hmac('sha256', $rawBody, $secretKey));
 $valid = hash_equals($expected, $_SERVER['HTTP_SIGNATURE']);
 ```
 
 ### Lifecycle
-- Processed by scheduled job "Process Webhook Queue" (default: every 5 min)
-- Failed deliveries are retried automatically
-- Persistent failures deactivate the webhook
-- Config: `webhookAllowedAddressList` in `data/config.php` for internal URLs
-
-### Delete
-```
-DELETE Webhook/{id}
-```
+Processed by "Process Webhook Queue" scheduled job (default 5 min). Failed deliveries retried; persistent failures deactivate webhook. Add internal URLs to `webhookAllowedAddressList` in `data/config.php`.
 
 ---
 
 ## Mass Operations
 
-### Mass Update
+### Mass Update / Delete
 ```
 POST Lead/action/massUpdate
-```
-
-By IDs:
-```json
-{"ids": ["id1", "id2"], "data": {"assignedUserId": "userId", "status": "In Process"}}
-```
-
-By filter:
-```json
-{"where": [{"type": "equals", "attribute": "status", "value": "New"}], "data": {"status": "Assigned"}}
-```
-
-### Mass Delete
-```
 POST Lead/action/massDelete
 ```
-Same payload patterns — `ids` array or `where` filter.
+By IDs: `{"ids": ["id1", "id2"], "data": {"status": "Assigned"}}`
+By filter: `{"where": [...], "data": {"status": "Assigned"}}`
 
-### No Bulk Create
-There is no native batch create endpoint. For bulk ingestion:
-1. Loop individual POST requests with reasonable pacing
-2. Use the built-in Import feature (Administration > Import) for CSV
-3. Write a custom API action for batch processing if volume demands it
+No native batch create — loop individual POSTs, use Administration > Import for CSV, or write custom API action for high volume.
 
-### Important
-API Before-Save Scripts (Formula) are **not executed** during mass update operations.
+**Note**: API Before-Save Scripts (Formula) are NOT executed during mass update.
 
 ---
 
 ## Error Handling
-
-### Status Codes
 
 | Code | Meaning | Action |
 |---|---|---|
@@ -290,60 +191,47 @@ API Before-Save Scripts (Formula) are **not executed** during mass update operat
 | 400 | Bad Request | Check required fields, validation |
 | 401 | Unauthorized | Check auth headers/credentials |
 | 403 | Forbidden | Check API User role/ACL |
-| 404 | Not Found | Record doesn't exist or no read access |
-| 409 | Conflict | Duplicate detected or record locked |
+| 404 | Not Found | Record missing or no read access |
+| 409 | Conflict | Duplicate or record locked |
 | 500 | Server Error | Check `data/log` on server |
 
-### Error Details
-Error reason is in the `X-Status-Reason` response header (not always in the body).
-
-### Duplicate Detection (409)
-```json
-{"reason": "Duplicate", "data": {"idList": ["existingId1"]}}
-```
-Bypass with `X-Skip-Duplicate-Check: true` header.
+Error reason in `X-Status-Reason` response header. Duplicate 409 body: `{"reason": "Duplicate", "data": {"idList": ["existingId1"]}}`. Bypass with `X-Skip-Duplicate-Check: true`.
 
 ---
 
-## Performance Best Practices
+## Performance
 
-1. **Select only needed fields** — `?select=id,name,status` avoids loading all attributes
-2. **Skip total count** — `X-No-Total: true` header skips the COUNT query on list requests
-3. **Paginate** — use `offset` + `maxSize` (keep maxSize at 50-100)
-4. **Use primary filters** — server-optimized named filters are faster than complex WHERE
-5. **Minimal API User roles** — dedicated API users with only required scopes
-6. **No native rate limiter** — implement at reverse proxy level (nginx, Apache) if needed
-7. **OpenAPI spec** — `GET OpenApi` returns full schema for your instance including custom entities (v9.3+, admin only)
+1. `?select=id,name,status` — load only needed fields
+2. `X-No-Total: true` header — skip COUNT query on lists
+3. Paginate with `offset` + `maxSize` (keep at 50–100)
+4. Use `primaryFilter` — server-optimized, faster than complex WHERE
+5. Dedicated API users with minimal scopes only
+6. No native rate limiter — implement at reverse proxy (nginx/Apache)
+7. `GET OpenApi` — full schema for your instance incl. custom entities (v9.3+, admin)
 
 ---
 
 ## Client Libraries
 
-### PHP (Official — Preferred)
-
-`composer require espocrm/php-espo-api-client`
-
-Class: `Espo\ApiClient\Client`. Constructor takes base URL. Auth via `setApiKey()` or `setApiKey()` + `setSecretKey()` for HMAC. All requests through `$client->request(METHOD, path, params, payload)`.
+### PHP (Official)
+```
+composer require espocrm/php-espo-api-client
+```
+`Espo\ApiClient\Client` — constructor takes base URL. Auth via `setApiKey()` / `setApiKey()` + `setSecretKey()` for HMAC. All requests: `$client->request(METHOD, path, params, payload)`.
 
 ### Node.js
-
-No official npm package. Build a thin client around `fetch` with:
-- Base URL + `/api/v1/` prefix
-- `X-Api-Key` header (or compute HMAC per-request)
-- `Content-Type: application/json`
-- Search params as JSON-encoded `searchParams` query param
-- Error extraction from `X-Status-Reason` header on non-2xx responses
+No official npm package. Build thin client around `fetch`:
+- Base URL + `/api/v1/` prefix, `X-Api-Key` or per-request HMAC, `Content-Type: application/json`
+- JSON-encode `searchParams` as query param; extract errors from `X-Status-Reason` header
 
 ---
 
-## Field Types & API Representation
+## Field Types
 
 | Field Type | JSON Type | Example |
 |---|---|---|
-| varchar | string | `"name": "Test"` |
-| text | string | `"description": "Long text"` |
-| int | number | `"quantity": 5` |
-| float | number | `"rate": 4.5` |
+| varchar, text | string | `"name": "Test"` |
+| int, float | number | `"quantity": 5`, `"rate": 4.5` |
 | boolean | boolean | `"isActive": true` |
 | enum | string | `"status": "New"` |
 | multiEnum | string[] | `"tags": ["A", "B"]` |
@@ -352,9 +240,8 @@ No official npm package. Build a thin client around `fetch` with:
 | currency | number + string | `"amount": 1000, "amountCurrency": "USD"` |
 | link | string (ID) | `"accountId": "someId"` |
 | linkMultiple | string[] + object | `"teamsIds": ["id1"], "teamsNames": {"id1": "Sales"}` |
-| email | string | `"emailAddress": "test@example.com"` |
-| phone | string | `"phoneNumber": "+1234567890"` |
+| email, phone | string | `"emailAddress": "test@example.com"` |
 | address | multiple fields | `"billingAddressStreet": "123 Main", "billingAddressCity": "NYC"` |
 | file | string (ID) | `"fileId": "attachmentId"` |
 
-All datetime values are UTC. Date format: `YYYY-MM-DD`. Datetime: `YYYY-MM-DD HH:mm:ss`.
+All datetimes UTC. Date: `YYYY-MM-DD`. Datetime: `YYYY-MM-DD HH:mm:ss`.

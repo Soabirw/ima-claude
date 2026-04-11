@@ -16,95 +16,64 @@ description: >-
 
 **"jQuery IS native in WordPress. Reach for it first."**
 
-## Why This Skill Exists
+Agents default to verbose vanilla JS even when jQuery is loaded. In WordPress, jQuery is always available (core dependency, 0 additional bytes). `$('.foo').on('click', ...)` beats `document.querySelectorAll('.foo').forEach(el => el.addEventListener('click', ...))`.
 
-Agents default to verbose vanilla JS even when jQuery is loaded and simpler. In WordPress, jQuery is **always available** (core dependency, 0 additional bytes). Writing `document.querySelectorAll('.foo').forEach(el => el.addEventListener('click', ...))` when `$('.foo').on('click', ...)` exists is unnecessary complexity.
-
-**This skill ensures jQuery is the default for DOM work in WordPress/Bootstrap environments.**
-
-## When to Use jQuery (Decision Tree)
+## Decision Tree
 
 ```
-Writing browser JS in a WordPress environment?
-├── YES: Does it touch the DOM (select, manipulate, events, AJAX)?
-│   ├── YES → Use jQuery (default choice)
-│   │   Exception: Pure business logic (calculations, validation, formatting)
-│   │   → Keep as vanilla JS in pure/ directory (testable without DOM)
-│   └── NO (pure data transforms, utilities) → Vanilla JS
-├── Is jQuery already loaded on the page?
+Writing browser JS in WordPress?
+├── YES: Touches DOM (select, manipulate, events, AJAX)?
+│   ├── YES → Use jQuery (default)
+│   │   Exception: Pure business logic → vanilla JS in pure/ directory
+│   └── NO (pure data transforms) → Vanilla JS
+├── jQuery already loaded?
 │   ├── YES → Use jQuery for DOM work
-│   └── NO → Vanilla JS (don't add jQuery just for convenience)
-└── NO WordPress context?
-    └── See js-fp for vanilla patterns
+│   └── NO → Vanilla JS
+└── No WordPress context → See js-fp
 ```
 
-**Strong signals to use jQuery:**
-- WordPress theme or plugin JavaScript
-- Bootstrap component initialization or interaction
-- Gravity Forms, ACF, or any jQuery-based plugin integration
-- AJAX calls to `admin-ajax.php` or WP REST API
-- Event delegation on dynamic content
-- DOM traversal and manipulation
+**Use jQuery:** WordPress theme/plugin JS, Bootstrap component interaction, Gravity Forms/ACF integration, `admin-ajax.php` AJAX, event delegation on dynamic content.
 
-**Signals to use vanilla JS instead:**
-- Pure business logic (no DOM)
-- Isolated ES module with no WP plugin interaction
-- Node.js / server-side code
-- React/Vue component internals
+**Use vanilla JS:** Pure business logic, isolated ES module, Node.js, React/Vue internals.
 
 ## jQuery + FP: They're Compatible
-
-jQuery's API is inherently functional in several ways:
 
 ### Chaining IS Composition
 
 ```javascript
-// jQuery chaining = function composition without pipe()
 $('.user-card')
     .filter('.active')
     .find('.username')
     .addClass('highlighted')
     .text(function(i, text) { return text.toUpperCase(); });
-
-// Each method takes input, returns output (the jQuery object)
-// This IS composition — no custom pipe() needed
+// No custom pipe() needed
 ```
 
-### $.map and $.grep ARE Declarative
+### $.map / $.grep Are Declarative
 
 ```javascript
-// jQuery's functional utilities
-var activeNames = $.map($('.user'), function(el) {
-    return $(el).data('active') ? $(el).text() : null;
-});
+// Use for jQuery collections
+var admins = $.grep(users, function(user) { return user.role === 'admin'; });
 
-// $.grep = filter
-var admins = $.grep(users, function(user) {
-    return user.role === 'admin';
-});
-
-// Prefer native Array methods for plain data:
+// Use native Array methods for plain arrays
 var activeNames = users.filter(u => u.active).map(u => u.name);
-// Use $.map/$.grep when working with jQuery collections
 ```
 
-### Pure Logic Extraction (The FP Core)
+### Pure Logic Extraction
 
 ```javascript
 (function($) {
     'use strict';
 
-    // PURE: Business logic — testable, no DOM
+    // PURE: Testable, no DOM
     function calculateShipping(weight, zone) {
         var rates = { domestic: 0.5, international: 1.2 };
         return Math.max(0, weight) * (rates[zone] || rates.domestic);
     }
 
-    function formatPrice(amount) {
-        return '$' + Math.max(0, amount).toFixed(2);
-    }
+    function formatPrice(amount) { return '$' + Math.max(0, amount).toFixed(2); }
 
-    // IMPURE: DOM wrapper — uses jQuery, calls pure functions
+    // IMPURE: DOM wrapper
     function ShippingCalculator($container) {
         this.$container = $container;
         this.$container.on('change', 'select, input', this.update.bind(this));
@@ -113,18 +82,13 @@ var activeNames = users.filter(u => u.active).map(u => u.name);
     ShippingCalculator.prototype.update = function() {
         var weight = parseFloat(this.$container.find('[name="weight"]').val()) || 0;
         var zone = this.$container.find('[name="zone"]').val();
-        var cost = calculateShipping(weight, zone);
-        this.$container.find('.shipping-cost').text(formatPrice(cost));
+        this.$container.find('.shipping-cost').text(formatPrice(calculateShipping(weight, zone)));
     };
 
-    // Init
-    $('.shipping-calculator').each(function() {
-        new ShippingCalculator($(this));
-    });
+    $('.shipping-calculator').each(function() { new ShippingCalculator($(this)); });
 
-    // Export pure functions for testing
     if (typeof module !== 'undefined' && module.exports) {
-        module.exports = { calculateShipping: calculateShipping, formatPrice: formatPrice };
+        module.exports = { calculateShipping, formatPrice };
     }
 })(jQuery);
 ```
@@ -134,182 +98,115 @@ var activeNames = users.filter(u => u.active).map(u => u.name);
 ### IIFE Wrapper (WordPress Standard)
 
 ```javascript
-// Always use this pattern in WordPress — avoids $ conflicts
 (function($) {
     'use strict';
-
     // All jQuery code here, $ is safe
-
 })(jQuery);
 
-// Shorthand document ready
-jQuery(function($) {
-    // DOM ready, $ is safe
-});
+// Document ready shorthand
+jQuery(function($) { /* DOM ready */ });
 ```
 
 ### Selectors and Traversal
 
 ```javascript
-// Selecting
 $('.class')                    // By class
 $('#id')                       // By ID
 $('[data-action="delete"]')    // By attribute
-$('.parent .child')            // Descendant
-$('.item:first')               // Pseudo-selector
 $('input[type="text"]')        // Attribute selector
 
-// Traversal (chained)
 $('.item')
-    .closest('.container')     // Up: nearest ancestor matching selector
-    .find('.target')           // Down: descendants matching selector
-    .siblings('.active')       // Sideways: siblings matching selector
+    .closest('.container')     // Up: nearest ancestor
+    .find('.target')           // Down: all descendants
+    .siblings('.active')       // Sideways: siblings
     .parent()                  // Up: direct parent
-    .children('.row')          // Down: direct children only
-    .first()                   // Filter: first in set
-    .filter('.visible')        // Filter: matching selector
-    .not('.disabled')          // Filter: exclude matching
-    .eq(2)                     // Filter: by index
+    .children('.row')          // Down: direct children
+    .first() / .last()
+    .filter('.visible')
+    .not('.disabled')
+    .eq(2)                     // By index
 
-// Context-scoped selection (efficient)
 var $form = $('#my-form');
-$form.find('.field')           // Only searches within $form
-$form.find('input').val()      // Get value within scope
+$form.find('.field')           // Scoped selection (efficient)
 ```
 
 ### DOM Manipulation
 
 ```javascript
 // Classes
-$el.addClass('active')
-$el.removeClass('loading')
-$el.toggleClass('visible')
+$el.addClass('active') / $el.removeClass('loading') / $el.toggleClass('visible')
 $el.hasClass('hidden')          // Returns boolean
 
 // Content
-$el.text('Plain text')          // Set text (escapes HTML)
-$el.html('<strong>HTML</strong>') // Set HTML
-$el.val()                       // Get form value
-$el.val('new value')            // Set form value
+$el.text('Plain text')          // Safe — escapes HTML
+$el.html('<strong>HTML</strong>')
+$el.val() / $el.val('new value')
 
-// Attributes and Data
-$el.attr('href')                // Get attribute
-$el.attr('href', '/new-url')    // Set attribute
-$el.prop('checked', true)       // Set property (for checkboxes, disabled, etc.)
-$el.data('user-id')             // Get data-* attribute (cached, parsed)
+// Attributes / Data
+$el.attr('href') / $el.attr('href', '/new')
+$el.prop('checked', true)       // For checkboxes, disabled, etc.
+$el.data('user-id')             // Parsed, cached data-* value
 $el.removeAttr('disabled')
 
-// DOM insertion
-$container.append($newElement)   // Add inside, at end
-$container.prepend($newElement)  // Add inside, at start
-$el.after($sibling)             // Add outside, after
-$el.before($sibling)            // Add outside, before
-$el.wrap('<div class="wrapper"></div>')
-$el.remove()                    // Remove from DOM
-$el.empty()                     // Remove children
-$el.clone()                     // Deep clone
+// Insertion
+$container.append($el) / $container.prepend($el)
+$el.after($sibling) / $el.before($sibling)
+$el.remove() / $el.empty() / $el.clone()
 
-// CSS and Display
-$el.css('color', 'red')         // Set single property
-$el.css({ color: 'red', fontSize: '14px' }) // Set multiple
-$el.show()                      // display: previous value
-$el.hide()                      // display: none
-$el.toggle()                    // Toggle visibility
+// CSS / Visibility
+$el.css('color', 'red') / $el.css({ color: 'red', fontSize: '14px' })
+$el.show() / $el.hide() / $el.toggle()
 ```
 
 ### Events
 
 ```javascript
-// Binding
-$el.on('click', handler)                        // Direct bind
-$container.on('click', '.child', handler)        // Delegated (dynamic content!)
-$el.off('click', handler)                        // Unbind specific
-$el.off('click')                                 // Unbind all click
+$el.on('click', handler)                        // Direct
+$container.on('click', '.child', handler)        // Delegated (dynamic content)
+$el.off('click', handler) / $el.off('click')
 
-// Common events
-$el.on('click', fn)
-$el.on('change', fn)           // Form elements
-$el.on('submit', fn)           // Forms
-$el.on('keyup', fn)
-$el.on('input', fn)            // Real-time input tracking
-$el.on('focus blur', fn)       // Multiple events
+// Namespaced (clean removal)
+$el.on('click.myPlugin', handler)
+$el.off('.myPlugin')
 
-// Event object
-$el.on('click', function(e) {
-    e.preventDefault();         // Stop default behavior
-    e.stopPropagation();        // Stop bubbling
-    var $this = $(this);        // Cache $(this)
-    var data = $this.data('id');
-});
-
-// Namespaced events (clean removal)
-$el.on('click.myPlugin', handler);
-$el.off('.myPlugin');           // Remove all myPlugin events
-
-// One-time events
-$el.one('click', handler);     // Fires once, then auto-unbinds
+$el.one('click', handler)       // Fires once, auto-unbinds
 ```
 
-### AJAX
+### AJAX (WordPress)
 
 ```javascript
-// Standard WordPress AJAX
 $.ajax({
-    url: myVars.ajaxUrl,        // wp_localize_script value
+    url: myVars.ajaxUrl,
     type: 'POST',
-    data: {
-        action: 'my_action',    // WordPress action hook
-        nonce: myVars.nonce,    // Security token
-        id: itemId
-    },
-    success: function(response) {
-        if (response.success) {
-            // response.data contains the payload
-        }
-    },
-    error: function(xhr, status, error) {
-        console.error('AJAX failed:', error);
-    }
+    data: { action: 'my_action', nonce: myVars.nonce, id: itemId },
+    success: function(response) { if (response.success) { /* response.data */ } },
+    error: function(xhr, status, error) { console.error('AJAX failed:', error); }
 });
 
-// Shorthand GET
-$.get(myVars.restUrl + '/items', function(data) {
-    renderItems(data);
-});
+// Shorthand
+$.get(myVars.restUrl + '/items', renderItems);
+$.post(myVars.ajaxUrl, { action: 'save_item', data: formData }, handleResponse);
 
-// Shorthand POST
-$.post(myVars.ajaxUrl, { action: 'save_item', data: formData }, function(response) {
-    handleResponse(response);
-});
-
-// Promise-style (chainable)
+// Promise-style
 $.ajax({ url: '/api/data', dataType: 'json' })
-    .done(function(data) { /* success */ })
-    .fail(function(xhr) { /* error */ })
-    .always(function() { /* cleanup */ });
+    .done(function(data) { })
+    .fail(function(xhr) { })
+    .always(function() { });
 ```
 
 ### Utilities
 
 ```javascript
-// Iteration
 $.each(array, function(index, value) { });
 $.each(object, function(key, value) { });
-$('.items').each(function(index) {
-    var $this = $(this);        // Cache for performance
-});
+$('.items').each(function(index) { var $this = $(this); });
 
-// Type checking — prefer native equivalents
-Array.isArray(val)              // Not $.isArray (deprecated)
-typeof val === 'string'         // Not $.type (deprecated)
-val != null                     // Not $.isNullOrUndefined
+// Prefer native — these jQuery equivalents are deprecated:
+Array.isArray(val)              // not $.isArray
+typeof val === 'string'         // not $.type
 
-// Object merge (deep copy)
-var merged = $.extend(true, {}, defaults, options);
-
-// Serialize form data
-var data = $form.serialize();           // URL-encoded string
-var dataArray = $form.serializeArray(); // Array of {name, value}
+var merged = $.extend(true, {}, defaults, options);  // Deep merge
+var data = $form.serialize();   // URL-encoded string
 ```
 
 ## Common Patterns
@@ -317,37 +214,26 @@ var dataArray = $form.serializeArray(); // Array of {name, value}
 ### Cache jQuery Selections
 
 ```javascript
-// BAD: Re-querying DOM repeatedly
-$('.my-element').addClass('active');
-$('.my-element').find('.child').show();
-$('.my-element').data('loaded', true);
-
-// GOOD: Cache the selection
+// GOOD: Cache, then chain
 var $el = $('.my-element');
-$el.addClass('active');
-$el.find('.child').show();
-$el.data('loaded', true);
+$el.addClass('active').find('.child').show();
 
-// BEST: Chain when possible
+// BEST: Chain with .end()
 $('.my-element')
     .addClass('active')
     .find('.child').show()
-    .end()                      // Go back to .my-element
+    .end()
     .data('loaded', true);
 ```
 
 ### Delegated Events for Dynamic Content
 
 ```javascript
-// BAD: Won't work for dynamically added elements
+// BAD: Won't fire on dynamically added elements
 $('.delete-btn').on('click', handleDelete);
 
-// GOOD: Delegated — works for current AND future elements
+// GOOD: Fires for current AND future elements
 $('.item-list').on('click', '.delete-btn', handleDelete);
-
-// Use delegation when:
-// - Elements are added/removed dynamically (AJAX, repeaters)
-// - Many identical handlers (performance — one handler vs hundreds)
 ```
 
 ### UI State Management
@@ -356,58 +242,46 @@ $('.item-list').on('click', '.delete-btn', handleDelete);
 (function($) {
     'use strict';
 
-    // Pure: Compute next state
-    function getToggleState($el) {
-        return !$el.hasClass('is-open');
-    }
+    function getToggleState($el) { return !$el.hasClass('is-open'); }
 
-    // Impure: Apply state to DOM
     function applyToggleState($trigger, $target, isOpen) {
         $trigger.attr('aria-expanded', isOpen);
         $target.toggleClass('is-open', isOpen);
-        if (isOpen) {
-            $target.slideDown(200);
-        } else {
-            $target.slideUp(200);
-        }
+        isOpen ? $target.slideDown(200) : $target.slideUp(200);
     }
 
-    // Wire up
     $('.accordion').on('click', '.accordion-trigger', function(e) {
         e.preventDefault();
         var $trigger = $(this);
-        var $target = $($trigger.data('target'));
-        applyToggleState($trigger, $target, getToggleState($target));
+        applyToggleState($trigger, $($trigger.data('target')), getToggleState($($trigger.data('target'))));
     });
 })(jQuery);
 ```
 
 ## Anti-Patterns
 
-| Anti-Pattern | Problem | Fix |
-|---|---|---|
-| Vanilla JS when jQuery is loaded | Verbose, inconsistent | Use jQuery for DOM work |
-| `document.querySelectorAll` + `forEach` in WP | Ignores available jQuery | `$('.selector').each()` |
-| Mixing jQuery and vanilla in same file | Inconsistent, confusing | Pick one per file |
-| Not caching `$(this)` in loops | Re-wraps DOM element each time | `var $this = $(this)` |
-| `$('.selector')` inside loops | Re-queries DOM each iteration | Cache outside loop |
-| Direct binding on dynamic elements | Handlers lost on DOM change | Use delegated `.on()` |
-| Creating custom `pipe()` / `compose()` | Over-engineering | jQuery chaining IS composition |
-
-## Integration
-
-- **js-fp**: Core FP principles (purity, immutability, testing). jQuery DOM code follows these — pure logic extracted, side effects in DOM wrapper.
-- **js-fp-wordpress**: WordPress-specific integration (GF hooks, ACF hooks, admin JS). References this skill for jQuery patterns.
-- **ima-bootstrap**: Bootstrap 5 JS components. jQuery available but BS5 doesn't require it — use for custom enhancements.
-- **Context7**: For deep jQuery API lookups use library ID `/jquery/jquery`.
+| Anti-Pattern | Fix |
+|---|---|
+| Vanilla `querySelectorAll` + `forEach` in WP | `$('.selector').each()` |
+| Mixing jQuery and vanilla in same file | Pick one per file |
+| Not caching `$(this)` in loops | `var $this = $(this)` |
+| `$('.selector')` inside loops | Cache outside loop |
+| Direct binding on dynamic elements | Use delegated `.on()` |
+| Custom `pipe()` / `compose()` | jQuery chaining IS composition |
 
 ## WordPress Coding Standards
 
-Per WordPress JS coding standards:
-- Use tabs for indentation
-- IIFE wrapper with `jQuery` passed as `$`
-- `'use strict'` inside the IIFE
-- Spaces inside parentheses: `if ( condition )` not `if (condition)`
-- `var` declarations at top of scope (unless using build tools with ES6+)
+- Tabs for indentation
+- IIFE with `jQuery` passed as `$`
+- `'use strict'` inside IIFE
+- Spaces inside parens: `if ( condition )`
+- `var` at top of scope (unless using ES6+ build tools)
 
-See [WordPress JavaScript Coding Standards](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/javascript/) for full reference.
+## Integration
+
+| Skill | Relationship |
+|-------|-------------|
+| `js-fp` | Core FP principles — pure logic extracted, side effects in DOM wrapper |
+| `js-fp-wordpress` | WordPress-specific (GF hooks, ACF, admin JS) — references this skill |
+| `ima-bootstrap` | Bootstrap 5 JS — jQuery available for custom enhancements |
+| Context7 | Deep jQuery API lookups: library ID `/jquery/jquery` |

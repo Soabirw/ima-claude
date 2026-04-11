@@ -5,16 +5,16 @@ description: Use Tavily MCP for web research and current information beyond know
 
 # Tavily MCP - Web Research & Current Information
 
-Use Tavily for current information and research instead of multiple WebFetch calls.
+Use Tavily for current information and multi-source research instead of multiple WebFetch calls.
 
-## MCP Tools
+## Tools
 
 | Tool | Purpose |
 |------|---------|
 | `mcp__tavily__search` | Web search with depth control |
 | `mcp__tavily__extract` | Extract content from specific URLs |
 
-## Basic Search
+## Search
 
 ```
 mcp__tavily__search
@@ -23,96 +23,73 @@ mcp__tavily__search
   max_results: 10
 ```
 
-**Key parameters**:
-- `query` (required): Search query string
-- `search_depth`: "basic" | "advanced" (default: "basic")
-- `max_results`: Number of results (default: 5)
-- `topic`: "general" | "news" (default: "general")
-- `days`: Limit results to last N days (optional)
-- `include_domains`: Array of domains to include (optional)
-- `exclude_domains`: Array of domains to exclude (optional)
+| Parameter | Values | Default |
+|-----------|--------|---------|
+| `query` | string | required |
+| `search_depth` | `basic` / `advanced` | `basic` |
+| `max_results` | number | 5 |
+| `topic` | `general` / `news` | `general` |
+| `days` | N (last N days) | — |
+| `include_domains` | array | — |
+| `exclude_domains` | array | — |
 
-## Search Depth Selection
+| Depth | Use Case |
+|-------|----------|
+| `basic` | Factual lookups, quick answers |
+| `advanced` | Comparisons, multiple perspectives |
 
-| Depth | Use Case | Response Time |
-|-------|----------|---------------|
-| `basic` | Standard factual lookups, quick answers | Fast |
-| `advanced` | Comprehensive research, comparisons, multiple perspectives | Slower, more thorough |
+## Query Patterns
 
-## Query Optimization
+| Need | Pattern |
+|------|---------|
+| Latest features | `"[library] [version] new features [year]"` |
+| Breaking changes | `"[library] [version] migration breaking changes"` |
+| Comparisons | `"[tool A] vs [tool B] comparison [year]"` |
+| Best practices | `"[topic] best practices [year]"` |
 
-**Effective queries**:
-- Include year: "React 19 features 2026"
-- Be specific: "Vite 6 breaking changes" not "Vite updates"
-- Add context: "TypeScript 5.5 new utility types"
+Always include year. Be specific: `"Vite 6 breaking changes"` not `"Vite updates"`.
 
-**Query patterns**:
-| Need | Query Pattern |
-|------|---------------|
-| Latest version features | "[library] [version] new features [year]" |
-| Breaking changes | "[library] [version] migration breaking changes" |
-| Comparisons | "[tool A] vs [tool B] comparison [year]" |
-| Best practices | "[topic] best practices [year]" |
-
-## Extract Content
+## Extract
 
 ```
 mcp__tavily__extract
   urls: ["https://example.com/article"]
 ```
 
-Extracts clean content from specific URLs.
-
 ## Decision Logic
 
 ```
-IF question requires post-January-2025 information:
-    → Use Tavily
-ELSE IF research needs multiple web sources:
-    → Use Tavily
-ELSE IF single known URL needed:
-    → Use native WebFetch
-ELSE IF question within Claude's knowledge:
-    → Use native Claude
-ELSE IF asking about library API (not "what's new"):
-    → Use Context7 instead
+Post-Jan-2025 info needed → Tavily
+Multi-source research needed → Tavily
+Single known URL → WebFetch
+Library API docs (not "what's new") → Context7
+Question within Claude's knowledge → native Claude
 ```
-
-## When NOT to Use
-
-- Library API documentation (use Context7)
-- Code symbol searches (use Serena)
-- Questions Claude already knows (pre-cutoff knowledge)
-- Single URL content extraction where native WebFetch works
 
 ## Examples
 
-| User Request | Action |
-|--------------|--------|
-| "What's new in Vue 4?" | tavily search(query: "Vue 4 new features 2026", search_depth: "basic") |
-| "Compare Bun vs Node 2026" | tavily search(query: "Bun vs Node.js comparison 2026", search_depth: "advanced") |
-| "Latest Vite features" | tavily search(query: "Vite latest features 2026") |
-| "How does useState work?" | Native Claude (known knowledge) |
-| "Quasar QDialog API" | Use Context7 (library docs) |
+| Request | Action |
+|---------|--------|
+| "What's new in Vue 4?" | `search(query: "Vue 4 new features 2026", search_depth: "basic")` |
+| "Compare Bun vs Node 2026" | `search(query: "Bun vs Node.js comparison 2026", search_depth: "advanced")` |
+| "How does useState work?" | Native Claude |
+| "Quasar QDialog API" | Context7 |
 
 ## Source Attribution
 
-After using Tavily, always include sources section:
+Always include after Tavily results:
 
 ```
 Sources:
-- [Official Vue Blog](https://blog.vuejs.org/...)
-- [Release Notes](https://github.com/vuejs/...)
+- [Source Name](https://url)
 ```
 
 ## Setup
 
-Requires Tavily API key. Install with:
 ```bash
+# Automated
 bun run scripts/setup-mcp.ts
-```
 
-Or manually:
-```bash
+# Manual
 claude mcp add --scope user -e TAVILY_API_KEY=your-key -- tavily npx -y tavily-mcp@latest
 ```

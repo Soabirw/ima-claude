@@ -9,18 +9,13 @@ description: >-
   NOT for Gitea — use mcp-gitea for internal repos.
 ---
 
-# GitHub CLI (`gh`) — GitHub Operations
-
-The `gh` CLI is the primary tool for all GitHub operations. It's authenticated, reliable, and covers the full GitHub API surface.
+# GitHub CLI (`gh`)
 
 ## Prerequisites
 
 ```bash
-# Verify authentication
-gh auth status
+gh auth status  # must pass before any operations
 ```
-
-The CLI must be authenticated (`gh auth login`) before use. Verify scopes with `gh auth status`.
 
 ## Command Reference
 
@@ -110,7 +105,7 @@ The CLI must be authenticated (`gh auth login`) before use. Verify scopes with `
 | Delete release | `gh release delete v1.0.0` |
 | Edit release | `gh release edit v1.0.0 --title "..." --notes "..."` |
 
-### GitHub Actions (Workflows & Runs)
+### GitHub Actions
 
 | Operation | Command |
 |-----------|---------|
@@ -129,7 +124,7 @@ The CLI must be authenticated (`gh auth login`) before use. Verify scopes with `
 | Rerun failed jobs | `gh run rerun 12345 --failed` |
 | Cancel run | `gh run cancel 12345` |
 
-### Search (Cross-Repository)
+### Search
 
 | Operation | Command |
 |-----------|---------|
@@ -151,56 +146,46 @@ The CLI must be authenticated (`gh auth login`) before use. Verify scopes with `
 
 ### Raw API Access
 
-For operations not covered by built-in commands:
-
 ```bash
-# GET request
+# GET
 gh api repos/{owner}/{repo}/topics
 
-# POST request
+# POST
 gh api repos/{owner}/{repo}/labels -f name="priority" -f color="ff0000"
 
-# With pagination
+# Paginated
 gh api repos/{owner}/{repo}/issues --paginate
 
 # GraphQL
 gh api graphql -f query='{ viewer { login } }'
 
-# JSON output + jq filtering
+# JSON + jq
 gh api repos/{owner}/{repo}/pulls --jq '.[].title'
 ```
 
 ## Decision Logic
 
 ```
-Is this a GitHub-hosted repo?
-  Check: git remote -v → shows github.com
-  → Yes: Use gh CLI (this skill)
-  → No: Is it Gitea-hosted?
-      → Yes: Use mcp-gitea tools (see mcp-gitea skill)
-      → Unknown: Ask the user
+github.com remote? → use gh (this skill)
+Gitea remote?      → use mcp-gitea
+Local git ops      → use git CLI directly
 
-For local-only git operations (commit, diff, log, stash, rebase):
-  → Always use git CLI directly — gh is for GitHub API operations
-
-Operation routing:
-  PRs (create, review, merge, list)  → gh pr ...
-  Issues (create, comment, close)    → gh issue ...
-  Releases (create, upload, list)    → gh release ...
-  CI/CD status, rerun, logs          → gh run ... / gh workflow ...
-  Search across GitHub               → gh search ...
-  Anything not in built-in commands  → gh api ...
+PRs                → gh pr ...
+Issues             → gh issue ...
+Releases           → gh release ...
+CI/CD              → gh run ... / gh workflow ...
+Search             → gh search ...
+Anything else      → gh api ...
 ```
 
 ## Common Workflows
 
-### Create a PR with Body via HEREDOC
+### PR with HEREDOC body
 
 ```bash
 gh pr create --title "feat: add gh-cli skill" --body "$(cat <<'EOF'
 ## Summary
 - Added gh-cli skill for GitHub CLI operations
-- Replaces unreliable MCP GitHub integration
 
 ## Test plan
 - [ ] Verify gh auth status
@@ -209,17 +194,14 @@ EOF
 )"
 ```
 
-### Check CI and Merge When Ready
+### Check CI then merge
 
 ```bash
-# Check CI status
 gh pr checks 123
-
-# If all checks pass, merge
 gh pr merge 123 --squash --delete-branch
 ```
 
-### Create a Release with Changelog
+### Release with auto-changelog
 
 ```bash
 gh release create v2.12.0 \
@@ -228,49 +210,28 @@ gh release create v2.12.0 \
   --latest
 ```
 
-### Cross-Repo Issue Search
+### Cross-repo issue search
 
 ```bash
-# Find all open bugs assigned to me across repos
 gh search issues "is:open assignee:@me label:bug" --limit 20
-
-# Find PRs awaiting my review
 gh search prs "is:open review-requested:@me" --limit 20
 ```
 
-### View PR Comments (API)
+### PR comments via API
 
 ```bash
-# List PR review comments
 gh api repos/{owner}/{repo}/pulls/123/comments --jq '.[].body'
-
-# List issue/PR timeline comments
 gh api repos/{owner}/{repo}/issues/123/comments --jq '.[] | "\(.user.login): \(.body)"'
 ```
 
-## Output Formatting
-
-The `gh` CLI supports structured output:
+## Output & Targeting
 
 ```bash
-# JSON output
+# Structured output
 gh pr list --json number,title,state
-
-# JSON + jq filter
 gh pr list --json number,title --jq '.[] | "\(.number): \(.title)"'
 
-# Table format (default for list commands)
-gh issue list
-
-# Web browser
-gh pr view 123 --web
-```
-
-## Cross-Repository Operations
-
-Use `--repo` or `-R` to target any GitHub repo:
-
-```bash
+# Target any repo
 gh pr list -R owner/other-repo
 gh issue create -R owner/other-repo --title "..."
 gh run list -R owner/other-repo

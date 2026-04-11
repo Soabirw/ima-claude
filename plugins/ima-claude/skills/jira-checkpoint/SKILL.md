@@ -12,167 +12,86 @@ description: >-
 
 # Jira Checkpoint - Team Visibility Layer
 
-**"Work gets done. Does the team know?"**
-
-Claude Code makes us 3-5x faster. Jira becomes the bottleneck — not the work, but remembering to update it. This skill adds lightweight checkpoints so team visibility stays current without breaking flow.
-
-## Responsibility Separation
-
 ```
 task-master      = "How do I organize my work?"    (execution, tactical)
 jira-checkpoint  = "Does the team know?"           (visibility, strategic)
 mcp-atlassian    = "How do I talk to Jira's API?"  (implementation, reference)
 ```
 
-**No overlap.** task-master owns TaskList, decomposition, and delegation. jira-checkpoint owns the question "should we sync with Jira?" mcp-atlassian owns the API mechanics. Each skill stays in its lane.
+Each skill stays in its lane. jira-checkpoint never touches TaskList, decomposition, or delegation.
 
 ## The Three Checkpoints
 
-### 1. Before Work (Planning)
+### 1. Before Work
 
-**When:** User starts significant work — "let's implement", "build the", "fix the", "work on FNR-".
+**Trigger**: User starts significant work — "let's implement", "build the", "fix the", "work on FNR-".
 
-**Action:** Ask one question:
-
-> "Should I search Jira (FNR project) for related stories before we start?"
-
-**Decision tree:**
+Ask: `"Should I search Jira (FNR project) for related stories before we start?"`
 
 ```
-Is this significant work (feature, fix, refactor)?
+Significant work (feature, bug fix, multi-file refactor)?
 ├── YES → Ask about Jira search
-│   User says yes → searchJiraIssuesUsingJql with FNR project
-│   User says skip → Proceed, no Jira
-└── NO (trivial utility, config tweak, typo fix) → Stay silent
+│   yes → searchJiraIssuesUsingJql (FNR project)
+│   skip → proceed
+└── NO (utility function, config tweak, lint fix) → stay silent
 ```
 
-**What counts as "significant":**
-- New feature or component
-- Bug fix with user impact
-- Refactor touching multiple files
-- Anything that would reasonably be a Jira story
+### 2. During Work
 
-**What stays silent:**
-- Adding a utility function
-- Config file tweaks
-- Formatting/linting fixes
-- Internal refactors with no external impact
+**Trigger**: User mentions an issue key (e.g., `FNR-123`).
 
-### 2. During Work (Context)
-
-**When:** User references a Jira issue key (e.g., `FNR-123`).
-
-**Action:** Auto-fetch the issue details and surface relevant context:
-
+Auto-fetch and surface:
 ```
 Detected FNR-123. Fetching story context...
-
-→ "As a user, I want to reset my password via email"
-→ Acceptance criteria: [list]
-→ Status: In Progress | Assignee: Eric
+→ Summary
+→ Acceptance criteria
+→ Status | Assignee
 ```
 
-**Implementation:** Use `getJiraIssue` with fields: `summary,description,status,assignee,customfield_10016` (acceptance criteria). See mcp-atlassian skill for field filtering patterns.
+Use `getJiraIssue` with fields: `summary,description,status,assignee,customfield_10016`. Don't re-fetch if already retrieved this session.
 
-**Decision tree:**
+### 3. After Work
 
-```
-Did user mention an issue key (FNR-NNN)?
-├── YES → Auto-fetch, surface summary + acceptance criteria
-│   Already fetched this session? → Skip (don't re-fetch)
-└── NO → Stay silent
-```
+**Trigger**: Work wraps up AND a Jira story was referenced (user says "done"/"finished"/"ship it", commit created, PR ready).
 
-### 3. After Work (Sync)
-
-**When:** Work completes and a Jira story was referenced or discovered during the session.
-
-**Action:** Ask one question:
-
-> "We referenced FNR-123 during this work. Want to update its status or add a progress comment?"
-
-**Decision tree:**
+Ask: `"We referenced FNR-123 during this work. Want to update its status or add a progress comment?"`
 
 ```
-Is work wrapping up AND was a Jira story involved?
+Work wrapping up AND Jira story was involved?
 ├── YES → Ask about status update / comment
-│   User says yes → Use transitionJiraIssue or addCommentToJiraIssue
-│   User says skip → Done, no update
-└── NO story involved → Stay silent
+│   yes → transitionJiraIssue or addCommentToJiraIssue
+│   skip → done
+└── NO story involved → stay silent
 ```
 
-**What "wrapping up" looks like:**
-- User says "done", "finished", "that's it", "ship it"
-- Commit created for the feature/fix
-- PR created or ready
+## Key Tools
 
-## Integration Points
+| Tool | Checkpoint |
+|------|-----------|
+| `searchJiraIssuesUsingJql` | Before Work |
+| `getJiraIssue` | During Work |
+| `transitionJiraIssue` | After Work |
+| `addCommentToJiraIssue` | After Work |
+| `getAccessibleAtlassianResources` | Required bootstrap (cloudId) |
 
-### mcp-atlassian (API Reference)
+See `mcp-atlassian` for field filtering patterns and JQL.
 
-All Jira operations use tools from mcp-atlassian. Do NOT duplicate API docs here — refer to that skill for:
-- Tool catalog and parameters
-- Token-saving field filtering
-- JQL query patterns
-- Comment and transition workflows
+## Project Config
 
-**Key tools used by checkpoints:**
-- `searchJiraIssuesUsingJql` — Before Work search
-- `getJiraIssue` — During Work context fetch
-- `transitionJiraIssue` — After Work status update
-- `addCommentToJiraIssue` — After Work progress comment
-- `getAccessibleAtlassianResources` — Required bootstrap (cloudId)
-
-### task-master (No Overlap)
-
-task-master manages TaskList items and work decomposition. jira-checkpoint never:
-- Creates or modifies TaskList items
-- Changes task decomposition strategy
-- Interferes with delegation patterns
-
-They complement: task-master breaks work down, jira-checkpoint ensures Jira reflects it.
-
-### Vestige (Learning Preferences)
-
-Store user checkpoint preferences via Vestige:
-
-```
-User says "skip Jira" repeatedly → smart_ingest preference: "User prefers minimal Jira checkpoints"
-User always updates after work   → smart_ingest preference: "User wants post-work Jira sync prompts"
-User never wants before-work     → smart_ingest preference: "Skip before-work Jira checkpoint"
-```
-
-Check Vestige at session start for stored Jira checkpoint preferences.
-
-## User Control
-
-**Every checkpoint is a question, never a mandate.**
-
-- User can always say "skip Jira", "not now", "no Jira today"
-- Preferences accumulate in Vestige — skill adapts over time
-- No checkpoint ever blocks work from proceeding
-- If user seems annoyed by prompts, reduce frequency and store preference
-
-## Project Configuration
-
-**Default project key:** `FNR`
-
-When searching Jira without a specific issue key, scope to the FNR project:
+**Default project**: `FNR`
 
 ```
 JQL: project = FNR AND summary ~ "keyword" ORDER BY updated DESC
 ```
 
-## Experimental Status
+## User Control
 
-This skill is built for vetting. Expected evolution:
+Every checkpoint is a question, never a mandate. Store preferences via Vestige `smart_ingest`:
 
-1. **v1 (now):** Three manual checkpoints with questions
-2. **v2 (after feedback):** Adjusted trigger sensitivity based on usage patterns
-3. **v3 (if valuable):** Deeper task-master integration (auto-suggest Jira links for TaskList items)
+```
+"skip Jira" repeatedly         → "User prefers minimal Jira checkpoints"
+always updates after work      → "User wants post-work Jira sync prompts"
+never wants before-work prompt → "Skip before-work Jira checkpoint"
+```
 
-**Feedback signals to watch:**
-- How often does the user accept vs skip checkpoints?
-- Are before-work searches actually useful?
-- Does after-work sync feel natural or forced?
-- Is the FNR project scope too narrow?
+Check Vestige at session start for stored preferences.

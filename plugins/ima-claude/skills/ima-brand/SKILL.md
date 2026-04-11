@@ -14,12 +14,6 @@ description: >-
 
 Brand Book v4.0 (September 2025) — Independent Medical Alliance.
 
-## Core Principle
-
-**Brand consistency builds trust in healthcare communication.**
-
-Every piece of content, every design decision, every communication should reinforce IMA's position as a trustworthy, patient-centric medical alliance.
-
 ## Decision Tree
 
 ```
@@ -48,7 +42,7 @@ What type of brand question?
     → Use ima-bootstrap skill instead
 ```
 
-## Quick Reference: Color Palette
+## Color Palette
 
 | Name | Hex | Usage |
 |------|-----|-------|
@@ -62,10 +56,9 @@ What type of brand question?
 | Calm Stone | `#919396` | Secondary text, labels |
 | Clarity Wash | `#F2F3F5` | Backgrounds, cards |
 | Soft Mist | `#EDF3F4` | Light blue-gray backgrounds |
-| Accessible Teal | `#007BB4` | High-contrast alternative |
 | Brand Gradient | `150deg, #00066F → #00B8B8` | Hero sections, overlays |
 
-## Quick Reference: Typography
+## Typography
 
 | Element | Font | Weight | Size | Notes |
 |---------|------|--------|------|-------|
@@ -76,7 +69,7 @@ What type of brand question?
 | Buttons (large) | Lato | Bold | 2em, uppercase | 0.04em letter-spacing, 15px radius |
 | Form labels | Open Sans | Regular | 14px | |
 
-## Quick Reference: Voice & Tone
+## Voice & Tone
 
 | Context | Tone | Example |
 |---------|------|---------|
@@ -92,19 +85,19 @@ What type of brand question?
 | BAD | GOOD | Why |
 |-----|------|-----|
 | "FLCCC" in new content | "IMA" or "Independent Medical Alliance" | Rebranded; FLCCC is legacy |
-| Stretching or recoloring the logo | Use approved lockup variants | Brand integrity |
+| Stretching or recoloring logo | Use approved lockup variants | Brand integrity |
 | Logo on busy/patterned backgrounds | White, light, dark, or gradient bg only | Readability |
-| Logo below 200px width | Minimum 200px, use IMA lettermark for small sizes | Legibility |
-| Jargon-heavy copy without explanation | Plain language with medical terms defined | Patient accessibility |
+| Logo below 200px width | Min 200px; use IMA lettermark for small sizes | Legibility |
+| Jargon-heavy copy | Plain language with medical terms defined | Patient accessibility |
 | Fear-based messaging | Solution-oriented, empowering language | Brand persona |
-| Missing medical disclaimer on health content | Include standard disclaimer | Legal compliance |
+| Missing medical disclaimer | Include standard disclaimer on health content | Legal compliance |
 | Inconsistent tone across channels | Match tone to context (see Voice table) | Brand consistency |
-| Using non-brand colors for key elements | Brand palette only for primary UI | Visual consistency |
+| Non-brand colors for key elements | Brand palette only for primary UI | Visual consistency |
 
 ## Cross-References
 
 - **CSS/SCSS implementation** (variables, mixins, components): `ima-bootstrap` skill
-- **SCSS source files**: `~/IMA/dev/ima-brand/sass/` (ima-brand plugin repo)
+- **SCSS source files**: `~/IMA/dev/ima-brand/sass/`
 - **Brand identity deep dive**: [references/brand-identity.md](references/brand-identity.md)
 - **Visual system details**: [references/visual-system.md](references/visual-system.md)
 - **Digital & legal standards**: [references/digital-standards.md](references/digital-standards.md)

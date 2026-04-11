@@ -5,13 +5,34 @@ All notable changes to ima-claude will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.22.0] - 2026-04-11
+## [2.23.0] - 2026-04-11
+
+### Changed
+
+- **LLM-optimized writing pass across all 62 skills, 6 agents, and 3 hook files** — Systematic compression of all LLM-consumed content following a new writing convention. Skills are machine-consumed instructions, not human documentation — they should be optimized for LLM comprehension, not prose readability. Inspired by the [caveman](https://github.com/codeape2/caveman) project and supported by research showing brevity constraints improve model accuracy ([arxiv.org/abs/2604.00025](https://arxiv.org/abs/2604.00025)).
+
+  **Results:**
+  | Category | Before | After | Saved |
+  |----------|--------|-------|-------|
+  | Skills (62) | 70,401 words | 44,990 words | 25,411 (36%) |
+  | Agents (6) | 1,726 words | 1,451 words | 275 (16%) |
+  | Hooks (3) | 1,109 words | 891 words | 218 (20%) |
+  | **Total** | **73,236 words** | **47,332 words** | **25,904 (35%)** |
+
+  Estimated **~33,700 fewer input tokens** per full skill corpus load. Savings compound every session, every skill activation.
+
+  **What was removed:** filler words, hedging, pleasantries, throat-clearing, "why it matters" sections, philosophical quotes, redundant cross-references, "when to use" prose duplicating frontmatter, sign-off lines, meta-commentary.
+
+  **What was preserved:** all code blocks, technical terms, decision trees, tables, frontmatter, and actionable directives.
 
 ### Added
 
-- **enable-efficient personality** — Token-efficient communication style inspired by Star Trek's Data. Eliminates filler, hedging, pleasantries, and meta-commentary while keeping full sentences and articles. Targets ~30-40% output token savings. Includes auto-clarity rule (reverts to normal English for security warnings and irreversible operations).
-- **enable-terse personality** — Aggressive token-efficient style modeled on a blunt senior engineer. Fragments OK, bullets over prose, short synonyms, optional article drops. Targets ~50-65% output token savings. Same auto-clarity safety rule.
-- **Functional personality category** — Personalities README now distinguishes flavor personalities (40k, templars) from functional personalities (efficient, terse) that reduce rather than add tokens.
+- **LLM-optimized writing convention** (`.claude/rules/llm-optimized-writing.md`) — Codified rules for writing token-efficient skill files. Applied automatically to all future content in this repo. Key rules: imperatives over explanations, tables over prose, one concept per line, drop articles where unambiguous.
+- **enable-efficient personality** — Token-efficient output style inspired by Star Trek's Data. Full sentences, zero filler/hedging/pleasantries. Targets ~30-40% output token savings. Auto-clarity rule reverts to normal English for security warnings and irreversible operations.
+- **enable-terse personality** — Aggressive output compression modeled on a blunt senior engineer. Fragments OK, bullets over prose, short synonyms, optional article drops. Targets ~50-65% output token savings. Same auto-clarity safety rule.
+- **Functional personality category** — Personalities README distinguishes flavor personalities (40k, templars) from functional personalities (efficient, terse) that reduce rather than add tokens.
+
+## [2.21.0] - 2026-04-11
 
 ## [2.21.0] - 2026-04-11
 

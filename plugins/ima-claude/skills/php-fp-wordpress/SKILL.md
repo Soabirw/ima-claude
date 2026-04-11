@@ -5,28 +5,13 @@ description: "Security-first WordPress development with PHP FP principles - pure
 
 # PHP FP - WordPress
 
-Security-first WordPress development combining PHP functional programming principles with mandatory WordPress security practices.
+Security-first WordPress development: pure functions for business logic, WordPress wrappers with mandatory security.
 
-## When to Use This Skill
-
-- Building WordPress plugins or themes
-- Need security-first development practices
-- Implementing pure business logic with WordPress integration
-- Testing WordPress functionality
-
-## Core Philosophy
-
-**Security practices prevent vulnerabilities, not architectural patterns.**
-
-Hybrid approach:
-1. **Pure functions** for business logic (testable, no WordPress deps)
-2. **WordPress wrappers** with mandatory security (capability, nonce, sanitize, escape, prepare)
-
-**Foundation**: Reference `../php-fp/SKILL.md` for PHP FP core principles.
+**Foundation**: `../php-fp/SKILL.md` for PHP FP core.
 
 ## The 5 Non-Negotiable Security Practices
 
-**Evidence**: Analysis of 7,966 vulnerabilities (2024) shows these prevent 95%+ of WordPress plugin vulnerabilities.
+Evidence: 7,966 vulnerabilities (2024) — these prevent 95%+ of WordPress plugin vulnerabilities.
 
 | Practice | Prevents | Rule |
 |----------|----------|------|
@@ -36,18 +21,20 @@ Hybrid approach:
 | **Output Escaping** | XSS | Escape ALL output by context |
 | **Prepared Statements** | SQL injection | `$wpdb->prepare()` for ALL queries |
 
-### Quick Reference: Security Functions
+### Security Function Reference
 
 **Sanitization (Input)**:
+
 | Function | Use For |
 |----------|---------|
 | `sanitize_text_field()` | Plain text |
 | `sanitize_email()` | Email addresses |
 | `absint()` | Positive integers |
 | `wp_kses_post()` | HTML content |
-| `esc_url_raw()` | URLs (for storage) |
+| `esc_url_raw()` | URLs (storage) |
 
 **Escaping (Output)**:
+
 | Function | Context |
 |----------|---------|
 | `esc_html()` | HTML body |
@@ -60,37 +47,30 @@ Hybrid approach:
 ```php
 <?php
 add_action('wp_ajax_my_action', function() {
-    // 1. Capability check
     if (!current_user_can('edit_posts')) {
         wp_send_json_error('Unauthorized', 403);
     }
 
-    // 2. Nonce verification
     check_ajax_referer('my_action_nonce', 'nonce');
 
-    // 3. Sanitize input
-    $id = absint($_POST['id']);
+    $id   = absint($_POST['id']);
     $name = sanitize_text_field($_POST['name']);
 
-    // 4. Use prepared statement
     global $wpdb;
     $result = $wpdb->get_row($wpdb->prepare(
         "SELECT * FROM {$wpdb->prefix}my_table WHERE id = %d",
         $id
     ));
 
-    // 5. Escape output
     wp_send_json_success(['name' => esc_html($result->name)]);
 });
 ```
 
 ## Pure Logic + WordPress Wrapper Pattern
 
-**Separate testable business logic from WordPress integration.**
-
 ```php
 <?php
-// PURE: Zero WordPress dependencies, fully testable
+// PURE: zero WordPress dependencies, fully testable
 namespace MyPlugin\Pure;
 
 function calculate_discount(float $price, string $tier): float {
@@ -103,7 +83,6 @@ namespace MyPlugin;
 
 add_filter('product_price', function($price) {
     if (!is_user_logged_in()) return $price;
-
     $tier = get_user_meta(get_current_user_id(), 'tier', true);
     return Pure\calculate_discount($price, $tier);
 });
@@ -111,7 +90,7 @@ add_filter('product_price', function($price) {
 
 ## Inter-Plugin Communication: Hooks Only
 
-**Rule**: ALL cross-plugin calls use WordPress hooks. NEVER `function_exists()`.
+ALL cross-plugin calls use WordPress hooks. NEVER `function_exists()`.
 
 Hooks are safe no-ops — if nobody listens, nothing happens. `function_exists()` is tight coupling disguised as loose coupling.
 
@@ -125,21 +104,20 @@ if (function_exists('ima_discourse_refresh_user_meta')) {
 // GOOD — fire-and-forget side effect
 do_action('ima_discourse_refresh_user_meta', $user_id);
 
-// GOOD — transform with safe default (function composition via WP)
+// GOOD — transform with safe default
 $result = apply_filters('ima_membership_cancel_subscription', ['success' => true], $user_id, $sub_id);
 ```
 
-**Actions** (`do_action`): Side effects — "something happened, react if you care."
-**Filters** (`apply_filters`): Data transformation — chained function composition with a default return.
+- **Actions** (`do_action`): side effects — "something happened, react if you care"
+- **Filters** (`apply_filters`): data transformation — chained composition with default return
 
-The handler registers itself:
 ```php
 <?php
-// ima-discourse registers once — or doesn't. Either way, callers don't crash.
+// Handler registers itself — callers never crash if plugin is absent
 add_action('ima_discourse_refresh_user_meta', 'ima_discourse_refresh_user_meta', 10, 1);
 ```
 
-**When `function_exists()` is acceptable**: Internal guard clauses within a single plugin checking if its own functions are loaded, or checking PHP extensions (`function_exists('sodium_crypto_secretbox')`).
+`function_exists()` is acceptable only for internal guards within a single plugin, or checking PHP extensions (`function_exists('sodium_crypto_secretbox')`).
 
 ## Plugin Complexity Guide
 
@@ -149,7 +127,7 @@ add_action('ima_discourse_refresh_user_meta', 'ima_discourse_refresh_user_meta',
 | Medium | 500-2000 | Classes + pure functions |
 | Complex | 2000+ | DI Container + Services |
 
-**Rule**: Start simple, add complexity only when needed.
+Start simple, add complexity only when needed.
 
 ## File Organization
 
@@ -165,7 +143,7 @@ my-plugin/
     └── integration/           # WordPress tests
 ```
 
-## Security Checklist
+## Quality Gates
 
 - [ ] Capability checks on all privileged operations
 - [ ] Nonces on all form/AJAX submissions
@@ -176,41 +154,15 @@ my-plugin/
 - [ ] No hardcoded credentials
 - [ ] Cross-plugin calls use hooks, not `function_exists()`
 
-## Quality Gates
+## Reference Files
 
-1. **Security**: All 5 mandatory practices implemented?
-2. **Pure logic**: Business logic separated from WordPress?
-3. **Testability**: Pure functions have unit tests?
-4. **Complexity**: Architecture matches plugin size?
-
-## When to Load Reference Files
-
-### Security Deep-Dive
-**File**: [`references/security-examples.md`](references/security-examples.md)
-**Load when**: Need detailed security patterns, vulnerable vs. safe comparisons
-**Contains**: Full examples for all 5 practices, security function reference tables
-
-### FP Patterns
-**File**: [`references/fp-patterns.md`](references/fp-patterns.md)
-**Load when**: Implementing pure logic + wrapper pattern, function factories
-**Contains**: Complete membership system example, production email validator example
-
-### Plugin Architecture
-**File**: [`references/plugin-architecture.md`](references/plugin-architecture.md)
-**Load when**: Deciding plugin structure, implementing DI container
-**Contains**: Simple/medium/complex plugin patterns, file organization examples
-
-### Testing Strategy
-**File**: [`references/testing-strategy.md`](references/testing-strategy.md)
-**Load when**: Setting up tests, writing security tests
-**Contains**: Unit/integration test examples, minimal mock bootstrap, security test patterns
-
-## Success Metrics
-
-- **Security**: Zero vulnerabilities from missing practices
-- **Testability**: 95%+ coverage for pure functions
-- **Maintainability**: Clear separation of concerns
+| File | Load When |
+|------|-----------|
+| `references/security-examples.md` | Detailed security patterns, vulnerable vs. safe comparisons |
+| `references/fp-patterns.md` | Pure logic + wrapper pattern, function factories, production examples |
+| `references/plugin-architecture.md` | Plugin structure decisions, DI container implementation |
+| `references/testing-strategy.md` | Unit/integration tests, security tests, minimal mock bootstrap |
 
 ---
 
-**Evidence Base**: Analysis of 7,966 WordPress vulnerabilities (2024), WordPress Core Team standards, Wordfence/Patchstack research.
+Evidence: 7,966 WordPress vulnerabilities (2024), WordPress Core Team standards, Wordfence/Patchstack research.

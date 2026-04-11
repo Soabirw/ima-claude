@@ -5,23 +5,14 @@ description: "End-to-end testing and QA automation with Playwright + TypeScript.
 
 # Playwright + QA Automation
 
-E2E testing with Playwright and TypeScript. Combines QA strategy (what/why to test) with Playwright implementation (how to test).
+E2E testing with Playwright and TypeScript.
 
-## QA Strategy Layer
+## QA Strategy
 
-### Test Pyramid for E2E
-
-E2E tests are expensive. Use them strategically:
-
-- **Test critical user journeys** — login, checkout, signup, core workflows
-- **Don't duplicate unit test coverage** — if business logic is tested in unit tests, don't re-test it through the UI
-- **Test integration points** — where frontend meets backend, where data flows between systems
-- **Test what users actually do** — real workflows, not implementation details
-
-### What Makes a Good E2E Test
+Test critical user journeys (login, checkout, signup). Don't duplicate unit test coverage. Test integration points and real workflows, not implementation details. Each test must be self-contained — set up its own data via API, never depend on another test's state.
 
 ```typescript
-// GOOD: Tests a real user journey with meaningful assertions
+// GOOD: Real user journey
 test('user completes checkout flow', async ({ page }) => {
   await page.goto('/products')
   await page.getByRole('button', { name: 'Add to cart' }).first().click()
@@ -30,43 +21,23 @@ test('user completes checkout flow', async ({ page }) => {
   await expect(page.getByText('Order confirmed')).toBeVisible()
 })
 
-// BAD: Tests implementation details, brittle selectors
-test('checkout works', async ({ page }) => {
-  await page.goto('/products')
-  await page.click('#product-123 > .btn-primary')  // brittle
-  await page.waitForTimeout(2000)  // never do this
-  expect(await page.locator('.cart-count').innerText()).toBe('1')  // manual assertion
-})
+// BAD: Brittle selectors + hard waits
+await page.click('#product-123 > .btn-primary')
+await page.waitForTimeout(2000)  // never do this
 ```
-
-### Test Independence
-
-Each test must be self-contained:
-- Set up its own data (via API calls, not UI when possible)
-- Clean up after itself (or use fresh browser contexts — Playwright's default)
-- Never depend on another test's state or execution order
 
 ## Locator Strategy
 
-**Priority order** (most resilient to least):
-
-| Priority | Locator | Example | Why |
-|----------|---------|---------|-----|
-| 1 | Role | `getByRole('button', { name: 'Submit' })` | Semantic, accessible |
-| 2 | Label | `getByLabel('Email address')` | User-facing text |
-| 3 | Placeholder | `getByPlaceholder('Enter email')` | User-facing text |
-| 4 | Text | `getByText('Welcome back')` | User-visible content |
-| 5 | Test ID | `getByTestId('submit-btn')` | Stable, explicit contract |
-| 6 | CSS/XPath | `locator('.btn-primary')` | Last resort only |
+| Priority | Locator | Example |
+|----------|---------|---------|
+| 1 | Role | `getByRole('button', { name: 'Submit' })` |
+| 2 | Label | `getByLabel('Email address')` |
+| 3 | Placeholder | `getByPlaceholder('Enter email')` |
+| 4 | Text | `getByText('Welcome back')` |
+| 5 | Test ID | `getByTestId('submit-btn')` |
+| 6 | CSS/XPath | `locator('.btn-primary')` — last resort |
 
 ```typescript
-// Prefer semantic locators
-await page.getByRole('button', { name: 'Save changes' }).click()
-await page.getByLabel('Email').fill('user@example.com')
-
-// Use test IDs when no semantic option exists
-await page.getByTestId('chart-container').isVisible()
-
 // Scoped locators for disambiguation
 const dialog = page.getByRole('dialog')
 await dialog.getByRole('button', { name: 'Confirm' }).click()
@@ -77,48 +48,28 @@ await page.getByRole('listitem').filter({ hasText: 'Product A' }).click()
 
 ## Assertions
 
-**Always use web-first assertions** — they auto-wait and retry.
+Always use web-first assertions — they auto-wait and retry.
 
 ```typescript
-// CORRECT: Web-first assertions (auto-wait + retry)
+// CORRECT: Web-first (auto-wait + retry)
 await expect(page.getByText('Success')).toBeVisible()
 await expect(page.getByRole('heading')).toHaveText('Dashboard')
 await expect(page).toHaveURL(/\/dashboard/)
-await expect(page).toHaveTitle('My App - Dashboard')
 
-// WRONG: Manual assertions (race conditions, flaky)
+// WRONG: Race condition
 expect(await page.getByText('Success').isVisible()).toBe(true)
-const text = await page.locator('h1').innerText()
-expect(text).toBe('Dashboard')
 ```
 
-### Key Assertions
-
+Key assertions:
 ```typescript
-// Visibility
-await expect(locator).toBeVisible()
-await expect(locator).toBeHidden()
-
-// Text content
-await expect(locator).toHaveText('exact text')
-await expect(locator).toContainText('partial')
-
-// Input state
-await expect(locator).toHaveValue('test@example.com')
-await expect(locator).toBeChecked()
-await expect(locator).toBeDisabled()
-
-// Count
+await expect(locator).toBeVisible() / toBeHidden()
+await expect(locator).toHaveText('exact') / toContainText('partial')
+await expect(locator).toHaveValue('val') / toBeChecked() / toBeDisabled()
 await expect(page.getByRole('listitem')).toHaveCount(3)
-
-// Page-level
-await expect(page).toHaveURL(/dashboard/)
-await expect(page).toHaveTitle(/Dashboard/)
+await expect(page).toHaveURL(/dashboard/) / toHaveTitle(/Dashboard/)
 ```
 
 ## Page Object Model
-
-Encapsulate page interactions in classes. Tests read like user stories.
 
 ```typescript
 // pages/LoginPage.ts
@@ -137,44 +88,30 @@ export class LoginPage {
     this.errorMessage = page.getByRole('alert')
   }
 
-  async goto() {
-    await this.page.goto('/login')
-  }
-
+  async goto() { await this.page.goto('/login') }
   async login(email: string, password: string) {
     await this.emailInput.fill(email)
     await this.passwordInput.fill(password)
     await this.submitButton.click()
   }
-
   async expectError(message: string) {
     await expect(this.errorMessage).toContainText(message)
   }
 }
 ```
 
-### Register Page Objects as Fixtures
+### Fixtures
+
+Register page objects as fixtures instead of beforeEach/afterEach:
 
 ```typescript
 // fixtures.ts
 import { test as base } from '@playwright/test'
 import { LoginPage } from './pages/LoginPage'
-import { DashboardPage } from './pages/DashboardPage'
 
-type Fixtures = {
-  loginPage: LoginPage
-  dashboardPage: DashboardPage
-}
-
-export const test = base.extend<Fixtures>({
-  loginPage: async ({ page }, use) => {
-    await use(new LoginPage(page))
-  },
-  dashboardPage: async ({ page }, use) => {
-    await use(new DashboardPage(page))
-  },
+export const test = base.extend<{ loginPage: LoginPage }>({
+  loginPage: async ({ page }, use) => { await use(new LoginPage(page)) },
 })
-
 export { expect } from '@playwright/test'
 ```
 
@@ -187,35 +124,9 @@ test('successful login redirects to dashboard', async ({ loginPage, dashboardPag
   await loginPage.login('user@example.com', 'password123')
   await expect(dashboardPage.heading).toBeVisible()
 })
-
-test('invalid credentials show error', async ({ loginPage }) => {
-  await loginPage.goto()
-  await loginPage.login('user@example.com', 'wrong')
-  await loginPage.expectError('Invalid credentials')
-})
 ```
 
-## Custom Fixtures
-
-Fixtures provide reusable setup/teardown. Use them instead of beforeEach/afterEach.
-
-```typescript
-// fixtures.ts — authenticated user fixture
-export const test = base.extend<{
-  authenticatedPage: Page
-}>({
-  authenticatedPage: async ({ browser }, use) => {
-    const context = await browser.newContext({
-      storageState: 'auth/user.json'  // pre-saved auth state
-    })
-    const page = await context.newPage()
-    await use(page)
-    await context.close()
-  },
-})
-```
-
-### Save Auth State (Global Setup)
+### Auth State (Global Setup)
 
 ```typescript
 // global-setup.ts
@@ -232,38 +143,27 @@ export default async function globalSetup(config: FullConfig) {
   await page.context().storageState({ path: 'auth/user.json' })
   await browser.close()
 }
+
+// fixture usage
+authenticatedPage: async ({ browser }, use) => {
+  const context = await browser.newContext({ storageState: 'auth/user.json' })
+  const page = await context.newPage()
+  await use(page)
+  await context.close()
+}
 ```
 
 ## Project Structure
 
 ```
 tests/
-├── e2e/
-│   ├── auth/
-│   │   ├── login.spec.ts
-│   │   └── signup.spec.ts
-│   ├── checkout/
-│   │   └── purchase-flow.spec.ts
-│   └── dashboard/
-│       └── widgets.spec.ts
-├── pages/
-│   ├── LoginPage.ts
-│   ├── DashboardPage.ts
-│   └── CheckoutPage.ts
-├── components/
-│   ├── Modal.ts
-│   ├── DataTable.ts
-│   └── Navigation.ts
-├── fixtures.ts
+├── e2e/          # Test specs grouped by feature
+├── pages/        # One page object per page/section
+├── components/   # Shared: Modal.ts, DataTable.ts, Navigation.ts
+├── fixtures.ts   # Extended test object (single export)
 ├── global-setup.ts
 └── playwright.config.ts
 ```
-
-**Guidelines**:
-- One page object per page/major section
-- Shared components (modals, tables, nav) get their own classes in `components/`
-- Tests grouped by feature area
-- Single `fixtures.ts` exports the extended `test` object
 
 ## Configuration
 
@@ -279,14 +179,12 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: process.env.CI ? 'blob' : 'html',
   globalSetup: './tests/global-setup.ts',
-
   use: {
     baseURL: process.env.BASE_URL ?? 'http://localhost:3000',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
   },
-
   projects: [
     { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
     { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
@@ -294,7 +192,6 @@ export default defineConfig({
     { name: 'mobile-chrome', use: { ...devices['Pixel 5'] } },
     { name: 'mobile-safari', use: { ...devices['iPhone 13'] } },
   ],
-
   webServer: {
     command: 'npm run dev',
     url: 'http://localhost:3000',
@@ -303,17 +200,17 @@ export default defineConfig({
 })
 ```
 
-## Network Mocking (Quick Reference)
+## Network Mocking
 
 ```typescript
-// Mock an API endpoint
+// Mock endpoint
 await page.route('**/api/users', route => route.fulfill({
   status: 200,
   contentType: 'application/json',
   body: JSON.stringify([{ id: 1, name: 'Test User' }]),
 }))
 
-// Modify a real response
+// Modify real response
 await page.route('**/api/products', async route => {
   const response = await route.fetch()
   const json = await response.json()
@@ -321,114 +218,66 @@ await page.route('**/api/products', async route => {
   await route.fulfill({ response, json })
 })
 
-// Block resources (speed up tests)
+// Block resources
 await page.route('**/*.{png,jpg,gif}', route => route.abort())
 
 // Add auth headers
-await page.route('**/api/**', route => {
-  route.continue({
-    headers: { ...route.request().headers(), Authorization: 'Bearer test-token' },
-  })
-})
+await page.route('**/api/**', route =>
+  route.continue({ headers: { ...route.request().headers(), Authorization: 'Bearer test-token' } })
+)
 ```
 
-For advanced mocking patterns (HAR recording, API-first setup, error simulation), see [references/network-mocking.md](references/network-mocking.md).
+See [references/network-mocking.md](references/network-mocking.md) for HAR recording, API-first setup, error simulation.
 
-## Visual Regression (Quick Reference)
+## Visual Regression
 
 ```typescript
-// Full page screenshot comparison
 await expect(page).toHaveScreenshot()
-
-// Element-level comparison
 await expect(page.getByTestId('chart')).toHaveScreenshot('chart.png')
-
-// With tolerance for minor rendering differences
 await expect(page).toHaveScreenshot({ maxDiffPixelRatio: 0.01 })
-
 // Update baselines: npx playwright test --update-snapshots
 ```
 
-For deterministic screenshots, animation handling, and CI considerations, see [references/visual-regression.md](references/visual-regression.md).
+See [references/visual-regression.md](references/visual-regression.md) for deterministic screenshots and CI strategies.
 
 ## Debugging
 
 ```bash
-# Run with UI mode (interactive debugging)
-npx playwright test --ui
-
-# Run with headed browser
-npx playwright test --headed
-
-# Run with step-by-step trace viewer
-npx playwright test --trace on
-
-# Debug a specific test
+npx playwright test --ui          # Interactive UI mode
+npx playwright test --headed      # Headed browser
+npx playwright test --trace on    # Step-by-step trace
 npx playwright test -g "login" --debug
-
-# View last test report
 npx playwright show-report
 ```
 
 ```typescript
-// Pause execution for manual inspection
-await page.pause()
-
-// Slow down actions for visual debugging
-// In config: use: { launchOptions: { slowMo: 500 } }
+await page.pause()  // Pause for manual inspection
+// Slow actions: use: { launchOptions: { slowMo: 500 } }
 ```
 
 ## Anti-Patterns
 
 ```typescript
-// NEVER: Hard-coded waits
-await page.waitForTimeout(3000)  // Use auto-waiting instead
-
-// NEVER: Brittle CSS selectors
-await page.click('#app > div:nth-child(2) > button.btn-primary')
-
-// NEVER: Manual assertions without retry
-const text = await page.locator('.status').innerText()
-expect(text).toBe('Ready')  // Race condition — use web-first assertions
-
-// NEVER: Testing third-party dependencies
-await page.goto('https://external-service.com/verify')  // Mock it instead
-
-// NEVER: Shared mutable state between tests
-let sharedUser  // Each test gets its own state via fixtures
-
-// NEVER: Skipping cleanup
-// Use fixtures — they handle teardown automatically
+await page.waitForTimeout(3000)                          // NEVER: hard wait
+await page.click('#app > div:nth-child(2) > button')     // NEVER: brittle CSS
+expect(await page.locator('.status').innerText()).toBe('Ready')  // NEVER: race condition
+await page.goto('https://external-service.com/verify')   // NEVER: test third-party
+let sharedUser  // NEVER: shared mutable state between tests
 ```
 
 ## Linting
-
-Use `eslint-plugin-playwright` to catch common mistakes:
 
 ```bash
 npm install -D eslint-plugin-playwright
 ```
 
-Key rules it catches:
-- Missing `await` on async Playwright calls
-- Using `page.waitForTimeout` (prefer auto-waiting)
-- Manual assertions instead of web-first assertions
-- Using forbidden selectors (nth-child, etc.)
+Catches: missing `await`, `waitForTimeout` usage, manual assertions, forbidden selectors.
 
 ## Reference Files
 
-### Network Mocking Patterns
-**File**: [references/network-mocking.md](references/network-mocking.md)
-**When**: Mocking APIs, HAR recording, intercepting requests, simulating errors, API-first test setup
-
-### Visual Regression Testing
-**File**: [references/visual-regression.md](references/visual-regression.md)
-**When**: Screenshot comparisons, deterministic rendering, CI screenshot strategies, animation handling
-
-### Accessibility Testing
-**File**: [references/accessibility-testing.md](references/accessibility-testing.md)
-**When**: WCAG compliance audits, axe-core integration, accessibility fixtures, automated a11y checks
-
-### CI/CD Integration
-**File**: [references/ci-cd.md](references/ci-cd.md)
-**When**: GitHub Actions setup, sharding, parallelism, artifact management, Docker, reporting strategies
+| File | When |
+|------|------|
+| [references/network-mocking.md](references/network-mocking.md) | HAR recording, intercepting, error simulation |
+| [references/visual-regression.md](references/visual-regression.md) | Screenshot CI, animation handling |
+| [references/accessibility-testing.md](references/accessibility-testing.md) | WCAG audits, axe-core, a11y fixtures |
+| [references/ci-cd.md](references/ci-cd.md) | GitHub Actions, sharding, artifacts, Docker |

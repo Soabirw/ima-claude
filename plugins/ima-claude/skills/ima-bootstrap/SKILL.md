@@ -5,128 +5,107 @@ description: "Bootstrap 5.3 with IMA brand integration for WordPress/Picostrap5 
 
 # IMA Bootstrap
 
-Bootstrap 5.3 with IMA brand integration for WordPress/Picostrap5 child theme sites.
-
-## Core Principle
+Bootstrap 5.3 + IMA brand for WordPress/Picostrap5 child theme sites.
 
 **Utility-first: prefer Bootstrap utility classes over custom CSS.**
 
 ```
-Need spacing/display/flex/text? → Bootstrap utility class
-Need IMA brand color/typography? → IMA SCSS variable or mixin
-Need component? → Bootstrap component + IMA brand overrides
-Need deep Bootstrap API details? → Context7: /websites/getbootstrap
+Spacing/display/flex/text? → Bootstrap utility class
+IMA brand color/typography? → IMA SCSS variable or mixin
+Component? → Bootstrap component + IMA brand overrides
+Bootstrap API details? → Context7: /websites/getbootstrap
 ```
 
 ## Decision Tree
 
 ```
-Writing HTML/template markup?
-├── Layout (viewport-responsive) → .container, .row, .col-{bp}-{n}
-├── Layout (container-responsive) → .ima-row, .ima-col-{bp}-{n} ← USE FOR COMPONENTS
-├── Spacing → .m{side}-{size}, .p{side}-{size} (0-5 scale)
+Writing HTML?
+├── Layout (viewport) → .container, .row, .col-{bp}-{n}
+├── Layout (container) → .ima-row, .ima-col-{bp}-{n} ← USE FOR COMPONENTS
+├── Spacing → .m{side}-{size}, .p{side}-{size}
 ├── Display → .d-{value}, .d-{bp}-{value}
 ├── Flex → .d-flex, .justify-content-{v}, .align-items-{v}
 ├── Text → .text-{align}, .fw-{weight}, .fs-{size}
-├── Colors → .text-{color}, .bg-{color} (primary = IMA indigo)
+├── Colors → .text-{color}, .bg-{color}
 ├── Component → card, modal, accordion, btn, badge, alert, navbar
-└── Custom need? → Check IMA brand mixins first, then write SCSS
+└── Custom? → IMA brand mixins first, then SCSS
 
 Writing SCSS?
-├── Use IMA variable → $ima-brand-{color}, $ima-font-{prop}
-├── Use IMA mixin → @include ima-{component}
-├── Override Bootstrap → Set $variable BEFORE @import "bootstrap5/variables"
-└── Custom utility? → Probably Bootstrap already has it
+├── IMA variable → $ima-brand-{color}, $ima-font-{prop}
+├── IMA mixin → @include ima-{component}
+├── Bootstrap override → Set $variable BEFORE @import "bootstrap5/variables"
+└── Custom utility? → Bootstrap probably has it
 ```
 
-### Bootstrap Grid vs IMA Container Grid
+### Grid: Bootstrap vs IMA Container
 
-```
-Need columns that respond to VIEWPORT width?
-  → Bootstrap: .row + .col-md-6 (page-level layouts)
+| Need | Use | Why |
+|------|-----|-----|
+| Columns at viewport breakpoint | `.row` + `.col-md-6` | Page-level layouts |
+| Columns at container breakpoint | `.ima-row` + `.ima-col-sm-6` | Components, forms, sidebars, modals |
 
-Need columns that respond to CONTAINER width?
-  → IMA: .ima-row + .ima-col-sm-6 (components, forms, widgets, sidebars)
-```
-
-**Rule of thumb:** Page structure = Bootstrap grid. Reusable components = IMA container grid.
-
-Bootstrap's `.col-md-6` breaks at viewport ≥768px — useless when a form sits in a narrow
-sidebar on a wide screen. IMA's `.ima-col-sm-6` breaks at container ≥400px regardless of
-viewport, so the same form works in a sidebar, card, modal, or full-width page.
+`.col-md-6` breaks at viewport ≥768px — useless in a narrow sidebar. `.ima-col-sm-6` breaks at container ≥400px regardless of viewport.
 
 ## Anti-Patterns
 
-| BAD | GOOD | Why |
-|-----|------|-----|
-| `margin-top: 16px` | `class="mt-3"` | Bootstrap spacing scale |
-| `display: flex` | `class="d-flex"` | Bootstrap utility |
-| `color: #040C53` | `$ima-brand-primary` or `.text-primary` | Theme-mapped |
-| `font-family: Lato` | `$ima-font-family-primary` | Centralized |
-| `border-radius: 10px` on every element | Already set via `$border-radius` | Global override |
-| Custom `.my-card { padding: 24px; ... }` | `class="card"` | Cards already IMA-branded |
-| `@media (min-width: 768px)` for layout | `class="col-md-6"` | Grid handles it |
-| `.col-md-6` in a reusable component | `.ima-col-sm-6` | Container-responsive |
-| Inline `style="flex: 1 1 200px"` hacks | `.ima-row` + `.ima-col-sm-6` | Utility classes |
+| BAD | GOOD |
+|-----|------|
+| `margin-top: 16px` | `class="mt-3"` |
+| `display: flex` | `class="d-flex"` |
+| `color: #040C53` | `$ima-brand-primary` / `.text-primary` |
+| `font-family: Lato` | `$ima-font-family-primary` |
+| Custom `.my-card { padding: 24px }` | `class="card"` |
+| `@media (min-width: 768px)` for layout | `class="col-md-6"` |
+| `.col-md-6` in reusable component | `.ima-col-sm-6` |
 
-## Bootstrap Utility Quick Reference
+## Bootstrap Utility Reference
 
-### Spacing (rem-based, 0-5 scale)
-- **Pattern**: `{property}{side}-{size}` → `mt-3`, `px-4`, `mb-0`
-- **Properties**: `m` (margin), `p` (padding)
-- **Sides**: `t` top, `b` bottom, `s` start, `e` end, `x` horizontal, `y` vertical, blank = all
-- **Sizes**: `0`=0, `1`=0.25rem, `2`=0.5rem, `3`=1rem, `4`=1.5rem, `5`=3rem, `auto` (margin only)
+### Spacing (rem-based, 0-5)
+- Pattern: `{property}{side}-{size}` → `mt-3`, `px-4`, `mb-0`
+- Properties: `m` margin, `p` padding
+- Sides: `t` `b` `s` `e` `x` `y` (blank = all)
+- Sizes: `0`=0, `1`=0.25rem, `2`=0.5rem, `3`=1rem, `4`=1.5rem, `5`=3rem, `auto`
 
 ### Display & Flex
 - `d-none`, `d-block`, `d-flex`, `d-grid`, `d-inline-block`
-- Responsive: `d-{bp}-{value}` → `d-none d-md-block` (hidden below md)
-- `flex-row`, `flex-column`, `flex-wrap`, `flex-nowrap`
+- Responsive: `d-{bp}-{value}` → `d-none d-md-block`
+- `flex-row`, `flex-column`, `flex-wrap`
 - `justify-content-{start|center|end|between|around|evenly}`
 - `align-items-{start|center|end|stretch|baseline}`
 - `gap-{0-5}`, `row-gap-{n}`, `column-gap-{n}`
 
-### Grid (12-column, viewport-based)
-- `.container` (responsive), `.container-fluid` (full-width)
+### Grid (12-col, viewport-based)
+- `.container`, `.container-fluid`
 - `.col`, `.col-{1-12}`, `.col-{bp}-{1-12}`
 - Breakpoints: `sm`≥576, `md`≥768, `lg`≥992, `xl`≥1200, `xxl`≥1400
 - `.offset-{bp}-{n}`, `.order-{bp}-{n}`
-- **Use for page-level layouts only** — see IMA Container Grid for components
 
-### IMA Container Grid (12-column, container-based)
-- `.ima-row` (establishes container query context + CSS grid)
-- `.ima-col-{1-12}` (always that width), `.ima-col-{bp}-{1-12}` (responsive)
-- Breakpoints: `sm`≥400px, `md`≥600px, `lg`≥800px (container width, NOT viewport)
-- Default: all columns stack full-width (mobile-first)
-- Gap: `1rem` default
-- **Use for reusable components** — forms, widgets, cards, anything in sidebars/modals
+### IMA Container Grid (12-col, container-based)
+- `.ima-row` — container query context + CSS grid
+- `.ima-col-{1-12}`, `.ima-col-{bp}-{1-12}`
+- Breakpoints: `sm`≥400px, `md`≥600px, `lg`≥800px (container width)
 - Source: `ima-brand/sass/_container-grid.scss`
 
 ### Text & Typography
 - `text-start`, `text-center`, `text-end`
 - `fw-bold`, `fw-semibold`, `fw-normal`, `fw-light`
-- `fs-1` (largest) through `fs-6` (smallest)
-- `text-uppercase`, `text-lowercase`, `text-capitalize`
-- `text-nowrap`, `text-break`, `text-truncate`
+- `fs-1` (largest) through `fs-6`
+- `text-uppercase`, `text-truncate`, `text-nowrap`
 
-### Colors (IMA-mapped via theme)
-- Text: `text-primary` (indigo), `text-secondary` (teal), `text-danger`, `text-warning`, `text-success`, `text-info`, `text-muted`, `text-white`
-- Background: `bg-primary`, `bg-secondary`, `bg-light`, `bg-dark`, `bg-white`, `bg-body-tertiary`
+### Colors (IMA-mapped)
+- Text: `text-primary` (indigo), `text-secondary` (teal), `text-danger`, `text-warning`, `text-muted`
+- Background: `bg-primary`, `bg-secondary`, `bg-light`, `bg-dark`, `bg-body-tertiary`
 - Subtle: `text-{color}-emphasis`, `bg-{color}-subtle`
 
 ### Sizing & Position
-- `w-25`, `w-50`, `w-75`, `w-100`, `w-auto`, `mw-100`
-- `h-25`, `h-50`, `h-75`, `h-100`, `h-auto`
+- `w-25/50/75/100/auto`, `mw-100`, `h-25/50/75/100/auto`
 - `position-relative`, `position-absolute`, `position-fixed`, `position-sticky`
 - `top-0`, `start-0`, `end-0`, `bottom-0`, `translate-middle`
 
 ### Borders & Shadows
-- `border`, `border-top`, `border-0`, `border-top-0`
+- `border`, `border-top`, `border-0`
 - `rounded`, `rounded-{0-5}`, `rounded-circle`, `rounded-pill`
 - `shadow-none`, `shadow-sm`, `shadow`, `shadow-lg`
-
-### Visibility
-- `visible`, `invisible` (layout preserved)
-- `visually-hidden` (screen reader only)
 
 ## Key Components
 
@@ -180,7 +159,6 @@ viewport, so the same form works in a sidebar, card, modal, or full-width page.
 ```html
 <button class="btn btn-primary">Primary (teal)</button>
 <button class="btn btn-outline-primary">Outline</button>
-<button class="btn btn-secondary">Secondary</button>
 <button class="btn btn-lg btn-primary">Large (20px radius)</button>
 ```
 
@@ -194,19 +172,9 @@ viewport, so the same form works in a sidebar, card, modal, or full-width page.
 </div>
 ```
 
-## IMA Brand Integration
+## IMA Brand
 
-For detailed IMA brand variables, colors, mixins, and component patterns:
-- See [references/ima-brand.md](references/ima-brand.md)
-
-For theme SCSS architecture and Bootstrap variable override chain:
-- See [references/theme-integration.md](references/theme-integration.md)
-
-For extended Bootstrap utility patterns and Sass customization:
-- See [references/bootstrap-patterns.md](references/bootstrap-patterns.md)
-
-### Quick IMA Color Reference
-
+### Colors
 | Name | Hex | SCSS Variable | Bootstrap Class |
 |------|-----|---------------|-----------------|
 | Trustworthy Indigo | `#040C53` | `$ima-brand-primary` | `.text-primary`, `.bg-primary` |
@@ -217,7 +185,7 @@ For extended Bootstrap utility patterns and Sass customization:
 | Red Ribbon | `#DD153B` | `$ima-brand-red` | `.text-danger`, `.bg-danger` |
 | Clarity Wash | `#F2F3F5` | `$ima-brand-gray-light` | `.bg-light` |
 
-### IMA Typography Mixins
+### Typography Mixins
 ```scss
 @include ima-page-header;        // Lato Bold 40px, uppercase, primary
 @include ima-section-header;     // Lato Bold 20px, primary
@@ -227,7 +195,7 @@ For extended Bootstrap utility patterns and Sass customization:
 @include ima-form-label;         // Open Sans 14px, gray
 ```
 
-### IMA Component Mixins
+### Component Mixins
 ```scss
 @include ima-button-primary;      // Teal bg, white text, 20px/40px padding
 @include ima-button-primary-wide; // Same, 80px horizontal padding
@@ -238,7 +206,7 @@ For extended Bootstrap utility patterns and Sass customization:
 @include ima-gradient-bg;         // 150deg gradient, #00066F → #00B8B8
 ```
 
-## SCSS File Locations
+## SCSS Architecture
 
 ```
 picostrap5-child-base/sass/
@@ -246,33 +214,32 @@ picostrap5-child-base/sass/
 ├── _bootstrap-loader.scss       ← Bootstrap import chain
 ├── _theme_variables.scss        ← Variable overrides (loads IMA brand)
 ├── _custom.scss                 ← Modular custom styles
-├── base/                        ← Global base styles
-├── components/                  ← Reusable components
-├── pages/                       ← Page-specific styles
 └── bootstrap5/                  ← Bootstrap 5.3 source (DO NOT EDIT)
 
 plugins/ima-brand/sass/
-├── brand.scss                   ← Main import
 ├── _variables.scss              ← Colors, typography, spacing
 ├── _typography.scss             ← Font mixins
 ├── _spacing.scss                ← Component mixins, layout
-└── _container-grid.scss         ← Container query grid (.ima-row/.ima-col-*)
+└── _container-grid.scss         ← .ima-row/.ima-col-*
 ```
 
 **Import order**: Bootstrap functions → IMA brand → theme variables → Bootstrap variables → Bootstrap components → custom styles
 
-## Context7 Integration
+## Reference Files
 
-For deep Bootstrap docs (specific component APIs, all Sass variables):
+| File | Contains |
+|------|----------|
+| [`references/ima-brand.md`](references/ima-brand.md) | Full brand variables, colors, mixins |
+| [`references/theme-integration.md`](references/theme-integration.md) | SCSS architecture, Bootstrap override chain |
+| [`references/bootstrap-patterns.md`](references/bootstrap-patterns.md) | Extended utilities, Sass customization |
+
+## Context7
+
 ```
 mcp__context7__query-docs({ libraryId: "/websites/getbootstrap", query: "..." })
 ```
 
-Example queries: `"navbar responsive collapse"`, `"form validation custom styles"`, `"utility API extend"`, `"offcanvas placement responsive"`
-
 ## Success Metrics
-
-- Bootstrap utility usage: ≥80% (vs custom CSS for standard properties)
-- IMA brand variables: 100% (no hardcoded brand colors)
-- Custom CSS only for: truly custom patterns with no Bootstrap equivalent
-- Bootstrap components: used for all standard UI patterns
+- Bootstrap utility usage ≥80% vs custom CSS
+- IMA brand variables 100% (no hardcoded brand colors)
+- Custom CSS only for patterns with no Bootstrap equivalent

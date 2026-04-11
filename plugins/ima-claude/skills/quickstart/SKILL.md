@@ -7,7 +7,7 @@ description: "Team cheat sheet — scannable reference of the most common ima-cl
 
 ## Instructions
 
-**Display the entire cheat sheet below directly to the user.** Output it as-is in your response. Do not summarize, do not run any tools, do not perform memory bootstrap. Just print the cheat sheet.
+Display the entire cheat sheet below directly. Do not summarize, run tools, or perform memory bootstrap.
 
 ---
 
@@ -24,24 +24,20 @@ Memory bootstrap runs automatically at session start (Vestige search + intention
 
 ## IMA Workflow
 
-Habit-driven, not tool-enforced. Six steps:
-
 | Step | Where | Command / Action |
 |------|-------|-----------------|
-| **1. Brainstorm** | Claude Web Project | Ideate, flush out concept into a plan |
+| **1. Brainstorm** | Claude Web Project | Ideate, flush concept into plan |
 | **2. Plan** | Claude Code — Plan Mode | `/plan` or ask Claude to enter Plan Mode |
 | **3. Implement** | Claude Code | "Break this into tasks" (triggers `task-master`) |
 | **4. Test** | Claude Code + manual | Unit tests + human testing |
 | **5. Review** | Fresh Claude Code terminal | `/ima-claude:scorecard` + targeted reviews |
 | **6. Document** | Confluence / Jira / MCP memory | Update Qdrant, Serena, Vestige, Markdowns |
 
-Review findings may cycle back to any earlier step.
-
 ---
 
 ## Writing Code
 
-FP skills auto-activate by file type — just start coding.
+FP skills auto-activate by file type.
 
 | Context | Skill |
 |---------|-------|
@@ -67,7 +63,7 @@ Core rule: **Simple > Complex. No custom FP utilities. Native patterns.**
 | What | Command |
 |------|---------|
 | Project quality scorecard | `/ima-claude:scorecard` |
-| Full multi-agent review (Compound Engineering) | `/workflows:review` |
+| Full multi-agent review | `/workflows:review` |
 | Organize docs | `docs-organize` skill (Active/Archive/Transient tiers) |
 
 ---
@@ -78,8 +74,8 @@ Core rule: **Simple > Complex. No custom FP utilities. Native patterns.**
 |------|---------|
 | Update cross-session knowledge | Vestige (`smart_ingest`) |
 | Store large docs / plans | Qdrant (`mcp-qdrant`) |
-| Document a solved problem (Compound Engineering) | `/workflows:compound` |
-| Organize docs | `docs-organize` skill (Active/Archive/Transient tiers) |
+| Document solved problem | `/workflows:compound` |
+| Organize docs | `docs-organize` skill |
 
 ---
 
@@ -104,7 +100,7 @@ Core rule: **Simple > Complex. No custom FP utilities. Native patterns.**
 | PRDs, plans, large docs | **Qdrant** (semantic search, local RAG) |
 | Session state (current task, WIP) | **Serena** (`/ima-claude:save-session`) |
 
-Vestige stores automatically when you say "I prefer...", "Let's go with...", "From now on..."
+Vestige stores automatically on "I prefer...", "Let's go with...", "From now on..."
 
 ---
 

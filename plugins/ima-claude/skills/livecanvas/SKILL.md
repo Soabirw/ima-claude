@@ -12,10 +12,9 @@ description: >-
 
 # LiveCanvas
 
-Visual page builder for WordPress. Pure HTML/Bootstrap — no proprietary markup, no vendor lock-in.
-Content lives in the WordPress database (`wp_posts`), not PHP template files.
+Visual page builder for WordPress. Pure HTML/Bootstrap — no proprietary markup. Content lives in `wp_posts`, not PHP template files.
 
-**Cross-reference**: Use `ima-bootstrap` skill for Bootstrap 5.3 utilities, grid, components, and IMA brand integration. LiveCanvas uses your theme's Bootstrap — everything in `ima-bootstrap` applies directly.
+Use `ima-bootstrap` skill for Bootstrap 5.3 utilities, grid, and IMA brand integration — applies directly here.
 
 ## Mental Model
 
@@ -23,22 +22,20 @@ Content lives in the WordPress database (`wp_posts`), not PHP template files.
 LiveCanvas Page = HTML + Bootstrap classes + <tangible> blocks for dynamic data
 ```
 
-- **Static content**: Write Bootstrap HTML directly (cards, grids, heroes, etc.)
-- **Dynamic content**: Wrap Loops & Logic tags in `<tangible>` blocks
-- **Logic/conditions**: L&L replaces PHP — think Handlebars/Twig, not `<?php ?>`
-- **No custom CSS framework**: LiveCanvas adds zero CSS. Your theme's Bootstrap is the only framework.
+- Static content: Bootstrap HTML directly
+- Dynamic content: Loops & Logic tags in `<tangible>` blocks
+- Logic/conditions: L&L replaces PHP (think Handlebars/Twig)
+- No custom CSS framework: theme's Bootstrap is the only framework
 
 ## Page Structure
-
-Every LiveCanvas page follows this hierarchy:
 
 ```html
 <main>
   <section>                          <!-- Full-width, not nestable -->
-    <div class="container">          <!-- or container-fluid -->
+    <div class="container">
       <div class="row">
         <div class="col-lg-6">
-          <div class="lc-block">     <!-- Smallest editable unit -->
+          <div class="lc-block">
             <h2 editable="inline">Heading</h2>
           </div>
         </div>
@@ -53,15 +50,13 @@ Every LiveCanvas page follows this hierarchy:
 </main>
 ```
 
-**Rules**:
-- `<section>` elements are always direct children of `<main>`, edge-to-edge
-- Standard Bootstrap grid inside: `.container` > `.row` > `.col-*`
-- `lc-block` divs are the smallest building blocks
-- `editable="inline"` for single-line text, `editable="rich"` for rich text
+- `<section>` always direct children of `<main>`, edge-to-edge
+- Standard grid: `.container` > `.row` > `.col-*`
+- `editable="inline"` for single-line, `editable="rich"` for rich text
 
 ## Dynamic Content with Loops & Logic
 
-Wrap L&L markup in `<tangible>` tags. Add `class="live-refresh"` for real-time preview in the editor.
+Wrap L&L markup in `<tangible>`. Add `class="live-refresh"` for editor preview.
 
 ```html
 <tangible class="live-refresh">
@@ -82,7 +77,7 @@ Wrap L&L markup in `<tangible>` tags. Add `class="live-refresh"` for real-time p
 | Tag | Purpose | Example |
 |-----|---------|---------|
 | `<Loop>` | Query & iterate | `<Loop type="post" count="5">` |
-| `<Field>` | Output a value | `<Field title />` |
+| `<Field>` | Output value | `<Field title />` |
 | `<If>` / `<Else />` | Conditions | `<If field="image" exists>` |
 | `<Set>` / `<Get>` | Variables | `<Set name="total">0</Set>` |
 | `<Date>` | Date formatting | `<Date format="F j, Y" />` |
@@ -90,7 +85,7 @@ Wrap L&L markup in `<tangible>` tags. Add `class="live-refresh"` for real-time p
 | `<Math>` | Arithmetic | `<Math>price * 1.1</Math>` |
 | `<Template>` | Reuse saved template | `<Template name="card" />` |
 
-**Tags inside attributes** — use `{}` instead of `<>`:
+Tags inside attributes — use `{}` instead of `<>`:
 ```html
 <a href="{Field url}"><Field title /></a>
 <img src="{Field image_url}" alt="{Field title}" />
@@ -163,15 +158,11 @@ Wrap L&L markup in `<tangible>` tags. Add `class="live-refresh"` for real-time p
 
 ## Reusable Sections
 
-Save any section to a library. Recall on other pages:
-```
-[lc_html_section id="123"]
-```
-Edits propagate everywhere the section is used.
+Save section to library. Recall elsewhere: `[lc_html_section id="123"]` — edits propagate everywhere.
 
 ## LiveCanvas Shortcodes (Legacy)
 
-Still supported alongside L&L. Use for simple field output without `<tangible>` wrapper:
+Prefer L&L for new work. Shortcodes maintained for backward compatibility.
 
 | Shortcode | Purpose |
 |-----------|---------|
@@ -186,13 +177,11 @@ Still supported alongside L&L. Use for simple field output without `<tangible>` 
 | `[lc_if]` | Conditional |
 | `[lc_get_posts]` | Post query loop |
 
-**Prefer L&L for new work** — shortcodes are maintained for backward compatibility.
-
 ## When to Use What
 
 | Need | Use |
 |------|-----|
-| Static layout, typography, spacing | Bootstrap classes directly (see `ima-bootstrap`) |
+| Static layout, typography, spacing | Bootstrap classes (see `ima-bootstrap`) |
 | Dynamic post loops, conditions | L&L `<tangible>` blocks |
 | Simple single-field output | L&L `<Field>` or legacy shortcode |
 | ACF field display | L&L ACF tags |
@@ -202,8 +191,6 @@ Still supported alongside L&L. Use for simple field output without `<tangible>` 
 
 ## Reference Files
 
-Load these as needed for deeper information:
-
-- **[Loops & Logic Reference](references/loops-and-logic.md)** — Complete L&L syntax: all tags, Loop query parameters, Field types, If conditions, ACF integration, variables, Date/Format/Math, List/Map, WooCommerce
-- **[LiveCanvas Features](references/livecanvas-features.md)** — Editor workflow, all shortcodes with parameters, WooCommerce shortcodes, Forms API, reusable sections, keyboard shortcuts, template assignment
+- **[Loops & Logic Reference](references/loops-and-logic.md)** — Complete L&L syntax: all tags, Loop query params, Field types, If conditions, ACF integration, variables, Date/Format/Math, List/Map, WooCommerce
+- **[LiveCanvas Features](references/livecanvas-features.md)** — Editor workflow, shortcodes with params, WooCommerce shortcodes, Forms API, reusable sections, keyboard shortcuts, template assignment
 - **[PicoStrap Integration](references/picostrap.md)** — Theme architecture, SCSS pipeline, NinjaBootstrap utilities, child theme setup, dark mode, customizer options

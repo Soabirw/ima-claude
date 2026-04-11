@@ -5,28 +5,22 @@ description: "Use Serena MCP for ALL code navigation and investigation — it sa
 
 # Serena MCP - Code Symbol Operations
 
-**Serena is your DEFAULT tool for all code investigation.** Use it FIRST, before Read/Grep/Glob.
+Use Serena FIRST for all code investigation — before Read/Grep/Glob. Reading entire files wastes 40-70% token budget. Serena gives precise symbol-level access: structure without content, bodies only when needed, references without scanning every file.
 
-Reading entire files wastes 40-70% of your token budget. Serena gives you precise symbol-level access — structure without content, bodies only when needed, references without scanning every file.
+Tools available as `mcp__serena__*` (direct access, not through gateway).
 
-## Setup: Direct Access
-
-Serena runs directly (not through Airis gateway). Tools are available as `mcp__serena__*`.
-
-## MCP Tools
+## Tools
 
 | Tool | Purpose |
 |------|---------|
-| `mcp__serena__jet_brains_find_symbol` | Find symbols by name path pattern |
-| `mcp__serena__jet_brains_find_referencing_symbols` | Find all references to a symbol |
-| `mcp__serena__rename_symbol` | Rename symbol across entire codebase |
-| `mcp__serena__jet_brains_get_symbols_overview` | Get top-level symbols in a file |
-| `mcp__serena__search_for_pattern` | Regex pattern search (better for Vue) |
-| `mcp__serena__list_dir` | List directory contents |
+| `jet_brains_find_symbol` | Find symbols by name path pattern |
+| `jet_brains_find_referencing_symbols` | Find all references to a symbol |
+| `rename_symbol` | Rename symbol across entire codebase |
+| `jet_brains_get_symbols_overview` | Get top-level symbols in a file |
+| `search_for_pattern` | Regex pattern search (preferred for Vue) |
+| `list_dir` | List directory contents |
 
-## Workflow: Symbol Discovery
-
-### Find a Symbol
+## Symbol Discovery
 
 ```
 mcp__serena__jet_brains_find_symbol
@@ -35,11 +29,9 @@ mcp__serena__jet_brains_find_symbol
   depth: 1
 ```
 
-- Use `depth: 1` to see methods/properties
-- Use `include_body: true` only when you need implementation details
-- Use `relative_path` to narrow search scope
-
-### Find All References
+- `depth: 1` — see methods/properties
+- `include_body: true` — only when implementation needed
+- `relative_path` — narrow search scope
 
 ```
 mcp__serena__jet_brains_find_referencing_symbols
@@ -48,19 +40,13 @@ mcp__serena__jet_brains_find_referencing_symbols
   include_info: true
 ```
 
-### Get File Overview
-
 ```
 mcp__serena__jet_brains_get_symbols_overview
   relative_path: "src/services/user.ts"
   depth: 1
 ```
 
-Better than reading entire file when you just need structure.
-
-## Workflow: Symbol Modification
-
-### Rename Symbol
+## Symbol Modification
 
 ```
 mcp__serena__rename_symbol
@@ -69,41 +55,29 @@ mcp__serena__rename_symbol
   new_name: "fetchUserData"
 ```
 
-Automatically updates all references across the codebase.
+Updates all references automatically.
 
-## Gitignore Handling (Important)
+## Gitignore Handling
 
-**Known Issue**: Serena has problems with complex `.gitignore` negation patterns (GitHub Issue #600).
+Known issue: complex `.gitignore` negation patterns block Serena (GitHub #600). Example: `plugins/` ignored + `!plugins/custom/` re-included — Serena may still skip it.
 
-Example problem:
-```gitignore
-plugins/           # Ignored
-!plugins/custom/   # Re-included (but Serena may still ignore it)
+Workarounds:
+
 ```
-
-Serena's `is_ignored_path()` returns `True` early, bypassing negation logic.
-
-### Workarounds
-
-**For `list_dir`** - use `skip_ignored_files: false`:
-```
+# list_dir — use skip_ignored_files: false
 mcp__serena__list_dir
   relative_path: "plugins"
   recursive: true
   skip_ignored_files: false
-```
 
-**For `search_for_pattern`** - target folder directly with `relative_path`:
-```
+# search_for_pattern — target folder directly
 mcp__serena__search_for_pattern
   substring_pattern: "functionName"
   relative_path: "plugins/custom"
   context_lines_before: 2
   context_lines_after: 2
-```
 
-**Alternative** - use explicit glob to include:
-```
+# Or use explicit glob
 mcp__serena__search_for_pattern
   substring_pattern: "functionName"
   paths_include_glob: "**/plugins/**"
@@ -111,9 +85,7 @@ mcp__serena__search_for_pattern
 
 ## Vue 3 / Quasar Projects
 
-**Important**: TypeScript LSP doesn't fully understand Vue 3 `<script setup>` syntax.
-
-For `.vue` files and `src/composables/`, prefer pattern search:
+TypeScript LSP doesn't fully understand Vue 3 `<script setup>`. For `.vue` files and `src/composables/`, use pattern search:
 
 ```
 mcp__serena__search_for_pattern
@@ -123,56 +95,54 @@ mcp__serena__search_for_pattern
   context_lines_after: 2
 ```
 
-**Decision Logic for Vue**:
 ```
-IF target is .vue file OR src/composables/:
-    → Use search_for_pattern (more reliable)
-ELSE IF pure .ts/.js files:
-    → Use LSP tools (find_symbol, find_referencing_symbols)
+IF .vue file OR src/composables/:
+    → search_for_pattern
+ELSE IF .ts/.js files:
+    → find_symbol, find_referencing_symbols
 ```
 
 ## Decision Logic
 
 ```
-IF need to find/understand code symbols:
-    → Use find_symbol, find_referencing_symbols
-ELSE IF need to rename/refactor symbol:
-    → Use rename_symbol (handles dependencies automatically)
-ELSE IF simple text pattern search:
-    → Use search_for_pattern
-ELSE IF searching in gitignore-negated folder:
-    → Use relative_path to target directly OR skip_ignored_files: false
-ELSE IF reading full file needed:
-    → Use native Read tool
+IF find/understand code symbols:
+    → find_symbol, find_referencing_symbols
+ELSE IF rename/refactor:
+    → rename_symbol
+ELSE IF text pattern search:
+    → search_for_pattern
+ELSE IF gitignore-negated folder:
+    → relative_path directly OR skip_ignored_files: false
+ELSE IF full file content needed:
+    → native Read tool
 ```
 
 ## Error Recovery
 
 | Error | Recovery |
 |-------|----------|
-| Symbol not found | Try broader name_path_pattern, check spelling |
+| Symbol not found | Broader name_path_pattern, check spelling |
 | Vue SFC issues | Switch to search_for_pattern |
-| Gitignore blocking folder | Use relative_path directly or skip_ignored_files: false |
+| Gitignore blocking | Use relative_path or skip_ignored_files: false |
 | Rename failed | Check if symbol is in external dependency |
 | Too many results | Add relative_path to narrow scope |
 
-## When to Fall Back to Read/Grep
+## Fall Back to Read/Grep Only For
 
-Use Read/Grep ONLY in these narrow cases:
-- **Non-code files**: markdown, JSON, YAML, config files (Serena's LSP doesn't index these)
-- **Serena unavailable**: tools return errors or project lacks IDE integration
-- **Full file content needed**: after using `get_symbols_overview` to identify what to read, use Read for the specific section
+- Non-code files: markdown, JSON, YAML, config (LSP doesn't index these)
+- Serena unavailable or returning errors
+- Full file content after overview identified what to read
 
-Do NOT fall back to Grep for code searches — use `search_for_pattern` or `find_symbol` instead.
+Never use Grep for code searches — use `search_for_pattern` or `find_symbol`.
 
-## Examples
+## Quick Reference
 
-| User Request | Action |
-|--------------|--------|
-| "Where is UserService used?" | find_referencing_symbols(name_path: "UserService") |
-| "Rename getUserData to fetchUser" | rename_symbol(name_path: "getUserData", new_name: "fetchUser") |
-| "What methods does AuthService have?" | find_symbol(name_path: "AuthService", depth: 1) |
-| "Find useAuth usage in Vue files" | search_for_pattern(pattern: "useAuth", glob: "**/*.vue") |
-| "Search in plugins folder" | search_for_pattern(relative_path: "plugins/custom") |
-| "List plugins directory" | list_dir(relative_path: "plugins", skip_ignored_files: false) |
-| "Show me the user.ts file" | Native Read (full file needed) |
+| Request | Tool |
+|---------|------|
+| "Where is UserService used?" | `find_referencing_symbols(name_path: "UserService")` |
+| "Rename getUserData to fetchUser" | `rename_symbol(name_path: "getUserData", new_name: "fetchUser")` |
+| "What methods does AuthService have?" | `find_symbol(name_path: "AuthService", depth: 1)` |
+| "Find useAuth in Vue files" | `search_for_pattern(pattern: "useAuth", glob: "**/*.vue")` |
+| "Search in plugins folder" | `search_for_pattern(relative_path: "plugins/custom")` |
+| "List plugins directory" | `list_dir(relative_path: "plugins", skip_ignored_files: false)` |
+| "Show me user.ts" | Native Read |
