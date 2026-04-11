@@ -5,6 +5,20 @@ All notable changes to ima-claude will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.21.0] - 2026-04-11
+
+### Changed
+
+- **All code-investigating agents** — Added `mcp-serena` as a default skill on explorer, implementer, reviewer, tester, and wp-developer agents. Serena-first code navigation is now automatic — no need to specify `with skills: mcp-serena` when delegating.
+- **explorer, reviewer agents** — Removed explicit `tools:` restriction (`Read, Grep, Glob, LS, Bash`) that physically blocked all MCP tools. Now rely on `permissionMode: plan` for read-only enforcement while allowing Serena MCP access.
+- **Agent system prompts** — Each code-investigating agent now includes a "Code Navigation (Serena-First — REQUIRED)" section with substitution table baked into its own context, not just the orchestrator's.
+- **mcp-serena skill** — Made more assertive: Serena is the DEFAULT tool, not an option. "When NOT to use" narrowed to "When to Fall Back" with tighter exceptions.
+- **bootstrap.sh** — Serena section upgraded from "REQUIRED when installed" to "MANDATORY for all code investigation". Added delegation guidance and tester agent to the agent table.
+
+### Fixed
+
+- **Token waste from Serena non-adoption** — Triple failure fixed: (1) tools restriction blocked MCP tools, (2) no agent had mcp-serena in default skills, (3) agent prompts directed toward Read/Grep. Agents were hitting 5-hour rate caps at 2.5 hours due to reading entire files instead of using Serena's symbol-level access (40-70% token savings).
+
 ## [2.20.0] - 2026-04-06
 
 ### Added

@@ -13,10 +13,10 @@ Based on IMA Brand Book v4.0 (September 2025). Plugin: `ima-brand` v4.0.0.
 
 | Name | Hex | Variable | Usage |
 |------|-----|----------|-------|
-| Trustworthy Indigo | `#040C53` | `$ima-brand-primary` | Headers, titles, emphasis |
-| Aquatic Pulse | `#0296A1` | `$ima-brand-secondary` | Buttons, CTAs, links |
-| Bright Teal | `#00B8B8` | `$ima-brand-accent-teal` | Highlights, hover states |
+| Trustworthy Indigo | `#00066F` | `$ima-brand-primary` | Headers, titles, emphasis |
+| Aquatic Pulse | `#00B8B8` | `$ima-brand-secondary` | Buttons, CTAs, links |
 | Guidance Sky | `#A2CFF0` | `$ima-brand-sky` | Light backgrounds, accents |
+| Soft Mist | `#EDF3F4` | `$ima-brand-mist` | Light blue-gray backgrounds |
 
 ### Secondary Colors
 
@@ -48,7 +48,7 @@ Based on IMA Brand Book v4.0 (September 2025). Plugin: `ima-brand` v4.0.0.
 
 | Tag | Hex | Variable |
 |-----|-----|----------|
-| Telehealth | `#040C53` | `$ima-tag-telehealth` |
+| Telehealth | `#00066F` | `$ima-tag-telehealth` |
 | Prescriber | `#FFCC00` | `$ima-tag-prescriber` |
 | Family | `#A2CFF0` | `$ima-tag-family` |
 
@@ -94,7 +94,7 @@ Based on IMA Brand Book v4.0 (September 2025). Plugin: `ima-brand` v4.0.0.
 @include ima-provider-title;      // Lato Semi Bold 32px, primary color
 @include ima-provider-title-bold; // Lato Bold 1.4em
 @include ima-form-label;          // Open Sans 14px, gray
-@include ima-button-text;         // Lato Bold 18px, uppercase
+@include ima-button-text;         // Lato Bold 1em, uppercase, 0.04em letter-spacing
 @include ima-body-text;           // Proxima Nova Regular 16px
 @include ima-h1;                  // Lato Black 40px
 @include ima-h2;                  // Lato Bold 32px
@@ -106,14 +106,20 @@ Based on IMA Brand Book v4.0 (September 2025). Plugin: `ima-brand` v4.0.0.
 
 ## Component Mixins
 
-### Buttons
+### Buttons (Digital Content Guide 2026)
 ```scss
-@include ima-button-primary;      // Aquatic Pulse bg, white text, 20px/40px padding, 10px radius
-@include ima-button-primary-wide; // Same, 80px horizontal padding
-@include ima-button-outline;      // Transparent bg, primary border
+@include ima-button-teal;         // Teal bg, white text, inverts to outline on hover
+@include ima-button-dark;         // Navy bg, white text, inverts to outline on hover
+@include ima-button-inverse-teal; // Teal outline, fills to teal on hover
+@include ima-button-inverse-dark; // Navy outline, fills to navy on hover
+@include ima-button-lg;           // Large variant (2em font, 1.75em/3.75em padding)
+
+// Legacy aliases (still work):
+@include ima-button-primary;      // → ima-button-teal
+@include ima-button-outline;      // → ima-button-inverse-dark
 ```
-- Hover: Bright Teal (#00B8B8) background
-- Font: Lato Bold 18px, uppercase
+- All buttons: 15px radius, 1.25em/2.5em padding, 0.04em letter-spacing
+- Font: Lato Bold 1em, uppercase
 
 ### Forms
 ```scss
@@ -214,17 +220,20 @@ Source: `ima-brand/sass/_container-grid.scss`
 | Variable | Value | Usage |
 |----------|-------|-------|
 | `$ima-border-radius-sm` | 5px | Tags, small badges |
-| `$ima-border-radius-md` | 10px | Buttons, cards |
+| `$ima-border-radius-md` | 10px | Cards |
 | `$ima-border-radius-lg` | 15px | Form fields |
-| `$ima-border-radius-xl` | 20px | Large/digital buttons |
+| `$ima-border-radius-xl` | 20px | Reserved |
+| `$ima-button-border-radius` | 15px | All buttons (unified) |
 
 ## Component Spacing
 
 | Variable | Value |
 |----------|-------|
-| `$ima-button-padding-x` | 40px |
-| `$ima-button-padding-y` | 20px |
-| `$ima-button-padding-x-alt` | 80px (wide) |
+| `$ima-button-padding-y` | 1.25em |
+| `$ima-button-padding-x` | 2.5em |
+| `$ima-button-lg-padding-y` | 1.75em |
+| `$ima-button-lg-padding-x` | 3.75em |
+| `$ima-button-letter-spacing` | 0.04em |
 | `$ima-form-field-padding` | 16px |
 | `$ima-form-field-margin-bottom` | 24px |
 | `$ima-card-padding` | 24px |
@@ -236,14 +245,14 @@ Source: `ima-brand/sass/_container-grid.scss`
 The IMA brand plugin maps to Bootstrap's theme colors:
 
 ```scss
-$primary:   $ima-brand-primary;        // #040C53
-$secondary: $ima-brand-secondary;      // #0296A1
+$primary:   $ima-brand-primary;        // #00066F
+$secondary: $ima-brand-secondary;      // #00B8B8
 $success:   #28A745;
 $warning:   $ima-brand-gold;           // #FFCC00
 $danger:    $ima-brand-red;            // #DD153B
 $info:      $ima-brand-teal-accessible; // #007BB4
 $light:     $ima-brand-gray-light;     // #F2F3F5
-$dark:      $ima-brand-primary;        // #040C53
+$dark:      $ima-brand-primary;        // #00066F
 ```
 
 This means `.btn-primary`, `.bg-primary`, `.text-primary` etc. all use IMA brand colors automatically.
@@ -266,8 +275,9 @@ High-contrast teal alternative: `$ima-brand-teal-accessible` (#007BB4)
 ## Design Notes
 
 1. **No drop shadows** on cards (per brand feedback)
-2. **Uppercase buttons** standard (text-transform: uppercase)
-3. **Form radius: 15px**, button radius: 10px-20px (20px for digital/lg)
-4. **Form labels**: Open Sans 14px gray (not Lato)
+2. **Uppercase buttons** standard (text-transform: uppercase, 0.04em letter-spacing)
+3. **Button radius: 15px unified** (all sizes, Digital Content Guide 2026)
+4. **Form radius: 15px**, form labels: Open Sans 14px gray (not Lato)
 5. **Page headers**: uppercase
 6. **Font-weight fixes** included for Chrome/Brave consistency
+7. **4 button variants**: teal, dark, inverse-teal, inverse-dark (hover inverts fill/outline)

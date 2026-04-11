@@ -251,11 +251,11 @@ Named subagents with hard constraints — model, tools, and permissions enforced
 
 | Agent | Model | Mode | Pre-loaded Skills | Use For |
 |-------|-------|------|-------------------|---------|
-| `ima-claude:explorer` | haiku | read-only | — | File discovery, architecture understanding, code search |
-| `ima-claude:implementer` | sonnet | full access | `functional-programmer` | Feature dev, bug fixes, refactoring, tests |
-| `ima-claude:reviewer` | sonnet | read-only | `functional-programmer` | Code review, security audit, FP compliance |
-| `ima-claude:tester` | sonnet | full access | `unit-testing`, `functional-programmer` | Test creation, TDD, test running, debugging failures |
-| `ima-claude:wp-developer` | sonnet | full access | `php-fp`, `php-fp-wordpress`, `wp-ddev`, `wp-local`, `ima-forms-expert`, `ima-bootstrap`, `jquery` | WordPress plugins, themes, WP-CLI, forms |
+| `ima-claude:explorer` | haiku | read-only | `mcp-serena` | File discovery, architecture understanding, code search |
+| `ima-claude:implementer` | sonnet | full access | `functional-programmer`, `mcp-serena` | Feature dev, bug fixes, refactoring, tests |
+| `ima-claude:reviewer` | sonnet | read-only | `functional-programmer`, `mcp-serena` | Code review, security audit, FP compliance |
+| `ima-claude:tester` | sonnet | full access | `unit-testing`, `functional-programmer`, `mcp-serena` | Test creation, TDD, test running, debugging failures |
+| `ima-claude:wp-developer` | sonnet | full access | `php-fp`, `php-fp-wordpress`, `wp-ddev`, `wp-local`, `ima-forms-expert`, `ima-bootstrap`, `jquery`, `mcp-serena` | WordPress plugins, themes, WP-CLI, forms |
 | `ima-claude:memory` | sonnet | full access | `mcp-vestige`, `mcp-qdrant`, `mcp-serena` | Memory search, storage, consolidation across Vestige/Qdrant/Serena |
 
 Agents are auto-discovered from `plugins/ima-claude/agents/`. No manifest changes needed to add new ones.

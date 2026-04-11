@@ -5,7 +5,9 @@ description: "Use Serena MCP for ALL code navigation and investigation — it sa
 
 # Serena MCP - Code Symbol Operations
 
-Use Serena for code symbol discovery and modification instead of reading entire files.
+**Serena is your DEFAULT tool for all code investigation.** Use it FIRST, before Read/Grep/Glob.
+
+Reading entire files wastes 40-70% of your token budget. Serena gives you precise symbol-level access — structure without content, bodies only when needed, references without scanning every file.
 
 ## Setup: Direct Access
 
@@ -154,12 +156,14 @@ ELSE IF reading full file needed:
 | Rename failed | Check if symbol is in external dependency |
 | Too many results | Add relative_path to narrow scope |
 
-## When NOT to Use
+## When to Fall Back to Read/Grep
 
-- Simple text searches (use Grep)
-- Reading configuration files (use Read)
-- Operations on non-code files (markdown, json, yaml)
-- When you need file content, not symbol info
+Use Read/Grep ONLY in these narrow cases:
+- **Non-code files**: markdown, JSON, YAML, config files (Serena's LSP doesn't index these)
+- **Serena unavailable**: tools return errors or project lacks IDE integration
+- **Full file content needed**: after using `get_symbols_overview` to identify what to read, use Read for the specific section
+
+Do NOT fall back to Grep for code searches — use `search_for_pattern` or `find_symbol` instead.
 
 ## Examples
 

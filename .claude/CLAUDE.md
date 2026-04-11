@@ -102,13 +102,15 @@ When adding new skills or hooks, the registries and docs must also be updated.
 
 Named subagents with enforced constraints (model, tools, permissions, skills). The plugin auto-discovers `agents/` — agents appear as `ima-claude:{name}`.
 
+All code-investigating agents include `mcp-serena` by default — they will use Serena automatically for code navigation. You do NOT need to specify `with skills: mcp-serena` when delegating.
+
 | Agent | Model | Mode | Skills | Purpose |
 |-------|-------|------|--------|---------|
-| `explorer` | haiku | read-only (`plan`) | — | File discovery, codebase exploration, architecture understanding |
-| `implementer` | sonnet | full access | `functional-programmer` | Feature dev, bug fixes, refactoring, test writing |
-| `reviewer` | sonnet | read-only (`plan`) | `functional-programmer` | Code review, security audit, FP compliance |
-| `tester` | sonnet | full access | `unit-testing`, `functional-programmer` | Test creation, TDD, test running, debugging test failures |
-| `wp-developer` | sonnet | full access | `php-fp`, `php-fp-wordpress`, `wp-ddev`, `wp-local`, `ima-forms-expert`, `ima-bootstrap`, `jquery` | WordPress plugins, themes, WP-CLI, forms, Bootstrap |
+| `explorer` | haiku | read-only (`plan`) | `mcp-serena` | File discovery, codebase exploration, architecture understanding |
+| `implementer` | sonnet | full access | `functional-programmer`, `mcp-serena` | Feature dev, bug fixes, refactoring, test writing |
+| `reviewer` | sonnet | read-only (`plan`) | `functional-programmer`, `mcp-serena` | Code review, security audit, FP compliance |
+| `tester` | sonnet | full access | `unit-testing`, `functional-programmer`, `mcp-serena` | Test creation, TDD, test running, debugging test failures |
+| `wp-developer` | sonnet | full access | `php-fp`, `php-fp-wordpress`, `wp-ddev`, `wp-local`, `ima-forms-expert`, `ima-bootstrap`, `jquery`, `mcp-serena` | WordPress plugins, themes, WP-CLI, forms, Bootstrap |
 | `memory` | sonnet | full access | `mcp-vestige`, `mcp-qdrant`, `mcp-serena` | Memory search, storage, consolidation across Vestige/Qdrant/Serena |
 
 ## Available Skills

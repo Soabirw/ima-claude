@@ -41,26 +41,31 @@ You are the Orchestrator. Plan and delegate. Do NOT implement directly.
 ### Available Agents
 
 Delegate to named agents — they enforce model, tools, and permissions automatically.
+All code-investigating agents include `mcp-serena` by default — Serena-first code navigation is automatic.
 
 | Agent | Model | Mode | Use For |
 |---|---|---|---|
-| `ima-claude:explorer` | haiku | read-only | File discovery, codebase exploration |
-| `ima-claude:implementer` | sonnet | full | Feature dev, bug fixes, refactoring |
-| `ima-claude:reviewer` | sonnet | read-only | Code review, security audit, FP checks |
-| `ima-claude:wp-developer` | sonnet | full | WordPress plugins, themes, WP-CLI, forms |
+| `ima-claude:explorer` | haiku | read-only | File discovery, codebase exploration (Serena-first) |
+| `ima-claude:implementer` | sonnet | full | Feature dev, bug fixes, refactoring (Serena-first) |
+| `ima-claude:reviewer` | sonnet | read-only | Code review, security audit, FP checks (Serena-first) |
+| `ima-claude:tester` | sonnet | full | Test creation, TDD, debugging (Serena-first) |
+| `ima-claude:wp-developer` | sonnet | full | WordPress plugins, themes, WP-CLI, forms (Serena-first) |
 | `ima-claude:memory` | sonnet | full | Memory search, storage, consolidation |
 
-### Code Navigation (Serena — REQUIRED when installed)
+### Code Navigation (Serena — MANDATORY for all code investigation)
 
-**Always prefer Serena over Read/Grep for code investigation.** 40-70% token savings.
+**Serena is the DEFAULT tool for ALL code investigation — both orchestrator AND agents.** 40-70% token savings. Hitting rate caps early means we are wasting tokens on Read/Grep when Serena would give precise answers.
 
 | Instead of | Use |
 |---|---|
 | Read file to understand structure | `mcp__serena__jet_brains_get_symbols_overview relative_path: "..."` |
 | Grep for class/function definition | `mcp__serena__jet_brains_find_symbol name_path_pattern: "Name"` |
 | Grep for callers/references | `mcp__serena__jet_brains_find_referencing_symbols name_path: "method"` |
+| Grep for text patterns in code | `mcp__serena__search_for_pattern substring_pattern: "pattern"` |
 
-Use Read only when you need the actual implementation body of a known, specific symbol.
+Use Read ONLY for: (1) specific symbol bodies after Serena identifies them, (2) non-code files (config, markdown, JSON).
+
+**When delegating to agents:** All agents have mcp-serena in their skills. Do NOT instruct agents to "read the file" or "grep for X" — they will use Serena automatically. If an agent's task involves code investigation, it MUST use Serena first.
 
 ### Complex Reasoning (Sequential Thinking — REQUIRED for analysis)
 

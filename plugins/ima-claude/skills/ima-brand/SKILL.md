@@ -61,18 +61,20 @@ What type of brand question?
 | Plum Velvet | `#7B024D` | Accent, distinction |
 | Calm Stone | `#919396` | Secondary text, labels |
 | Clarity Wash | `#F2F3F5` | Backgrounds, cards |
+| Soft Mist | `#EDF3F4` | Light blue-gray backgrounds |
 | Accessible Teal | `#007BB4` | High-contrast alternative |
 | Brand Gradient | `150deg, #00066F → #00B8B8` | Hero sections, overlays |
 
 ## Quick Reference: Typography
 
-| Element | Font | Weight | Size |
-|---------|------|--------|------|
-| Page headers | Lato | Bold/Black | 40px |
-| Section headers | Lato | Bold | 20px |
-| Body text | Proxima Nova / Open Sans | Regular | 16px |
-| Buttons | Lato | Bold | 18px, uppercase |
-| Form labels | Open Sans | Regular | 14px |
+| Element | Font | Weight | Size | Notes |
+|---------|------|--------|------|-------|
+| Page headers | Lato | Bold/Black | 40px | |
+| Section headers | Lato | Bold | 20px | |
+| Body text | Proxima Nova / Open Sans | Regular | 16px | |
+| Buttons (small) | Lato | Bold | 1em, uppercase | 0.04em letter-spacing, 15px radius |
+| Buttons (large) | Lato | Bold | 2em, uppercase | 0.04em letter-spacing, 15px radius |
+| Form labels | Open Sans | Regular | 14px | |
 
 ## Quick Reference: Voice & Tone
 
