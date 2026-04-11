@@ -221,7 +221,14 @@ Or explicitly invoke:
 
 ## Personalities (Optional)
 
-Fun themed response styles (tone only, no expertise change):
+Token-efficient communication styles:
+
+```
+"Enable efficient mode"  # Precise, no filler (~30-40% token savings)
+"Enable terse mode"      # Blunt fragments, compressed (~50-65% token savings)
+```
+
+Fun themed response styles (tone only):
 
 ```
 "Enable 40k mode"  # Warhammer 40K themed

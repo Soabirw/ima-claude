@@ -9,7 +9,7 @@ export const HOOKS_DIR = join(CLAUDE_DIR, "hooks");
 export const COMMANDS_DIR = join(CLAUDE_DIR, "commands");
 export const RULES_DIR = join(CLAUDE_DIR, "rules");
 export const SETTINGS_FILE = join(CLAUDE_DIR, "settings.json");
-export const VERSION = "2.21.0";
+export const VERSION = "2.22.0";
 
 export const colors = {
   reset: "\x1b[0m",
@@ -208,6 +208,8 @@ export const SKILLS_TO_INSTALL = [
 export const PERSONALITIES_TO_INSTALL = [
   "enable-40k.md",
   "enable-templars.md",
+  "enable-efficient.md",
+  "enable-terse.md",
 ];
 
 export const HOOKS_TO_INSTALL = [

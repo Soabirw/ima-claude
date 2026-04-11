@@ -5,6 +5,14 @@ All notable changes to ima-claude will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.22.0] - 2026-04-11
+
+### Added
+
+- **enable-efficient personality** — Token-efficient communication style inspired by Star Trek's Data. Eliminates filler, hedging, pleasantries, and meta-commentary while keeping full sentences and articles. Targets ~30-40% output token savings. Includes auto-clarity rule (reverts to normal English for security warnings and irreversible operations).
+- **enable-terse personality** — Aggressive token-efficient style modeled on a blunt senior engineer. Fragments OK, bullets over prose, short synonyms, optional article drops. Targets ~50-65% output token savings. Same auto-clarity safety rule.
+- **Functional personality category** — Personalities README now distinguishes flavor personalities (40k, templars) from functional personalities (efficient, terse) that reduce rather than add tokens.
+
 ## [2.21.0] - 2026-04-11
 
 ### Changed
