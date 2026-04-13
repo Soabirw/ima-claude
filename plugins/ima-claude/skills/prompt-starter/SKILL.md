@@ -16,6 +16,7 @@ description: Build better prompts from rough ideas. Selects template, pre-fills 
 |---|---|
 | `brainstorm`, `research`, `explore` | `references/brainstorm.md` |
 | `plan`, `implement`, `build`, `execute` | `references/plan-implement.md` |
+| `review`, `code review`, `audit`, `PR review`, Gitea/GitHub PR URL | `references/code-review.md` |
 | `quick` or short one-liner | `references/quick.md` |
 | Jira key only (ambiguous) | Ask which template |
 
@@ -27,6 +28,7 @@ description: Build better prompts from rough ideas. Selects template, pre-fills 
 - Summary → one-line goal / user story
 - Description → Problem section
 - Acceptance Criteria → Acceptance / Test sections
+- For code-review template: PR URL or branch from description/linked branch → pre-fill `Scope` section
 
 Use judgment — if Jira description is sparse, leave bracket hints for user.
 

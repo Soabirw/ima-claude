@@ -23,6 +23,16 @@ Use Serena as FIRST approach for ALL code investigation. Saves 40-70% tokens vs 
 
 Use Read only for specific symbol bodies under review. Fall back to Read/Grep for non-code files.
 
+## PR review mode
+
+When given a Gitea/GitHub PR URL or diff:
+1. Fetch the diff (gh-cli / mcp-gitea / mcp-github)
+2. For EACH changed file, use Serena `get_symbols_overview` on the full file — NOT just the diff hunks. Context around changes matters (init sites, callers, preconditions).
+3. Use `find_referencing_symbols` on changed functions to verify call sites still hold contract.
+4. Review against the checklist below.
+
+Diff-only analysis is the failure mode. Always read surrounding context.
+
 ## Review checklist
 
 **Correctness** — logic errors, off-by-one, null paths, edge cases, type safety
@@ -40,6 +50,8 @@ Severity tiers — for each finding include: file path, line number, issue, spec
 - **Critical** — must fix before merge (bugs, security)
 - **Warning** — should fix (FP violations, potential issues)
 - **Suggestion** — consider improving (style, minor simplifications)
+
+For Critical and Warning findings: before reporting, re-examine with fresh reading of the relevant code. State "2nd pass: confirmed" or "2nd pass: withdrawn — [reason]". This is NOT optional for Critical.
 
 ## Do not
 

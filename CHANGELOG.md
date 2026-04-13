@@ -5,6 +5,17 @@ All notable changes to ima-claude will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.24.0] - 2026-04-13
+
+### Added
+
+- **code-review prompt template** (`plugins/ima-claude/skills/prompt-starter/references/code-review.md`) — Encodes the proven multi-stage PR review pattern (task-master → explorer + reviewer with domain skills, Serena full-file context, 2nd-opinion pass). Explicitly warns against `/code-review:code-review` (third-party) whose validation gates drop real bugs.
+
+### Changed
+
+- **prompt-starter SKILL.md** — Added `review`, `code review`, `audit`, `PR review`, and Gitea/GitHub PR URL patterns to template selection table. Added Jira field mapping for code-review template (PR URL/branch → pre-fill Scope section).
+- **reviewer agent** — Added PR Review Mode section: fetch diff, read full files via Serena (not diff-only), verify call sites with `find_referencing_symbols`. Added 2nd-opinion requirement for Critical and Warning findings.
+
 ## [2.23.0] - 2026-04-11
 
 ### Changed

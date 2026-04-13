@@ -164,7 +164,7 @@ All code-investigating agents include `mcp-serena` by default — they will use 
 - `ima-editorial-scorecard` - Score IMA content against editorial standards (Brand Voice, Evidence, Audience, Structure, CTA)
 - `ima-editorial-workflow` - Orchestrates Plan → Write → Review → Approve → Learn editorial process
 - `ima-email-creator` - Render branded email-client-safe HTML from editorial copy (table layouts, inline CSS, EspoCRM)
-- `prompt-starter` - Build better prompts from rough ideas (template selection, Jira pre-fill, editor spawn). Returns refined prompt — does NOT execute the work.
+- `prompt-starter` - Build better prompts from rough ideas (template selection, Jira pre-fill, editor spawn). Returns refined prompt — does NOT execute the work. Templates: brainstorm, plan-implement, code-review (PR/audit), quick.
 
 ### Agentic Workflow Skills
 - `agentic-workflows` - Headless workflow phases, recipes, and standards for Jira-triggered content creation (gather → outline → draft → review → deliver)
