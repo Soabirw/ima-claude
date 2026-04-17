@@ -37,6 +37,36 @@ Use Read only for specific symbol bodies to test. Fall back to Read/Grep for non
 4. Verify behavior, not implementation details
 5. Run suite; confirm all pass
 
+## When to think harder (in-scope)
+
+Before acting on hard reasoning WITHIN plan scope, invoke `mcp__sequential-thinking__sequentialthinking`:
+- Debugging failing tests (is the test wrong, or the code?)
+- Trade-offs on test strategy (unit vs integration boundary)
+- Mock-vs-refactor decisions
+
+## Escalation Protocol (out-of-scope)
+
+Pause and return a structured report — do NOT power through — if you hit:
+
+1. **Scope drift** — test requires changes to production code beyond the task scope
+2. **Architectural fork** — requires new test infrastructure (fixtures, harness, framework change) not in the plan
+3. **Security-sensitive surface** — tests would expose secrets, or require production credentials, or validate auth flows not in original plan
+4. **Repeated red** — 3+ fix attempts and the test is still failing. **Do NOT** weaken the assertion, add skip markers, or rewrite to pass — that hides the bug. Escalate.
+5. **Ambiguous requirement** — acceptance criteria can't be turned into verifiable assertions
+
+Return format:
+
+```
+ESCALATION: <trigger>
+Did: <what was completed>
+Blocked on: <specific decision needed>
+Options: <candidates, if any>
+Recommendation: <leaning + why>
+Files touched: <paths>
+```
+
+Parent (Opus) arbitrates and re-dispatches. Clean hand-off beats a green test that lies.
+
 ## Do not
 
 - Test implementation details (private methods, internal state)

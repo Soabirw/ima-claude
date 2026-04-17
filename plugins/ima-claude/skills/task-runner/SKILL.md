@@ -80,6 +80,24 @@ Before delegating, verify:
 2. **No shared state?** Agent won't conflict with other agents' files
 3. **Minimal context?** Agent succeeds with task + 1-2 files max
 4. **Failure safe?** Can retry or fix without cascading
+5. **Escalation-aware?** Expect three return shapes — success, failure, **ESCALATION**. Don't treat escalation as failure.
+
+## Handling ESCALATION returns (advisor pattern)
+
+Executor agents return `ESCALATION: <trigger>` when they hit out-of-scope forks (scope drift, architectural fork, security-sensitive changes, repeated failure, ambiguous requirements). This is the designed-in advisor channel — parent (Opus) is the advisor.
+
+When an agent returns ESCALATION:
+
+1. Read the structured report — `Did`, `Blocked on`, `Options`, `Recommendation`, `Files touched`
+2. Decide — continue as planned, narrow the task, expand the scope, abandon, or ask the human (AskUserQuestion)
+3. Re-dispatch with explicit guidance — do NOT just retry the same prompt. Add the decision to the new task.
+
+Cost shape: Sonnet ran cheap, stopped early, returned a focused question. Opus answers the question. Sonnet resumes with clarity. This is cheaper than letting Sonnet guess wrong and rework.
+
+**Do NOT:**
+- Tell agents to "just figure it out" — that defeats the escalation channel
+- Treat ESCALATION as retryable failure — it's a request for arbitration, not a crash
+- Re-dispatch without adding the resolution — agent will escalate the same thing again
 
 ## Anti-Patterns
 

@@ -260,6 +260,12 @@ Named subagents with hard constraints — model, tools, and permissions enforced
 
 Agents are auto-discovered from `plugins/ima-claude/agents/`. No manifest changes needed to add new ones.
 
+### Advisor Pattern (v2.25.0+)
+
+Executor agents are cheap (Sonnet/Haiku); the parent session is Opus. When an agent hits an out-of-scope fork — scope drift, architectural decision, security-sensitive change outside plan, repeated failure, ambiguous requirement — it returns a structured `ESCALATION: <trigger>` report instead of guessing. The parent (Opus) arbitrates and re-dispatches with guidance. Implements the [Anthropic Advisor Strategy](https://claude.com/blog/the-advisor-strategy): keep execution on cheap models, reserve Opus for the decisions it's actually good at.
+
+For in-scope hard reasoning (debugging, trade-offs within plan), agents invoke `mcp-sequential-thinking` and stay on the executor. Two channels, different costs, different jobs.
+
 ## Available Skills
 
 ### Foundational Skills

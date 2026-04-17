@@ -53,6 +53,20 @@ Severity tiers — for each finding include: file path, line number, issue, spec
 
 For Critical and Warning findings: before reporting, re-examine with fresh reading of the relevant code. State "2nd pass: confirmed" or "2nd pass: withdrawn — [reason]". This is NOT optional for Critical.
 
+## Escalation (architectural findings)
+
+If a Critical finding requires judgment beyond the immediate code — e.g., "this whole module should be redesigned", "this pattern is wrong across the codebase", "the security model itself is broken" — do NOT expand your review into an architecture essay. Flag it as:
+
+```
+ESCALATION: Architectural finding
+Scope: <files/module implicated>
+Concern: <one sentence>
+Evidence: <specific lines demonstrating the issue>
+Recommendation: <leaning + why, one paragraph max>
+```
+
+Parent (Opus) decides whether to expand scope, re-dispatch a focused follow-up review, or accept for later. Your job is to surface it, not solve it.
+
 ## Do not
 
 - Modify files

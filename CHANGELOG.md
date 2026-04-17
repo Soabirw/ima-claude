@@ -5,6 +5,27 @@ All notable changes to ima-claude will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.25.0] - 2026-04-16
+
+### Added
+
+- **Advisor-pattern escalation across executor agents** — Implements the [Anthropic Advisor Strategy](https://claude.com/blog/the-advisor-strategy) for the ima-claude orchestrator. Sonnet/Haiku executor agents now return a structured `ESCALATION: <trigger>` report when they hit out-of-scope forks (scope drift, architectural fork, security-sensitive changes outside plan, repeated failure, ambiguous requirements). The parent session (Opus) is the advisor — it arbitrates the decision and re-dispatches with explicit guidance, rather than the agent guessing at Sonnet-level judgment. Closes the main gap identified in the pipeline: previously, agents had no mid-task escalation channel and were instructed to run end-to-end autonomously.
+
+  **Agents updated** (`plugins/ima-claude/agents/`):
+  - `implementer`, `wp-developer`, `tester` — Added `Escalation Protocol` and `When to think harder (in-scope)` sections. Sequential-thinking is now explicitly invoked for in-scope trade-offs; ESCALATION for out-of-scope forks. Each agent has domain-specific trigger flavor (WP: wider security surface; tester: "do NOT weaken the assertion to make a test pass").
+  - `reviewer` — Architectural findings now route through a structured ESCALATION block instead of expanding into architecture essays within the review.
+
+  **Skills updated:**
+  - `task-runner` — Delegation checklist gains an escalation-aware item; new `Handling ESCALATION returns (advisor pattern)` section documents parent-side arbitration.
+  - `task-master` — Dispatch tree gains an ESCALATION row; new `Advisor Pattern` section.
+  - `prompt-starter/references/code-review.md` — Renamed "2nd opinion" pass to "advisor pass"; added explicit handling for `ESCALATION: Architectural finding` returns.
+
+  **Bootstrap** — `hooks/bootstrap.sh` Orchestrator Protocol gains a one-line description so every session loads the pattern.
+
+### Changed
+
+- **Two-channel reasoning model for agents** — In-scope hard reasoning stays with the executor (via `mcp__sequential-thinking__sequentialthinking`); out-of-scope forks return to the advisor (parent Opus). Previously, agents had no documented guidance for either channel — they were expected to power through.
+
 ## [2.24.0] - 2026-04-13
 
 ### Added

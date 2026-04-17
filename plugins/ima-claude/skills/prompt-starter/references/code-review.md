@@ -20,16 +20,19 @@ Review [PR URL | branch | file paths] for [correctness | security | FP complianc
 Use `/ima-claude:task-master` to orchestrate:
 1. Delegate to `/ima-claude:explorer` first — understand scope and surrounding context via Serena (not diff-only)
 2. Delegate to `/ima-claude:reviewer` with domain skills: [php-fp, php-fp-wordpress, js-fp, js-fp-wordpress, jquery, etc.]
-3. For each finding: request a 2nd opinion before finalizing
-4. Document findings in Serena as `{pr-id}-review` for audit trail
+3. **Advisor pass on Critical findings** — before finalizing, each Critical gets a 2nd-pass re-examination (see reviewer agent's advisor-pattern rules). Confirmed → keep; withdrawn → drop.
+4. **Architectural findings escalate** — if reviewer returns `ESCALATION: Architectural finding`, parent (Opus) decides whether to expand scope, re-dispatch a focused follow-up, or accept for later.
+5. Document findings in Serena as `{pr-id}-review` for audit trail.
 
 ## Do NOT
 - Use `/code-review:code-review` (third-party) — its validation gates filter real issues
 - Restrict reviewer to diff-only — bugs depend on surrounding context
-- Skip the 2nd-opinion pass for Critical/Warning findings
+- Skip the advisor pass for Critical/Warning findings
+- Treat an architectural ESCALATION as a failed review — it's a scoped request for arbitration
 
 ## Acceptance
 - [ ] All Critical issues have specific file:line + proposed fix
 - [ ] Warnings include reasoning
 - [ ] Findings saved to Serena
-- [ ] 2nd opinion confirmed before reporting Critical
+- [ ] Advisor pass confirmed (or withdrawn) before reporting Critical
+- [ ] Any `ESCALATION:` returns handled by parent (Opus), not buried in the review

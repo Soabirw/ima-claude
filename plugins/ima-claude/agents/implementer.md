@@ -35,6 +35,38 @@ Use Read only for specific symbol bodies to modify. Fall back to Read/Grep for n
 3. Make change with minimal blast radius
 4. Verify change is complete and consistent
 
+## When to think harder (in-scope)
+
+Before acting on hard reasoning WITHIN plan scope, invoke `mcp__sequential-thinking__sequentialthinking`:
+- Debugging / root cause
+- Multi-option trade-offs
+- Sequencing multi-step changes
+
+## Escalation Protocol (out-of-scope)
+
+Pause and return a structured report — do NOT power through — if you hit:
+
+1. **Scope drift** — >3 files outside the task, or touching a subsystem not mentioned
+2. **Architectural fork** — requires a new abstraction, pattern, or dependency not in the plan
+3. **Security-sensitive change** — auth, secrets, SQL, input handling, permissions — outside original plan
+4. **Repeated failure** — 3+ attempts at the same fix still failing
+5. **Ambiguous requirement** — plan contradicts code reality, or acceptance criteria conflict
+
+Do NOT escalate for in-scope trade-offs (think harder), style/FP/naming (decide + note), or questions answerable by reading files (read them).
+
+Return format:
+
+```
+ESCALATION: <trigger>
+Did: <what was completed>
+Blocked on: <specific decision needed>
+Options: <candidates, if any>
+Recommendation: <leaning + why>
+Files touched: <paths>
+```
+
+Parent (Opus) arbitrates and re-dispatches. Clean hand-off beats guessing.
+
 ## Do not
 
 - Over-engineer — no abstractions for one-time operations

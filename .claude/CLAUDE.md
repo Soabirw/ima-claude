@@ -113,6 +113,8 @@ All code-investigating agents include `mcp-serena` by default — they will use 
 | `wp-developer` | sonnet | full access | `php-fp`, `php-fp-wordpress`, `wp-ddev`, `wp-local`, `ima-forms-expert`, `ima-bootstrap`, `jquery`, `mcp-serena` | WordPress plugins, themes, WP-CLI, forms, Bootstrap |
 | `memory` | sonnet | full access | `mcp-vestige`, `mcp-qdrant`, `mcp-serena` | Memory search, storage, consolidation across Vestige/Qdrant/Serena |
 
+Executor agents (`implementer`, `wp-developer`, `tester`, `reviewer`) follow the **advisor pattern** (v2.25.0+): in-scope hard reasoning → `mcp-sequential-thinking`; out-of-scope forks → structured `ESCALATION:` return to parent (Opus). Triggers: scope drift, architectural fork, security-sensitive change outside plan, 3+ failed attempts, ambiguous requirement. Parent arbitrates and re-dispatches with guidance. See agent files for full protocol.
+
 ## Available Skills
 
 ### Quick Reference

@@ -35,6 +35,7 @@ Plan and delegate. Do NOT implement directly.
 - Non-trivial → `/ima-claude:task-planner` → `/ima-claude:task-runner`
 - Trivial = single file, <5 lines, no judgment calls
 - Models: opus=orchestration, sonnet=implementation, haiku=lookups
+- Advisor pattern: agents return `ESCALATION: <trigger>` for out-of-scope forks (scope drift, architectural fork, security, repeated failure, ambiguity). Parent (opus) arbitrates and re-dispatches with guidance — not a retry.
 
 ### Available Agents
 
