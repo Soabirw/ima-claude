@@ -63,6 +63,31 @@ npx ima-claude install --target claude      # Claude Code only (plugin recommend
 npx ima-claude detect                       # Show detected platforms
 ```
 
+**Tip: Install into a single project instead of globally**
+
+The installer resolves its target paths via `$HOME` (`~/.claude/...`). Override `$HOME` at invocation time to write skills, agents, hooks, and `settings.json` into the current repo's `./.claude/` instead:
+
+```bash
+HOME=$(pwd) npx ima-claude install --target claude
+```
+
+Produces:
+
+```
+./.claude/skills/       # project-scoped skills
+./.claude/agents/       # project-scoped agents
+./.claude/hooks/        # Python hook scripts
+./.claude/settings.json # hook configuration (absolute paths)
+```
+
+Claude Code already reads these as project-scoped config, so the skills/hooks load only when you're working inside that repo.
+
+Caveats:
+
+- The plugin marketplace flow (`/plugin install ima-claude`) remains the recommended path for most users. Use this override only when you want per-repo skill customization without touching your home install.
+- `settings.json` records hook paths as absolute strings resolved at install time — if you rename or move the project, the hook entries break.
+- `HOME=$(pwd)` also redirects npm's cache, so the install may drop a `.npm/` folder in the project root. Add it to `.gitignore` or clean up afterward.
+
 **What's different per platform?**
 
 | | Claude Code | Junie CLI | Gemini CLI | GitHub Copilot |
@@ -311,6 +336,7 @@ For in-scope hard reasoning (debugging, trade-offs within plan), agents invoke `
 | `wp-ddev` | WP-CLI commands for DDEV WordPress environments |
 | `wp-local` | WP-CLI commands for Flywheel Local WP |
 | `jira-checkpoint` | Jira awareness checkpoints for team visibility |
+| `ima-git` | IMA trunk-based git workflow (main/release/tag model, hotfix flow, deploy-gate push cadence, commit atomicity) |
 | `phpunit-wp` | PHPUnit testing for WordPress plugins with FP principles |
 | `rg` | Ripgrep usage patterns |
 | `ima-forms-expert` | WordPress form components (IMA Forms) |

@@ -26,9 +26,25 @@ Arguments are domain skills to evaluate against. If none provided, auto-detect f
 3. Identify project's primary language(s) and framework(s)
 4. Locate README (or note its absence)
 
-### Step 2: Parallel Review
+### Step 2: Run project validators (REQUIRED)
 
-Spawn parallel agents per category (`model: "sonnet"`). Each returns letter grade (A-F) + 2-3 justifying bullets. Be honest — inflated scores help nobody.
+Before any grading, discover and run the project's configured gate. Same discovery order as the `reviewer` agent:
+
+| Ecosystem | Where to look |
+|---|---|
+| PHP | `composer.json` scripts — `check`, `test`, `phpcs`, `phpcs:report` |
+| JS/TS | `package.json` scripts — `test`, `lint`, `typecheck`, `check` |
+| Make-based | `Makefile` targets — `check`, `test`, `lint`, `ci` |
+| Python | `pyproject.toml` / `tox.ini` / `noxfile.py` |
+| Ruby | `Rakefile` — `ci`, `test`, `rubocop` |
+
+Capture exit codes, error/warning counts, and test coverage % (run the coverage variant — `composer test:coverage`, `npm test -- --coverage` — when available). These are primary evidence for Code Standards, Security, and Test Coverage grades.
+
+Grades without validator backing are vibes grades. Don't ship them. No validators configured is itself a signal — floor Code Standards at C until they exist.
+
+### Step 3: Parallel Review
+
+Spawn parallel agents per category (`model: "sonnet"`). Each returns letter grade (A-F) + 2-3 justifying bullets rooted in validator output. Be honest — inflated scores help nobody.
 
 | Category | What to Evaluate | Key Signals |
 |----------|-----------------|-------------|
@@ -38,7 +54,7 @@ Spawn parallel agents per category (`model: "sonnet"`). Each returns letter grad
 | **Documentation** | README quality, inline docs, API docs | Setup instructions, usage examples, architecture notes |
 | **Maintainability** | Complexity, coupling, file organization | Small functions, clear boundaries, no circular deps |
 
-### Step 3: Compile Scores
+### Step 4: Compile Scores
 
 ```markdown
 ## Scorecard
@@ -69,7 +85,7 @@ Spawn parallel agents per category (`model: "sonnet"`). Each returns letter grad
 | D | 🔴 D | Poor — significant issues |
 | F | 🔴 F | Failing — critical problems |
 
-### Step 4: Insert into README
+### Step 5: Insert into README
 
 - Replace existing `## Scorecard` section, or insert after first heading if absent
 - Present full scorecard to user before writing

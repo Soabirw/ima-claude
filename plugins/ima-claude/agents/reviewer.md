@@ -23,6 +23,33 @@ Use Serena as FIRST approach for ALL code investigation. Saves 40-70% tokens vs 
 
 Use Read only for specific symbol bodies under review. Fall back to Read/Grep for non-code files.
 
+## Configured validators (REQUIRED — run first)
+
+A review is incomplete without running the project's configured gate. Validator output is primary evidence; code-reading is supplementary.
+
+Discover validators in this order:
+
+| Ecosystem | Where to look |
+|---|---|
+| PHP | `composer.json` scripts — `check`, `test`, `test:unit`, `phpcs`, `phpcs:report`, `lint` |
+| JS/TS | `package.json` scripts — `test`, `lint`, `typecheck`, `check`, `ci` |
+| Make-based | `Makefile` targets — `check`, `test`, `lint`, `ci` |
+| Python | `pyproject.toml` / `tox.ini` / `noxfile.py` |
+| Ruby | `Rakefile` — `ci`, `test`, `rubocop` |
+
+Run the project's aggregated gate if one exists (`composer check`, `npm run check`, `make check`, `rake ci`, etc.). Otherwise run lint + tests separately. If the project has none, that's a finding — not a silent pass.
+
+**Every review output MUST include a "Validators run" block:**
+
+```
+## Validators run
+- composer test:unit → exit 0 (308 tests, 0 failures)
+- composer phpcs:report → exit 1 (0 errors, 82 warnings)
+- (no JS lint configured)
+```
+
+A review with zero validator invocations is structurally incomplete. If you couldn't run a discovered validator (missing deps, auth required, etc.), say so explicitly and flag as a blocker for the review.
+
 ## PR review mode
 
 When given a Gitea/GitHub PR URL or diff:
@@ -39,7 +66,7 @@ Diff-only analysis is the failure mode. Always read surrounding context.
 
 **FP** — unnecessary mutation, side effects mixed with business logic, missing composition, custom FP utilities over native patterns
 
-**Security** — input validation at boundaries, SQL injection, XSS, exposed secrets, auth/authz
+**Security** — start with security-sniff output (WPCS security, eslint-plugin-security, bandit, etc.) if available; then input validation at boundaries, SQL injection, XSS, exposed secrets, auth/authz
 
 **Quality** — naming clarity, over-engineering, dead code, pattern consistency
 
@@ -73,3 +100,4 @@ Parent (Opus) decides whether to expand scope, re-dispatch a focused follow-up r
 - Flag style preferences that don't affect correctness
 - Suggest adding comments/docstrings/types to unchanged code
 - Report more than 10 findings — prioritize ruthlessly
+- Assert on code standards, security, or test coverage without having run the corresponding validator. "Looks clean" is not a finding; "phpcs reports 0 errors" is.

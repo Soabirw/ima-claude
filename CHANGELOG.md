@@ -5,6 +5,20 @@ All notable changes to ima-claude will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.26.0] - 2026-04-18
+
+### Added
+
+- **`ima-git` skill** (`plugins/ima-claude/skills/ima-git/`) — Codifies IMA's trunk-based git workflow: `main` = dev trunk, `release/<name>` = staging candidate (fast-forwarded from main, never committed to directly), `v<version>` tags = production releases, `hotfix/<name>` branches off the production tag. Covers deploy-gate push cadence (deploy tools clone fresh — unpushed commits are invisible), commit atomicity rules (security fixes isolated; tests-only never mixed with production code), HEREDOC commit message conventions, and deploy tool exit codes (0/1/2/3/4).
+
+- **Project-scope install pattern** (README) — Documented `HOME=$(pwd) npx ima-claude install --target claude` for installing skills/agents/hooks into `./.claude/` instead of `~/.claude/`. Plugin marketplace remains the recommended path; the project-scope trick is for per-repo customization.
+
+### Changed
+
+- **`reviewer` agent** — Added `Configured validators (REQUIRED — run first)` section with ecosystem discovery table (composer/npm/make/python/rake) and mandated `## Validators run` block in every review output. Reviews without validator invocations are now structurally incomplete. Security review explicitly starts from security-sniff tool output (WPCS, eslint-plugin-security, bandit) when available.
+
+- **`scorecard` skill** — Inserted new Step 2 (`Run project validators`) before grading. Code Standards, Security, and Test Coverage grades must now be rooted in validator output — "vibes grades" explicitly flagged as unshippable. Projects with no configured validators floor at Code Standards grade C.
+
 ## [2.25.0] - 2026-04-16
 
 ### Added

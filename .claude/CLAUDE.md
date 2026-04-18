@@ -159,6 +159,7 @@ Executor agents (`implementer`, `wp-developer`, `tester`, `reviewer`) follow the
 - `wp-ddev` - WP-CLI commands in DDEV WordPress environments (preferred over wp-local)
 - `wp-local` - WP-CLI commands in Flywheel Local WP environments
 - `jira-checkpoint` - Jira awareness checkpoints for team visibility (before/during/after work sync)
+- `ima-git` - IMA trunk-based git workflow (main/release/tag branch model, hotfix flow, deploy-gate push cadence, commit atomicity)
 - `rg` - Ripgrep usage patterns (prefer over grep/find)
 - `design-to-code` - Convert design screenshots → implementation prompt → working WordPress code (two-phase: design-to-prompt + prompt-to-code)
 - `ima-cancer-care-guides` - IMA cancer care guide document pipeline (DOCX extraction, markdown → HTML → PDF, Canva template mapping)
