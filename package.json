@@ -1,7 +1,7 @@
 {
   "name": "ima-claude",
-  "version": "2.26.0",
-  "description": "IMA's AI coding agent skills - FP patterns, architecture guidance, and team standards. Supports Claude Code, Junie CLI, Gemini CLI, and GitHub Copilot.",
+  "version": "2.27.0",
+  "description": "IMA's AI coding agent skills - FP patterns, architecture guidance, and team standards. Supports Claude Code, Junie CLI, Gemini CLI, GitHub Copilot, and OpenAI Codex CLI.",
   "type": "module",
   "scripts": {
     "build": "tsup",

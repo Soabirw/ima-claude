@@ -74,22 +74,24 @@ When adding new skills or hooks, the registries and docs must also be updated.
 1. `scripts/utils.ts` — `VERSION` constant
 2. `package.json` — `version`
 3. `plugins/ima-claude/.claude-plugin/plugin.json` — `version`
-4. `.claude-plugin/marketplace.json` — plugin `version`
+4. `plugins/ima-claude/.codex-plugin/plugin.json` — `version`
+5. `.claude-plugin/marketplace.json` — plugin `version`
 
 **Registries** (when adding new skills/hooks):
 
-5. `scripts/utils.ts` — `SKILLS_TO_INSTALL` array (new skills)
-6. `scripts/utils.ts` — `HOOKS_TO_INSTALL` array (new hooks)
+6. `scripts/utils.ts` — `SKILLS_TO_INSTALL` array (new skills)
+7. `scripts/utils.ts` — `HOOKS_TO_INSTALL` array (new hooks)
 
 **Documentation** (always update):
 
-7. `CHANGELOG.md` — new version entry
-8. `README.md` — skills tables, MCP tables, agent tables as needed
-9. `.claude/CLAUDE.md` — Available Skills table
+8. `CHANGELOG.md` — new version entry
+9. `README.md` — skills tables, MCP tables, agent tables as needed
+10. `.claude/CLAUDE.md` — Available Skills table
 
 **Counts** (keep accurate):
 
-10. `plugins/ima-claude/.claude-plugin/plugin.json` — `description` field skill/hook counts
+11. `plugins/ima-claude/.claude-plugin/plugin.json` — `description` field skill/hook counts
+12. `plugins/ima-claude/.codex-plugin/plugin.json` — `description` field skill/hook counts
 
 ## Gotchas
 

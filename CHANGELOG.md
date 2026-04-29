@@ -5,6 +5,21 @@ All notable changes to ima-claude will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.27.0] - 2026-04-28
+
+### Added
+
+- **OpenAI Codex CLI as a fifth install target** (`platforms/codex/`) — Skills, agents (as reference copies + delegation patterns documented in `AGENTS.md`), hooks (with tool-name translator shim), and a generated `AGENTS.md` are deployed to `~/.codex/`. Codex CLI's hook event names (`PreToolUse`, `PostToolUse`, `UserPromptSubmit`, `SessionStart`) are identical to Claude Code's, so only tool-name strings (`Bash` → `shell`, `Read` → `read`, etc.) are rewritten by the shim. Hook config emitted as `~/.codex/hooks.json` (matcher-grouped form, mirroring Gemini's). `CODEX_HOME` env var honoured. Run `npx ima-claude install --target codex` to install.
+
+- **`platforms/codex/hooks-translator.py`** — Python shim that rewrites `tool_name` in the hook stdin payload from Codex's identifiers to Claude Code's, so all 23 existing hook scripts work unmodified.
+
+- **`plugins/ima-claude/.codex-plugin/plugin.json`** — Codex-native plugin manifest, enabling installation via the Codex plugin marketplace: `codex plugin marketplace add Soabirw/ima-claude`. Codex also reads the existing `.claude-plugin/marketplace.json` as a "Claude-style marketplace," so both install paths work from the same repo.
+
+### Notes
+
+- MCP servers are not auto-configured for Codex yet — `postInstall()` prints a hint pointing at `~/.codex/config.toml` `[mcp_servers.<name>]` tables. Adding TOML merge will land in a follow-up release.
+- Named subagents are documented as delegation patterns in the generated `AGENTS.md`. Codex's formal `--agents <name>` flag is still proposed, not implemented.
+
 ## [2.26.0] - 2026-04-18
 
 ### Added

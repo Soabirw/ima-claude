@@ -2,7 +2,7 @@
 
 FP patterns, architecture guidance, and team standards for AI coding agents.
 
-**Supports Claude Code, Junie CLI, Gemini CLI, and GitHub Copilot** — with an extensible adapter architecture ready for more platforms.
+**Supports Claude Code, Junie CLI, Gemini CLI, GitHub Copilot, and OpenAI Codex CLI** — with an extensible adapter architecture ready for more platforms.
 
 Built by [Independent Medical Alliance](https://imahealth.org) (formerly FLCCC)
 
@@ -38,9 +38,9 @@ claude plugin update ima-claude
 
 Or use `/plugin` inside Claude Code to manage updates interactively via the **Installed** tab.
 
-### Junie CLI / Gemini CLI / GitHub Copilot — Multi-Platform Installer
+### Junie CLI / Gemini CLI / GitHub Copilot / Codex CLI — Multi-Platform Installer
 
-For Junie, Gemini, GitHub Copilot, or any non-plugin platform, use the interactive CLI installer:
+For Junie, Gemini, GitHub Copilot, OpenAI Codex CLI, or any non-plugin platform, use the interactive CLI installer:
 
 ```bash
 npx ima-claude install
@@ -48,7 +48,7 @@ npx ima-claude install
 
 The installer auto-detects which platforms are available and walks you through installation:
 
-1. **Detects platforms** — scans for Claude Code (`~/.claude`), Junie CLI (`~/.junie`), Gemini CLI (`~/.gemini`), and GitHub Copilot (`~/.copilot`)
+1. **Detects platforms** — scans for Claude Code (`~/.claude`), Junie CLI (`~/.junie`), Gemini CLI (`~/.gemini`), GitHub Copilot (`~/.copilot`), and OpenAI Codex CLI (`~/.codex`, or `$CODEX_HOME`)
 2. **Shows preview** — lists all skills, agents, and platform-specific items to install
 3. **Allows exclusions** — skip specific skills or agents you don't need
 4. **Installs with feedback** — step-by-step progress for each item
@@ -59,6 +59,7 @@ You can also target a specific platform directly:
 npx ima-claude install --target junie       # Junie only
 npx ima-claude install --target gemini      # Gemini CLI only
 npx ima-claude install --target gh-copilot  # GitHub Copilot only
+npx ima-claude install --target codex       # OpenAI Codex CLI only
 npx ima-claude install --target claude      # Claude Code only (plugin recommended instead)
 npx ima-claude detect                       # Show detected platforms
 ```
@@ -90,14 +91,14 @@ Caveats:
 
 **What's different per platform?**
 
-| | Claude Code | Junie CLI | Gemini CLI | GitHub Copilot |
-|---|---|---|---|---|
-| **Skills** | Plugin system (auto) | Copied to `~/.junie/skills/` | Copied to `~/.gemini/skills/` | Copied to `~/.copilot/skills/` |
-| **Agents** | Plugin system (auto) | Strips `permissionMode` | Strips `model` + `permissionMode`, maps tool names | Strips `model` + `permissionMode`, maps tool names, renames to `.agent.md` |
-| **Hooks** | 24 Python hook scripts | No hook system — behavioral guidelines | Translated events + tool names, translator shim | Translated events + tool names, translator shim, flattened config |
-| **Guidelines** | Plugin's `CLAUDE.md` injection | Generated `AGENTS.md` | Generated `GEMINI.md` | Generated `copilot-instructions.md` |
+| | Claude Code | Junie CLI | Gemini CLI | GitHub Copilot | Codex CLI |
+|---|---|---|---|---|---|
+| **Skills** | Plugin system (auto) | Copied to `~/.junie/skills/` | Copied to `~/.gemini/skills/` | Copied to `~/.copilot/skills/` | Copied to `~/.codex/skills/` |
+| **Agents** | Plugin system (auto) | Strips `permissionMode` | Strips `model` + `permissionMode`, maps tool names | Strips `model` + `permissionMode`, maps tool names, renames to `.agent.md` | Strips `model` + `permissionMode`, maps tool names; reference copies in `~/.codex/agents/` (Codex has no formal subagent dispatcher yet) |
+| **Hooks** | 24 Python hook scripts | No hook system — behavioral guidelines | Translated events + tool names, translator shim | Translated events + tool names, translator shim, flattened config | Translated tool names only (events match Claude Code), translator shim, matcher-grouped config |
+| **Guidelines** | Plugin's `CLAUDE.md` injection | Generated `AGENTS.md` | Generated `GEMINI.md` | Generated `copilot-instructions.md` | Generated `AGENTS.md` (Codex's native convention) |
 
-Junie doesn't support hooks, so behaviors become guidelines in `AGENTS.md`. Gemini and GitHub Copilot have hooks but use different event/tool names — a translator shim normalizes input so all existing hooks work unmodified. Copilot additionally uses a flat hook config format with `bash` field and `version: 1` wrapper.
+Junie doesn't support hooks, so behaviors become guidelines in `AGENTS.md`. Gemini and GitHub Copilot have hooks but use different event/tool names — a translator shim normalizes input so all existing hooks work unmodified. Copilot additionally uses a flat hook config format with `bash` field and `version: 1` wrapper. Codex CLI shares Claude Code's hook event names natively, so the translator only rewrites tool-name strings; MCP servers register via `[mcp_servers.<name>]` tables in `~/.codex/config.toml` (not auto-configured yet).
 
 ### Adding New Platforms
 
@@ -109,7 +110,8 @@ platforms/
 ├── claude/adapter.ts        # Claude Code adapter
 ├── junie/adapter.ts         # Junie CLI adapter
 ├── gemini/adapter.ts        # Gemini CLI adapter
-└── gh-copilot/adapter.ts    # GitHub Copilot adapter
+├── gh-copilot/adapter.ts    # GitHub Copilot adapter
+└── codex/adapter.ts         # OpenAI Codex CLI adapter
 ```
 
 See [platforms/shared/types.ts](platforms/shared/types.ts) for the interface contract.
@@ -118,10 +120,10 @@ See [platforms/shared/types.ts](platforms/shared/types.ts) for the interface con
 
 ## What's Included
 
-- **Multi-Platform Installer**: Interactive CLI with auto-detection, install preview, and per-item exclusion — supports Claude Code, Junie CLI, Gemini CLI, and GitHub Copilot
-- **49 Skills**: Foundational + FP implementation + domain expert + integration + meta-skills
+- **Multi-Platform Installer**: Interactive CLI with auto-detection, install preview, and per-item exclusion — supports Claude Code, Junie CLI, Gemini CLI, GitHub Copilot, and OpenAI Codex CLI
+- **63 Skills**: Foundational + FP implementation + domain expert + integration + meta-skills
 - **6 Named Agents**: Explorer (haiku), Implementer (sonnet), Reviewer (sonnet), Tester (sonnet), WP Developer (sonnet), Memory (sonnet) — enforced constraints
-- **23 Hooks**: Automatic behavioral enforcement (security, memory, workflow, Serena, code quality) — translated to guidelines for platforms without hook support
+- **24 Hooks**: Automatic behavioral enforcement (security, memory, workflow, Serena, code quality) — translated to guidelines for platforms without hook support
 - **Default Persona**: "The Practitioner" - 25-year veteran mindset, collaborative, plan-first
 - **3-Tier Memory**: Vestige (neural decay) + Qdrant (permanent library) + Serena (project workbench)
 - **IMA Workflow**: Brainstorm → Plan → Implement → Test → Review → Document (habit-driven, not tool-enforced)
@@ -131,7 +133,7 @@ See [platforms/shared/types.ts](platforms/shared/types.ts) for the interface con
 
 ## Prerequisites
 
-- [Claude Code](https://claude.ai/code), [Junie CLI](https://www.jetbrains.com/help/idea/junie.html), [Gemini CLI](https://github.com/google-gemini/gemini-cli), or [GitHub Copilot](https://github.com/features/copilot) installed
+- [Claude Code](https://claude.ai/code), [Junie CLI](https://www.jetbrains.com/help/idea/junie.html), [Gemini CLI](https://github.com/google-gemini/gemini-cli), [GitHub Copilot](https://github.com/features/copilot), or [OpenAI Codex CLI](https://github.com/openai/codex) installed
 
 ## MCP Servers (Highly Recommended)
 
@@ -497,7 +499,7 @@ ima-claude follows a **Persona + Skills** architecture:
 - **Platform adapters** - Shared `PlatformAdapter` interface; each platform implements detect, preview, install, and guideline generation
 
 This makes ima-claude:
-1. **Multi-platform** - Same skills and agents across Claude Code, Junie CLI, Gemini CLI, and GitHub Copilot
+1. **Multi-platform** - Same skills and agents across Claude Code, Junie CLI, Gemini CLI, GitHub Copilot, and OpenAI Codex CLI
 2. **Fully standalone** - Complete system without dependencies
 3. **Consistent** - Same mindset across all interactions
 4. **Efficient** - Skills load on-demand based on context
