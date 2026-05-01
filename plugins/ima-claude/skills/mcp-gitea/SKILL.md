@@ -1,25 +1,167 @@
 ---
 name: mcp-gitea
 description: >-
-  Gitea MCP for internal Git repository management — pull requests, issues, releases,
-  branches, tags, wikis, and CI/CD actions. Use when: creating/reviewing PRs, managing
-  issues, creating releases/tags, browsing repo contents, managing branches, wiki
-  operations, or any Gitea-hosted repository operation. Triggers on: Gitea, internal
-  repo, pull request, PR review, merge request, release, tag, branch, issue, milestone,
-  wiki, actions, CI/CD, timetracking. NOT for GitHub repos — use mcp-github for those.
+  Gitea internal Git repository management — pull requests, issues, releases, branches,
+  tags, wikis, and CI/CD actions via MCP server or tea CLI fallback. Use when: creating/
+  reviewing PRs, managing issues, creating releases/tags, browsing repo contents, managing
+  branches, wiki operations, or any Gitea-hosted repository operation. Triggers on: Gitea,
+  internal repo, pull request, PR review, merge request, release, tag, branch, issue,
+  milestone, wiki, actions, CI/CD, timetracking. NOT for GitHub repos — use mcp-github.
 ---
 
-# Gitea MCP - Internal Git Repository Management
+# Gitea - Internal Git Repository Management
 
-Team's internal Git platform. All tools prefixed `mcp__gitea__`.
+Team's internal Git platform. Two integration approaches available — check MCP availability first.
 
 - Gitea = primary for daily work (PRs, issues, releases)
 - GitHub = FOSS publishing only → use `mcp-github`
 - `gh` CLI = GitHub-only, does not work with Gitea
 
-**Method-dispatch:** `pull_request_read`, `pull_request_write`, `pull_request_review_write`, `issue_read`, `issue_write` require a `method` param — omitting it causes a missing parameter error.
+## Integration Approach: MCP vs tea CLI
 
-## Tool Catalog
+**Check which is available before acting:**
+
+```
+MCP configured? → verify: mcp__gitea__get_me works without error
+  → Yes: use mcp__gitea__* tools (structured, rich responses)
+  → No:  use tea CLI via Bash (zero-setup if tea is already configured)
+```
+
+| | MCP Server | tea CLI |
+|---|---|---|
+| **Setup** | Install binary + configure settings.json | `tea login add` (one-time) |
+| **Output** | Structured JSON | Text (parse with jq/grep if needed) |
+| **Coverage** | Full API surface | Common ops (PR, issue, release, repo) |
+| **Best for** | Agentic workflows, rich data reads | Quick ops, scripting, no MCP configured |
+
+## Setup
+
+### Option A — Gitea MCP Server
+
+Install the [official Gitea MCP server](https://gitea.com/gitea/gitea-mcp), then add to `~/.claude/settings.json`:
+
+```json
+{
+  "mcpServers": {
+    "gitea": {
+      "command": "gitea-mcp",
+      "env": {
+        "GITEA_URL": "https://your-gitea-instance",
+        "GITEA_TOKEN": "your-token"
+      }
+    }
+  }
+}
+```
+
+Verify: `mcp__gitea__get_me` returns your user profile.
+
+### Option B — tea CLI
+
+```bash
+# Check if configured
+tea login list
+
+# Add login if not configured
+tea login add --url https://your-gitea-instance --token your-token
+
+# Verify
+tea repos list
+```
+
+---
+
+## tea CLI Reference
+
+Use when MCP is not configured. All commands run via Bash tool.
+
+### Pull Requests
+
+```bash
+# List PRs
+tea pr list --repo owner/repo --state open
+
+# Create PR (after git push)
+tea pr create --repo owner/repo \
+  --title "feat: description" \
+  --body "## Summary\n- what changed" \
+  --head feature/branch --base main
+
+# View PR
+tea pr view <index> --repo owner/repo
+
+# Review PR
+tea pr review <index> --repo owner/repo --approve --comment "LGTM"
+tea pr review <index> --repo owner/repo --reject --comment "See comments"
+
+# Merge PR
+tea pr merge <index> --repo owner/repo --style squash --delete-branch
+
+# Add reviewers
+tea pr edit <index> --repo owner/repo --reviewer username
+```
+
+### Issues
+
+```bash
+# List issues
+tea issue list --repo owner/repo --state open
+
+# Create issue
+tea issue create --repo owner/repo \
+  --title "Bug: description" \
+  --body "## Steps\n1. ...\n\n## Expected\n...\n\n## Actual\n..."
+
+# Comment on issue
+tea comment create <index> --repo owner/repo --body "comment text"
+
+# Close issue
+tea issue close <index> --repo owner/repo
+```
+
+### Releases & Tags
+
+```bash
+# List releases
+tea releases list --repo owner/repo
+
+# Create release (tag must exist or will be created)
+tea releases create --repo owner/repo \
+  --tag v2.1.0 --title "v2.1.0 — Feature Name" \
+  --note "## Changes\n- ...\n\n## Breaking Changes\n- none"
+
+# List tags
+tea tag list --repo owner/repo
+```
+
+### Repos & Branches
+
+```bash
+# List repos
+tea repos list --owner org-name
+
+# List branches
+tea branch list --repo owner/repo
+
+# Create branch (use git directly — tea doesn't wrap branch creation)
+git checkout -b feature/branch && git push -u origin feature/branch
+```
+
+### Shorthand: omit `--repo` when inside a cloned repo
+
+```bash
+cd ~/projects/my-repo   # git remote must point to Gitea
+tea pr list             # auto-detects owner/repo from remote
+tea issue list --state open
+```
+
+---
+
+## MCP Tool Catalog
+
+*Use these when `mcp__gitea__get_me` succeeds.*
+
+**Method-dispatch:** `pull_request_read`, `pull_request_write`, `pull_request_review_write`, `issue_read`, `issue_write` require a `method` param — omitting it causes a missing parameter error.
 
 ### Identity & Discovery
 
@@ -229,24 +371,27 @@ get_file_contents(owner: "FLCCC", repo: "my-repo", filepath: "package.json", ref
 
 ```
 Gitea-hosted repo? (git remote -v shows gitea.* or internal hostname)
-  → Yes: mcp__gitea__*  ← PRIMARY for daily work
   → No, github.com: mcp__github__* or gh CLI
-  → Local git ops (commit, diff, log, stash, rebase): git CLI directly
+  → Local git ops (commit, diff, log, stash, rebase, push, pull): git CLI directly
+  → Yes, Gitea:
+      MCP configured? (mcp__gitea__get_me succeeds)
+        → Yes: use mcp__gitea__* tools below
+        → No:  use tea CLI via Bash (see tea CLI Reference above)
 
-Operation → Tool
-  Creating PR           → pull_request_write(method: "create")
-  Reading PR/diff       → pull_request_read(method: "get" | "get_diff")
-  Reviewing PR          → pull_request_review_write(method: "create" then "submit")
-  Merging PR            → pull_request_write(method: "merge")
-  Issue triage          → issue_write / list_issues
-  Adding comment        → issue_write(method: "add_comment")
-  Cutting release       → create_tag → create_release
-  Browsing files        → get_file_contents / get_dir_contents
-  Editing file via MCP  → create_or_update_file (need sha for updates)
-  Branch management     → create_branch / delete_branch
-  CI/CD status          → actions_run_read
-  Team docs             → wiki_write / wiki_read
-  Time logging          → timetracking_write
+Operation → MCP tool → tea CLI equivalent
+  Creating PR           → pull_request_write(method: "create")       → tea pr create
+  Reading PR/diff       → pull_request_read(method: "get|get_diff")  → tea pr view <n>
+  Reviewing PR          → pull_request_review_write(create→submit)   → tea pr review <n>
+  Merging PR            → pull_request_write(method: "merge")        → tea pr merge <n>
+  Issue triage          → issue_write / list_issues                  → tea issue list
+  Adding comment        → issue_write(method: "add_comment")         → tea comment create
+  Cutting release       → create_tag → create_release                → tea releases create
+  Browsing files        → get_file_contents / get_dir_contents       → tea repo list / git show
+  Editing file via MCP  → create_or_update_file (need sha first)     → Edit tool + git commit
+  Branch management     → create_branch / delete_branch              → git checkout -b / git push
+  CI/CD status          → actions_run_read                           → (no tea equivalent — check Gitea UI)
+  Team docs             → wiki_write / wiki_read                     → (no tea equivalent)
+  Time logging          → timetracking_write                         → (no tea equivalent)
 ```
 
 ## Token-Saving Strategies
@@ -261,6 +406,7 @@ Operation → Tool
 
 | Situation | Use Instead |
 |-----------|-------------|
+| MCP not configured | `tea` CLI via Bash (see tea CLI Reference above) |
 | GitHub-hosted repo (github.com) | `mcp__github__*` or `gh` CLI |
 | Local git operations (commit, diff, stash, rebase, cherry-pick) | `git` CLI |
 | Pushing/pulling code | `git push` / `git pull` |

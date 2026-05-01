@@ -5,6 +5,12 @@ All notable changes to ima-claude will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.28.0] - 2026-05-01
+
+### Changed
+
+- **`mcp-gitea` skill** — Added `tea` CLI as a first-class alternative to the Gitea MCP server. Skill now opens with a comparison table (MCP vs tea), setup instructions for both options (MCP server `settings.json` config + `tea login add`), a full `tea` CLI reference section (PRs, issues, releases, repos/branches, shorthand auto-detect), and an updated decision logic tree that checks MCP availability before choosing a path. Side-by-side MCP↔tea mapping added to the operation table. Gaps noted: CI/CD status, wiki, and time tracking have no `tea` equivalent.
+
 ## [2.27.0] - 2026-04-28
 
 ### Added
