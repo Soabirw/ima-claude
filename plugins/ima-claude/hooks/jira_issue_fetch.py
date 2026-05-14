@@ -15,6 +15,10 @@ import re
 import sys
 import time
 
+# Only run if Jira/Atlassian integration is enabled
+if os.environ.get("JIRA_ENABLED", "").lower() != "true":
+    sys.exit(0)
+
 STATE_FILE = os.path.expanduser("~/.claude/.jira_keys_fetched")
 STALENESS_SECONDS = 3600  # 1 hour — reset seen keys after this gap
 

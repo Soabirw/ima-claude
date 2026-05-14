@@ -14,6 +14,10 @@ import json
 import os
 import sys
 
+# Only run if Serena MCP is enabled
+if os.environ.get("SERENA_ENABLED", "").lower() != "true":
+    sys.exit(0)
+
 CODE_EXTENSIONS = {
     ".php", ".ts", ".tsx", ".js", ".jsx", ".py",
     ".rb", ".go", ".java", ".cs", ".vue", ".svelte",

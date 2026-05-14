@@ -10,6 +10,10 @@ import json
 import os
 import sys
 
+# Only run if Vestige/Qdrant memory system is enabled
+if os.environ.get("VESTIGE_ENABLED", "").lower() != "true":
+    sys.exit(0)
+
 STATE_FILE = os.path.expanduser("~/.claude/.memory_edit_count")
 EDIT_THRESHOLD = 5
 
